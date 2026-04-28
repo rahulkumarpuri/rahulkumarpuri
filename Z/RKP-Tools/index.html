@@ -1217,7 +1217,11 @@ document.addEventListener('input', e => {
 // LIVE SPEEDOMETER
 // ═══════════════════════════════════════════════════════════
 
-let speedWatchId = null;
+
+  let speedWatchId = null;
+
+let lastPosition = null;
+let lastTimestamp = null;
 
 function startSpeedometer() {
 
@@ -1229,35 +1233,64 @@ function startSpeedometer() {
     return;
   }
 
-  statusEl.textContent = 'Starting GPS...';
+  statusEl.textContent = 'Connecting GPS...';
 
   speedWatchId = navigator.geolocation.watchPosition(
 
     pos => {
 
-      let speed = pos.coords.speed;
+      const lat = pos.coords.latitude;
+      const lon = pos.coords.longitude;
+      const now = pos.timestamp;
 
-      // speed comes in m/s
-      if (speed == null) {
+      // First reading
+      if (!lastPosition) {
+
+        lastPosition = { lat, lon };
+        lastTimestamp = now;
+
+        statusEl.textContent = 'Move to detect speed...';
         speedEl.textContent = '0';
-        statusEl.textContent = 'Speed unavailable';
+
         return;
       }
 
-      // convert to km/h
-      speed = speed * 3.6;
+      // Distance in meters
+      const distance = getDistance(
+        lastPosition.lat,
+        lastPosition.lon,
+        lat,
+        lon
+      );
 
-      speedEl.textContent = Math.round(speed);
+      // Time difference in seconds
+      const timeDiff = (now - lastTimestamp) / 1000;
+
+      // Speed m/s
+      const speedMS = distance / timeDiff;
+
+      // Convert km/h
+      const speedKMH = speedMS * 3.6;
+
+      // Ignore fake GPS jumps
+      const finalSpeed = speedKMH > 300 ? 0 : speedKMH;
+
+      speedEl.textContent = Math.round(finalSpeed);
 
       statusEl.innerHTML = `
         Accuracy: ${Math.round(pos.coords.accuracy)}m
       `;
+
+      // Update previous position
+      lastPosition = { lat, lon };
+      lastTimestamp = now;
 
     },
 
     err => {
 
       switch(err.code) {
+
         case err.PERMISSION_DENIED:
           statusEl.textContent = 'Location permission denied';
           break;
@@ -1279,19 +1312,45 @@ function startSpeedometer() {
     {
       enableHighAccuracy: true,
       maximumAge: 0,
-      timeout: 5000
+      timeout: 10000
     }
 
   );
 
 }
 
+
+function getDistance(lat1, lon1, lat2, lon2) {
+
+  const R = 6371000;
+
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) *
+    Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) *
+    Math.sin(dLon / 2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return R * c;
+}
+
+
 function stopSpeedometer() {
 
   if (speedWatchId !== null) {
+
     navigator.geolocation.clearWatch(speedWatchId);
+
     speedWatchId = null;
   }
+
+  lastPosition = null;
+  lastTimestamp = null;
 
   document.getElementById('live-speed-status').textContent = 'Stopped';
 }
