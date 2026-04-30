@@ -168,6 +168,15 @@
         </div>
 
         <div class="stat-box">
+          <h3>Statistics</h3>
+          <p>Per Second: <span id="perSecond">₹0.0000</span></p>
+          <p>Per Minute: <span id="perMinute">₹0.0000</span></p>
+          <p>Per Hour: <span id="perHour">₹0.0000</span></p>
+          <p>Per Day: <span id="perDay">₹0.0000</span></p>
+          <p>Per Month: <span id="perMonth">₹0.0000</span></p>
+        </div>
+
+        <div class="stat-box">
           <h3>Shift Progress</h3>
           <p id="shiftPercent">0%</p>
           <div class="progress">
@@ -332,6 +341,53 @@ function startLiveCalculation() {
 
     const now = new Date();
 
+    const joiningDate = new Date(walletData.joiningDate);
+
+    const [startH, startM] = walletData.startTime.split(':').map(Number);
+    const [endH, endM] = walletData.endTime.split(':').map(Number);
+
+    const start = new Date();
+    start.setHours(startH, startM, 0, 0);
+
+    const end = new Date();
+    end.setHours(endH, endM, 0, 0);
+
+    let earned = 0;
+    let progress = 0;
+
+    const perSecond = calculatePerSecondEarning();
+    const perMinute = perSecond * 60;
+    const perHour = perMinute * 60;
+    const perDay = walletData.salary / walletData.workingDays;
+    const perMonth = walletData.salary;
+
+    document.getElementById('perSecond').innerText = '₹' + perSecond.toFixed(4);
+    document.getElementById('perMinute').innerText = '₹' + perMinute.toFixed(4);
+    document.getElementById('perHour').innerText = '₹' + perHour.toFixed(4);
+    document.getElementById('perDay').innerText = '₹' + perDay.toFixed(4);
+    document.getElementById('perMonth').innerText = '₹' + perMonth.toFixed(4);
+
+    if (now < joiningDate) {
+
+      earned = 0;
+      progress = 0;
+
+    } else if (now >= start && now <= end) {
+
+      const workedSeconds = (now - start) / 1000;
+
+      earned = workedSeconds * perSecond;
+
+      progress = ((now - start) / (end - start)) * 100;
+
+    } else if (now > end) {
+
+      earned = perDay;
+      progress = 100;
+    }
+
+    const now = new Date();
+
     const [startH, startM] = walletData.startTime.split(':').map(Number);
     const [endH, endM] = walletData.endTime.split(':').map(Number);
 
@@ -370,11 +426,11 @@ function startLiveCalculation() {
 
     document.getElementById('joiningDateText').innerText = walletData.joiningDate || '--';
 
-    document.getElementById('earned').innerText = '₹' + totalEarned.toFixed(2);
+    document.getElementById('earned').innerText = '₹' + totalEarned.toFixed(4);
 
-    document.getElementById('expenses').innerText = '₹' + expenseAmount.toFixed(2);
+    document.getElementById('expenses').innerText = '₹' + Math.floor(expenseAmount);
 
-    document.getElementById('balance').innerText = '₹' + balance.toFixed(2);
+    document.getElementById('balance').innerText = '₹' + balance.toFixed(4);
 
     document.getElementById('shiftPercent').innerText = progress.toFixed(2) + '%';
 
