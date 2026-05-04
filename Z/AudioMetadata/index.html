@@ -1,24 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>RKP Audio Cover Bot 🔥</title>
+<title>RKP Bot FIXED 😏🔥</title>
 <style>
-body { font-family: sans-serif; padding:15px; }
+body { font-family:sans-serif; padding:15px; }
 #log { background:#111; color:#0f0; height:200px; overflow:auto; padding:10px; }
-input { width:95%; padding:8px; }
 </style>
 </head>
 
 <body>
 
-<h2>🎵 RKP Bot (Final Version 😏)</h2>
+<h2>🎵 RKP Bot (Fixed)</h2>
 
 <input type="file" id="files" multiple accept=".mp3">
+<p id="status"></p>
 
-<h3>🔗 Paste Image URL</h3>
-<input type="text" id="imgInput" placeholder="Paste here...">
+<input type="text" id="imgInput" placeholder="Paste Image URL">
 
-<h3>📊 Logs</h3>
 <div id="log"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
@@ -28,25 +26,24 @@ input { width:95%; padding:8px; }
 let files = [];
 let index = 0;
 let images = [];
+let logs = [];
 let zip = new JSZip();
 
-// 🧠 LOG
 function log(msg){
-  document.getElementById("log").innerHTML += msg + "<br>";
+  logs.push(msg);
+  document.getElementById("log").innerHTML = logs.join("<br>");
+  saveCache();
 }
 
-// 🧠 CACHE SAVE
 function saveCache(){
-  let data = {
-    files: files.map(f => f.name),
-    index: index,
-    images: images,
+  localStorage.setItem("rkp_cache", JSON.stringify({
+    index,
+    images,
+    logs,
     time: Date.now()
-  };
-  localStorage.setItem("rkp_cache", JSON.stringify(data));
+  }));
 }
 
-// 🧠 CACHE LOAD
 function loadCache(){
   let data = JSON.parse(localStorage.getItem("rkp_cache"));
   if(!data) return;
@@ -58,41 +55,42 @@ function loadCache(){
 
   index = data.index || 0;
   images = data.images || [];
+  logs = data.logs || [];
 
-  log("♻️ Cache restored");
+  document.getElementById("log").innerHTML = logs.join("<br>");
+  log("♻️ Restored");
+
 }
 
 loadCache();
 
-// 🧠 FILE INPUT
-document.getElementById("files").onchange = function(e){
+document.getElementById("files").onchange = (e)=>{
   files = Array.from(e.target.files);
   index = 0;
   images = [];
+  logs = [];
   nextFile();
 };
 
-// 🧠 CLEAN NAME
 function cleanName(n){
   return n.replace(/\.[^/.]+$/, "");
 }
 
-// 🧠 NEXT FILE
 function nextFile(){
 
   if(index >= files.length){
     log("📦 Creating ZIP...");
 
-    images.forEach(img => {
+    images.forEach(img=>{
       zip.file(img.name, img.blob);
     });
 
     zip.generateAsync({type:"blob"}).then(content=>{
-      let a = document.createElement("a");
-      a.href = URL.createObjectURL(content);
-      a.download = "covers.zip";
+      let a=document.createElement("a");
+      a.href=URL.createObjectURL(content);
+      a.download="covers.zip";
       a.click();
-      log("🎉 DONE!");
+      log("🎉 DONE");
     });
 
     return;
@@ -100,83 +98,83 @@ function nextFile(){
 
   let name = cleanName(files[index].name);
 
-  let search = encodeURIComponent(name + " official cover");
+  document.getElementById("status").innerText =
+    `Processing ${index+1}/${files.length} → ${name}`;
 
   log("🔍 " + name);
 
   setTimeout(()=>{
-    window.location.href = "https://www.google.com/search?tbm=isch&q=" + search;
+    window.location.href =
+      "https://www.google.com/search?tbm=isch&q=" +
+      encodeURIComponent(name + " official cover");
   },500);
 }
 
-// 🧠 AUTO SUBMIT (paste detect)
-document.getElementById("imgInput").addEventListener("input", ()=>{
-  if(document.getElementById("imgInput").value.length > 10){
-    processImage();
-  }
+// 🔥 PASTE FIX
+document.getElementById("imgInput").addEventListener("paste", (e)=>{
+  setTimeout(()=> processImage(), 200);
 });
 
-// 🧠 PROCESS IMAGE
 async function processImage(){
 
-  let url = document.getElementById("imgInput").value;
+  let url = document.getElementById("imgInput").value.trim();
+
+  if(!url){
+    log("❌ Empty URL");
+    return;
+  }
+
   let name = cleanName(files[index].name);
 
   try{
 
     let finalURL = url;
 
-    // GOOGLE LINK FIX
     if(url.includes("imgres")){
       let u = new URL(url);
       finalURL = decodeURIComponent(u.searchParams.get("imgurl"));
     }
 
-    // BASE64
+    let blob;
+
     if(finalURL.startsWith("data:image")){
 
       let arr = finalURL.split(',');
       let mime = arr[0].match(/:(.*?);/)[1];
       let bstr = atob(arr[1]);
-      let n = bstr.length;
-      let u8arr = new Uint8Array(n);
+      let u8arr = new Uint8Array(bstr.length);
 
-      while(n--){
-        u8arr[n] = bstr.charCodeAt(n);
+      for(let i=0;i<bstr.length;i++){
+        u8arr[i] = bstr.charCodeAt(i);
       }
 
-      let blob = new Blob([u8arr], {type:mime});
-
-      images.push({name: name + ".jpg", blob});
-      log("✅ Saved (base64)");
+      blob = new Blob([u8arr], {type:mime});
 
     }else{
 
       let res = await fetch(finalURL);
-      let blob = await res.blob();
+      blob = await res.blob();
 
       if(blob.size < 1000) throw "Invalid";
-
-      let ext = blob.type.split("/")[1] || "jpg";
-
-      images.push({name: name + "." + ext, blob});
-      log("✅ Saved");
-
     }
+
+    let ext = blob.type.split("/")[1] || "jpg";
+
+    images.push({name: name+"."+ext, blob});
+
+    log("✅ Saved: " + name);
+
+    document.getElementById("imgInput").value = "";
+
+    index++;
+    saveCache();
+
+    setTimeout(nextFile, 500);
 
   }catch(e){
     log("❌ Failed → retry");
-    return;
   }
 
-  document.getElementById("imgInput").value = "";
-
-  index++;
-  saveCache();
-
-  setTimeout(()=>{
-    nextFile();
-  },800);
 }
 
 </script>
