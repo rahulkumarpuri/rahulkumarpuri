@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Petrol Pump Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+  --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+  --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+  --text-lg: clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
+  --text-xl: clamp(1.5rem, 1.2rem + 1.25vw, 2.25rem);
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1.25rem;
+  --radius-xl: 1.75rem;
+  --radius-full: 9999px;
+  --font-display: 'Outfit', 'Inter', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --color-bg: #090d16;
+  --color-surface: rgba(14, 19, 32, 0.78);
+  --color-surface-2: rgba(18, 24, 41, 0.92);
+  --color-surface-offset: rgba(29, 37, 61, 0.95);
+  --color-border: rgba(160, 174, 208, 0.16);
+  --color-divider: rgba(255, 255, 255, 0.08);
+  --color-text: #f5f7ff;
+  --color-text-muted: #b2bfd8;
+  --color-text-faint: #7e8aa4;
+  --color-primary: #3cc8ff;
+  --color-primary-deep: #127bce;
+  --color-primary-soft: rgba(60, 200, 255, 0.16);
+  --color-success: #22c55e;
+  --color-error: #ef4444;
+  --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 16px 35px rgba(0, 0, 0, 0.25);
+  --transition: 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+* , *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  min-height: 100vh;
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  color: var(--color-text);
+  background:
+    radial-gradient(circle at top left, rgba(18, 123, 206, 0.26), transparent 26%),
+    radial-gradient(circle at top right, rgba(60, 200, 255, 0.18), transparent 24%),
+    linear-gradient(180deg, #08101d 0%, #090d16 52%, #06080f 100%);
+  padding: var(--space-5);
+}
+img, svg { display: block; max-width: 100%; }
+button, input { font: inherit; }
+button { cursor: pointer; border: none; }
+input {
+  width: 100%;
+  padding: 0.95rem 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+  color: var(--color-text);
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+}
+input:focus {
+  border-color: rgba(60, 200, 255, 0.65);
+  box-shadow: 0 0 0 4px rgba(60, 200, 255, 0.12);
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+input[type=number] { -moz-appearance: textfield; }
+.container {
+  max-width: 760px;
+  margin: 0 auto;
+}
+.hero {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: var(--space-6);
+  padding: var(--space-8);
+  border-radius: 2rem;
+  background: linear-gradient(145deg, rgba(16, 23, 39, 0.9), rgba(8, 13, 22, 0.86));
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: var(--shadow-lg);
+}
+.hero::before,
+.hero::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.hero::before {
+  width: 240px;
+  height: 240px;
+  right: -70px;
+  top: -90px;
+  background: radial-gradient(circle, rgba(60,200,255,0.32), transparent 68%);
+}
+.hero::after {
+  width: 180px;
+  height: 180px;
+  left: -40px;
+  bottom: -80px;
+  background: radial-gradient(circle, rgba(18,123,206,0.28), transparent 70%);
+}
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0.45rem 0.85rem;
+  border-radius: var(--radius-full);
+  background: rgba(60, 200, 255, 0.1);
+  border: 1px solid rgba(60, 200, 255, 0.22);
+  color: #9ce8ff;
+  font-size: var(--text-xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: var(--space-4);
+}
+h1 {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  margin-bottom: var(--space-3);
+}
+.hero p {
+  max-width: 40ch;
+  color: var(--color-text-muted);
+}
+.cards {
+  display: grid;
+  gap: var(--space-5);
+}
+.card {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(17, 23, 38, 0.86), rgba(10, 15, 26, 0.94));
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(14px);
+}
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(60, 200, 255, 0.08), transparent 35%, transparent 70%, rgba(18, 123, 206, 0.06));
+  pointer-events: none;
+}
+.card > * { position: relative; z-index: 1; }
+.card h2 {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  margin-bottom: var(--space-4);
+  color: #8fe8ff;
+  letter-spacing: -0.02em;
+}
+label {
+  display: block;
+  margin-top: var(--space-4);
+  margin-bottom: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+.rateBox {
+  display: grid;
+  grid-template-columns: 1fr 56px;
+  gap: var(--space-3);
+  align-items: stretch;
+}
+.rateBox + .rateBox { margin-top: var(--space-3); }
+.rate {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: 1rem 1.1rem;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--color-text-muted);
+}
+.rate span {
+  color: var(--color-text);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.edit {
+  width: 56px;
+  height: 56px;
+  border-radius: 1rem;
+  background: linear-gradient(180deg, #34d7ff, #1693ea);
+  color: white;
+  font-size: 1.2rem;
+  box-shadow: 0 10px 24px rgba(22, 147, 234, 0.35);
+  transition: transform var(--transition), filter var(--transition);
+}
+.edit:hover,
+.reset:hover { transform: translateY(-1px); filter: brightness(1.05); }
+.edit:active,
+.reset:active { transform: translateY(0); }
+.total,
+.result {
+  margin-top: var(--space-4);
+  padding: 1rem 1.05rem;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.total {
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 1.1rem + 1vw, 1.85rem);
+  text-align: center;
+}
+.result {
+  font-size: 1.05rem;
+}
+.result span,
+.total span { color: #ffffff; }
+.green { color: var(--color-success); }
+.red { color: var(--color-error); }
+.reset {
+  width: 100%;
+  margin-top: var(--space-5);
+  padding: 1rem 1.1rem;
+  border-radius: 1rem;
+  color: white;
+  font-weight: 700;
+  background: linear-gradient(180deg, #ff6262, #e43e3e);
+  box-shadow: 0 12px 24px rgba(228, 62, 62, 0.26);
+}
+@media (max-width: 640px) {
+  body { padding: var(--space-4); }
+  .hero, .card { padding: var(--space-5); border-radius: 1.5rem; }
+  .rate { font-size: 0.95rem; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <section class="hero">
+    <div class="hero-badge">⛽ Daily Shift Calculator</div>
+    <h1>Petrol Pump Calculator</h1>
+    <p>Clean layout, faster reading, and the same calculation flow you already use every day.</p>
+  </section>
+
+  <div class="cards">
+    <div class="card">
+      <h2>Fuel Rates</h2>
+
+      <div class="rateBox">
+        <div class="rate">
+          <span>Petrol Rate</span>
+          <div>₹ <span id="petrolRateText">0</span></div>
+        </div>
+        <button class="edit" onclick="editRate('petrol')" aria-label="Edit petrol rate">✏️</button>
+      </div>
+
+      <div class="rateBox">
+        <div class="rate">
+          <span>Diesel Rate</span>
+          <div>₹ <span id="dieselRateText">0</span></div>
+        </div>
+        <button class="edit" onclick="editRate('diesel')" aria-label="Edit diesel rate">✏️</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Total Amount Collection</h2>
+
+      <label for="deposit">Total Deposited</label>
+      <input type="number" id="deposit" />
+
+      <label for="card">Card Amount</label>
+      <input type="number" id="card" />
+
+      <label for="balance">Net Balance</label>
+      <input type="number" id="balance" />
+
+      <label for="upi">UPI Amount</label>
+      <input type="number" id="upi" />
+
+      <div class="total">
+        Collection Total : ₹ <span id="collectionTotal">0</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Petrol Sale</h2>
+
+      <label for="petrolOpen">Opening Totalizer</label>
+      <input type="number" id="petrolOpen" />
+
+      <label for="petrolClose">Closing Totalizer</label>
+      <input type="number" id="petrolClose" />
+
+      <div class="result">Sale Liter : <span id="petrolLiter">0</span></div>
+      <div class="result">Amount : ₹ <span id="petrolAmount">0</span></div>
+    </div>
+
+    <div class="card">
+      <h2>Diesel Sale</h2>
+
+      <label for="dieselOpen">Opening Totalizer</label>
+      <input type="number" id="dieselOpen" />
+
+      <label for="dieselClose">Closing Totalizer</label>
+      <input type="number" id="dieselClose" />
+
+      <div class="result">Sale Liter : <span id="dieselLiter">0</span></div>
+      <div class="result">Amount : ₹ <span id="dieselAmount">0</span></div>
+    </div>
+
+    <div class="card">
+      <h2>Final Result</h2>
+
+      <div class="result">Total Sale : ₹ <span id="totalSale">0</span></div>
+      <div class="result" id="shortResult">Short / Excess</div>
+
+      <button class="reset" onclick="resetData()">Reset Calculation</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let memoryRates = {};
+let memoryInputs = {};
+
+let petrolRate = memoryRates.petrolRate ?? 0;
+let dieselRate = memoryRates.dieselRate ?? 0;
+
+document.getElementById("petrolRateText").innerText = petrolRate;
+document.getElementById("dieselRateText").innerText = dieselRate;
+
+function editRate(type){
+  let current = type === "petrol" ? petrolRate : dieselRate;
+  let value = prompt("Enter " + type + " rate", current);
+
+  if(value === null) return;
+
+  value = parseFloat(value);
+  if(isNaN(value)) return;
+
+  if(type === "petrol"){
+    petrolRate = value;
+    memoryRates.petrolRate = value;
+  } else {
+    dieselRate = value;
+    memoryRates.dieselRate = value;
+  }
+
+  document.getElementById("petrolRateText").innerText = petrolRate;
+  document.getElementById("dieselRateText").innerText = dieselRate;
+  calculate();
+}
+
+const inputs = document.querySelectorAll("input");
+
+inputs.forEach(input => {
+  input.addEventListener("input", () => {
+    saveInputs();
+    calculate();
+  });
+});
+
+function saveInputs(){
+  inputs.forEach(i => {
+    memoryInputs[i.id] = i.value;
+  });
+}
+
+function loadInputs(){
+  inputs.forEach(i => {
+    i.value = memoryInputs[i.id] || "";
+  });
+}
+
+function num(id){
+  return parseFloat(document.getElementById(id).value) || 0;
+}
+
+function calculate(){
+  let collection = num("deposit") + num("card") + num("balance") + num("upi");
+  document.getElementById("collectionTotal").innerText = collection.toFixed(2);
+
+  let petrolLiter = num("petrolClose") - num("petrolOpen");
+  if(petrolLiter < 0) petrolLiter = 0;
+
+  let petrolAmount = petrolLiter * petrolRate;
+  document.getElementById("petrolLiter").innerText = petrolLiter.toFixed(3);
+  document.getElementById("petrolAmount").innerText = petrolAmount.toFixed(2);
+
+  let dieselLiter = num("dieselClose") - num("dieselOpen");
+  if(dieselLiter < 0) dieselLiter = 0;
+
+  let dieselAmount = dieselLiter * dieselRate;
+  document.getElementById("dieselLiter").innerText = dieselLiter.toFixed(3);
+  document.getElementById("dieselAmount").innerText = dieselAmount.toFixed(2);
+
+  let totalSale = petrolAmount + dieselAmount;
+  document.getElementById("totalSale").innerText = totalSale.toFixed(2);
+
+  let diff = totalSale - collection;
+  let box = document.getElementById("shortResult");
+
+  if(diff > 0){
+    box.innerHTML = "🔴 Short : ₹ " + diff.toFixed(2);
+    box.className = "result red";
+  } else if(diff < 0){
+    box.innerHTML = "🟢 Excess : ₹ " + Math.abs(diff).toFixed(2);
+    box.className = "result green";
+  } else {
+    box.innerHTML = "✅ Perfect Match";
+    box.className = "result";
+  }
+}
+
+function resetData(){
+  if(!confirm("Reset all calculation?")) return;
+
+  inputs.forEach(i => {
+    i.value = "";
+    delete memoryInputs[i.id];
+  });
+
+  calculate();
+}
+
+loadInputs();
+calculate();
+
+if(petrolRate === 0){
+  editRate("petrol");
+}
+
+if(dieselRate === 0){
+  editRate("diesel");
+}
+</script>
+</body>
+</html>
