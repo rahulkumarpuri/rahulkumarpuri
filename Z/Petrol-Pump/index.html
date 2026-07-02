@@ -45,6 +45,7 @@ body{
     margin:auto;
 }
 
+        
 .header{
     text-align:center;
     margin-bottom:30px;
@@ -97,6 +98,16 @@ body{
     }
 }
 
+.money-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+}
+
+.money-grid div{
+    width:100%;
+}
+        
 label{
     display:block;
     margin-bottom:8px;
@@ -428,7 +439,7 @@ button:active{
 
             <h3>Cash Notes</h3>
 
-            <div class="grid">
+            <div class="money-grid">
 
                 <div>
                     <label>₹500 Notes</label>
@@ -470,7 +481,7 @@ button:active{
 
             <h3>Coins</h3>
 
-            <div class="grid">
+            <div class="money-grid">
 
                 <div>
                     <label>₹10 Coins</label>
