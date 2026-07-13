@@ -40,6 +40,10 @@ body{
     padding:20px;
 }
 
+.hide{
+display:none;
+}
+        
 .container{
     max-width:900px;
     margin:auto;
@@ -345,29 +349,14 @@ button:active{
     <!-- FUEL RATES -->
     <!-- ========================= -->
 
-    <section class="card">
-        <h2>Fuel Rates</h2>
+    <h2>
+Fuel Rates
+<button id="toggleRates">⚙️</button>
+</h2>
 
-        <div class="rate-grid">
-
-            <div class="rate-item">
-                <label>Petrol Rate</label>
-                <div class="rate-box">
-                    <span id="petrolRateText">₹ 0.00</span>
-                    <button id="editPetrolRate">✏️</button>
-                </div>
-            </div>
-
-            <div class="rate-item">
-                <label>Diesel Rate</label>
-                <div class="rate-box">
-                    <span id="dieselRateText">₹ 0.00</span>
-                    <button id="editDieselRate">✏️</button>
-                </div>
-            </div>
-
-        </div>
-    </section>
+<div id="rateSection">
+...
+</div>
 
 
 
@@ -1284,6 +1273,13 @@ document
 
 
 calculate();
+
+
+    toggleRates.onclick=()=>{
+
+rateSection.classList.toggle("hide");
+
+    }
 </script>
 
 <script src="script.js"></script>
