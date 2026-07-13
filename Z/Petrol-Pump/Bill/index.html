@@ -1,301 +1,1378 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Indian Oil Bill Generator</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fuel Sale Calculator</title>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-<style>
+    <style>
+        :root{
+    --bg:#e9eef5;
+    --card:#e9eef5;
+    --text:#1e293b;
+    --muted:#64748b;
+    --primary:#2563eb;
+    --green:#16a34a;
+    --red:#dc2626;
+
+    --shadow1:8px 8px 18px #cfd4da;
+    --shadow2:-8px -8px 18px #ffffff;
+
+    --inset:
+        inset 6px 6px 12px #cfd4da,
+        inset -6px -6px 12px #ffffff;
+}
+
 *{
-    box-sizing:border-box;
     margin:0;
     padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
 }
 
 body{
-    font-family:Arial, sans-serif;
-    background:#f2f2f2;
+    background:var(--bg);
+    color:var(--text);
+    min-height:100vh;
     padding:20px;
-    display:flex;
-    justify-content:center;
 }
 
 .container{
-    width:550px;
+    max-width:900px;
+    margin:auto;
 }
 
-.receipt{
-    background:#fff;
+        
+.header{
+    text-align:center;
+    margin-bottom:30px;
+}
+
+.header h1{
+    font-size:36px;
+    font-weight:700;
+}
+
+.header p{
+    color:var(--muted);
+    margin-top:8px;
+}
+
+.card{
+    background:var(--card);
+    border-radius:30px;
     padding:25px;
-    border:2px dashed #000;
-    border-radius:10px;
-    box-shadow:0 5px 15px rgba(0,0,0,0.15);
+    margin-bottom:25px;
+
+    box-shadow:
+        var(--shadow1),
+        var(--shadow2);
 }
 
-h1{
-    text-align:center;
-    font-size:28px;
-    margin-bottom:5px;
+.card h2{
+    margin-bottom:25px;
+    font-size:24px;
 }
 
-.staff{
-    text-align:center;
-    margin-bottom:20px;
-    color:#555;
-}
-
-h3{
+.card h3{
     margin-top:20px;
-    margin-bottom:10px;
-    border-bottom:1px solid #ddd;
-    padding-bottom:5px;
-    color:#0a5d00;
+    margin-bottom:20px;
 }
 
-.row{
-    display:flex;
-    justify-content:space-between;
-    margin:7px 0;
+.grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
 }
 
-.total{
-    font-weight:bold;
-    color:#0a5d00;
+@media(max-width:700px){
+    .grid{
+        gap:10px;
+    }
+
+    .grid input{
+        padding:12px 10px;
+        font-size:15px;
+    }
+
+    .grid label{
+        font-size:12px;
+        margin-bottom:5px;
+    }
 }
 
-.summary{
-    font-size:18px;
+@media(max-width:700px){
+    .header h1{
+        font-size:28px;
+    }
+}
+
+.money-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+}
+
+.money-grid div{
+    width:100%;
+}
+
+/* Compact 2-column reading grid (Petrol/Diesel Open-Close etc) */
+.grid{
+    row-gap:14px;
+}
+
+.card{
+    padding:20px;
+    margin-bottom:18px;
+    border-radius:24px;
+}
+
+.card h2{
+    margin-bottom:16px;
+    font-size:21px;
+}
+
+.result-box{
+    margin-top:10px;
+    padding:14px 18px;
+}
+
+.total-box{
+    margin-top:14px;
+    padding:14px 18px;
+}
+        
+label{
+    display:block;
+    margin-bottom:8px;
+    color:var(--muted);
+    font-size:14px;
+}
+
+input{
+    width:100%;
+    border:none;
+    outline:none;
+
+    background:var(--card);
+
+    padding:16px;
+    border-radius:18px;
+
+    font-size:17px;
+    color:var(--text);
+
+    box-shadow:var(--inset);
+}
+
+input:focus{
+    border:2px solid rgba(37,99,235,.15);
 }
 
 button{
-    width:100%;
-    padding:15px;
-    margin-top:20px;
     border:none;
-    border-radius:10px;
-    background:#007bff;
-    color:#fff;
-    font-size:18px;
     cursor:pointer;
+    transition:.2s;
 }
 
-button:hover{
-    background:#0056b3;
+button:active{
+    transform:scale(.97);
 }
 
-.thank{
-    text-align:center;
-    margin-top:25px;
-    color:#555;
+.rate-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
 }
 
-@media print{
-    button{
-        display:none;
+@media(max-width:700px){
+    .rate-grid{
+        grid-template-columns:1fr;
     }
 }
-</style>
+
+.rate-box{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    background:var(--card);
+    border-radius:20px;
+    padding:18px;
+
+    box-shadow:
+        var(--shadow1),
+        var(--shadow2);
+}
+
+.rate-box button{
+    width:45px;
+    height:45px;
+    border-radius:14px;
+
+    background:var(--card);
+
+    box-shadow:
+        var(--shadow1),
+        var(--shadow2);
+
+    font-size:18px;
+}
+
+#addDepositBtn,
+#addCardBtn{
+    width:100%;
+    padding:16px;
+    margin-top:15px;
+
+    border-radius:18px;
+    background:var(--card);
+
+    box-shadow:
+        var(--shadow1),
+        var(--shadow2);
+
+    font-weight:600;
+    color:var(--primary);
+}
+
+.total-box{
+    margin-top:20px;
+    padding:18px;
+
+    border-radius:18px;
+
+    background:var(--card);
+
+    box-shadow:
+        var(--inset);
+
+    font-size:20px;
+    font-weight:600;
+}
+
+.grand-total{
+    margin-top:25px;
+    padding:22px;
+
+    border-radius:22px;
+
+    background:var(--card);
+
+    box-shadow:
+        var(--shadow1),
+        var(--shadow2);
+
+    font-size:24px;
+    font-weight:700;
+    text-align:center;
+    color:var(--primary);
+}
+
+.result-box{
+    margin-top:15px;
+    padding:18px;
+
+    border-radius:18px;
+
+    background:var(--card);
+
+    box-shadow:
+        var(--inset);
+
+    font-size:18px;
+    font-weight:600;
+}
+
+.summary-row{
+    padding:18px;
+    margin-bottom:15px;
+
+    border-radius:18px;
+
+    background:var(--card);
+
+    box-shadow:
+        var(--inset);
+
+    font-size:18px;
+    font-weight:600;
+}
+
+.result-final{
+    font-size:22px;
+}
+
+.short{
+    color:var(--red);
+}
+
+.excess{
+    color:var(--green);
+}
+
+#resetBtn{
+    width:100%;
+    margin-top:20px;
+
+    padding:18px;
+
+    border-radius:20px;
+
+    background:var(--card);
+
+    box-shadow:
+        var(--shadow1),
+        var(--shadow2);
+
+    color:var(--red);
+    font-size:17px;
+    font-weight:700;
+}
+
+.toggle-box{
+    margin-bottom:18px;
+}
+
+.toggle-box label{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-size:16px;
+}
+
+.toggle-box input{
+    width:22px;
+    height:22px;
+}
+
+.deposit-item,
+.card-item{
+    margin-bottom:15px;
+}
+
+.summary-card{
+    margin-bottom:80px;
+}
+
+/* Fuel Rate toggle icon */
+.rate-toggle-btn{
+    width:100%;
+    padding:14px 18px;
+    border-radius:18px;
+    background:var(--card);
+    box-shadow:var(--shadow1), var(--shadow2);
+    font-size:15px;
+    font-weight:600;
+    color:var(--primary);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+}
+
+#fuelRatePanel{
+    overflow:hidden;
+    max-height:0;
+    transition:max-height .25s ease;
+}
+
+#fuelRatePanel.open{
+    max-height:300px;
+    margin-top:16px;
+}
+
+/* Quick-add hint text under single deposit/card input */
+.quick-hint{
+    color:var(--muted);
+    font-size:12px;
+    margin-top:8px;
+    padding-left:4px;
+}
+
+/* Net Balance quick operators */
+.op-row{
+    display:flex;
+    gap:12px;
+    margin:14px 0;
+}
+
+.op-btn{
+    flex:1;
+    padding:14px;
+    border-radius:16px;
+    background:var(--card);
+    box-shadow:var(--shadow1), var(--shadow2);
+    font-size:20px;
+    font-weight:700;
+    color:var(--primary);
+}
+
+.op-btn:active{
+    box-shadow:var(--inset);
+}
+
+.simple-balance-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+}
+
+@media(max-width:700px){
+    .simple-balance-grid{
+        grid-template-columns:1fr;
+    }
+}
+
+::-webkit-scrollbar{
+    width:8px;
+}
+
+::-webkit-scrollbar-thumb{
+    background:#cbd5e1;
+    border-radius:50px;
+}
+    </style>
 </head>
 <body>
 
 <div class="container">
 
-<div class="receipt" id="bill">
+    <header class="header">
+        <h1>⛽ Fuel Sale Calculator</h1>
+        <p>Petrol Pump Daily Sale Management</p>
+    </header>
 
-    <h1>INDIAN OIL</h1>
-    <div class="staff">
-        Staff Name: <b>Rahul Kumar Puri</b>
-    </div>
 
-    <div class="staff">
-        Time: <b>13:56 01/07/2026</b>
-    </div>
+    <!-- ========================= -->
+    <!-- FUEL RATES -->
+    <!-- ========================= -->
 
-    <h3>Fuel Rates</h3>
+    <section class="card">
 
-    <div class="row">
-        <span>Petrol Rate</span>
-        <span>₹114.18</span>
-    </div>
+        <button class="rate-toggle-btn" id="toggleRatePanel">
+            ⛽ Rate of Petrol/Diesel
+        </button>
 
-    <div class="row">
-        <span>Diesel Rate</span>
-        <span>₹103.08</span>
-    </div>
+        <div id="fuelRatePanel">
+            <div class="rate-grid">
 
-    <h3>Deposits</h3>
+                <div class="rate-item">
+                    <label>Petrol Rate</label>
+                    <div class="rate-box">
+                        <span id="petrolRateText">₹ 0.00</span>
+                        <button id="editPetrolRate">✏️</button>
+                    </div>
+                </div>
 
-    <div class="row">
-        <span>Deposited Amount</span>
-        <span>₹10,000 + ₹6,500</span>
-    </div>
+                <div class="rate-item">
+                    <label>Diesel Rate</label>
+                    <div class="rate-box">
+                        <span id="dieselRateText">₹ 0.00</span>
+                        <button id="editDieselRate">✏️</button>
+                    </div>
+                </div>
 
-    <div class="row total">
-        <span>Total Deposit</span>
-        <span>₹16,500.00</span>
-    </div>
+            </div>
+        </div>
+    </section>
 
-    <h3>Online Payment</h3>
 
-    <div class="row"><span>Card 1</span><span>₹1501.87</span></div>
-    <div class="row"><span>Card 2</span><span>₹1000.00</span></div>
-    <div class="row"><span>Card 3</span><span>₹1000.00</span></div>
-    <div class="row"><span>Card 4</span><span>₹100.00</span></div>
-    <div class="row"><span>Card 5</span><span>₹4300.49</span></div>
-    <div class="row"><span>Card 6</span><span>₹407.62</span></div>
-    <div class="row"><span>Card 7</span><span>₹4252.00</span></div>
-    <div class="row"><span>Card 8</span><span>₹7075.00</span></div>
 
-    <div class="row total">
-        <span>Total Card</span>
-        <span>₹19,636.98</span>
-    </div>
+    <!-- ========================= -->
+    <!-- DEPOSITED AMOUNT -->
+    <!-- ========================= -->
 
-    <div class="row total">
-        <span>Total UPI Payments</span>
-        <span>₹9,529.83</span>
-    </div>
+    <section class="card">
+        <h2>Deposited Amount</h2>
 
-    <h3>Cash Notes</h3>
+        <div>
+            <label>Enter Deposit (use + to add multiple)</label>
+            <input type="text" id="depositInput" inputmode="decimal" placeholder="e.g. 13000+5000+10500">
+        </div>
+        <div class="quick-hint">Type like 13000+5000+10500+21000 — total calculates automatically</div>
 
-    <div class="row"><span>(₹500×11) + (₹200×8) + (₹100×8) +</span><span></span></div>
-    <div class="row"><span>(₹50×3) + (₹20×0) + (₹10×13) = </span><span>₹8,180.00</span></div>
+        <div class="total-box">
+            Total Deposit :
+            ₹ <span id="depositTotal">0</span>
+        </div>
+    </section>
 
-    <div class="row total">
-        <span>Total Notes</span>
-        <span>₹8,180.00</span>
-    </div>
 
-    <h3>Coins</h3>
 
-    <div class="row"><span>₹10 Coins</span><span>5</span></div>
-    <div class="row"><span>₹5 Coins</span><span>0</span></div>
-    <div class="row"><span>₹2 Coins</span><span>0</span></div>
-    <div class="row"><span>₹1 Coins</span><span>0</span></div>
+    <!-- ========================= -->
+    <!-- CARD AMOUNT -->
+    <!-- ========================= -->
 
-    <div class="row total">
-        <span>Total Coins</span>
-        <span>₹50.00</span>
-    </div>
+    <section class="card">
+        <h2>Card Amount</h2>
 
-    <div class="row total summary">
-        <span>Net Balance</span>
-        <span>₹8,230.00</span>
-    </div>
+        <div>
+            <label>Enter Card Amount (use + to add multiple)</label>
+            <input type="text" id="cardInput" inputmode="decimal" placeholder="e.g. 4500+2200+1000">
+        </div>
+        <div class="quick-hint">Type like 4500+2200+1000 — total calculates automatically</div>
 
-    <h3>Petrol A2 Sale</h3>
+        <div class="total-box">
+            Total Card :
+            ₹ <span id="cardTotal">0</span>
+        </div>
+    </section>
 
-    <div class="row">
-        <span>Opening Totalizer</span>
-        <span>1395690.235</span>
-    </div>
 
-    <div class="row">
-        <span>Closing Totalizer</span>
-        <span>1395906.445</span>
-    </div>
 
-    <div class="row">
-        <span>Sale Liter</span>
-        <span>216.210</span>
-    </div>
+    <!-- ========================= -->
+    <!-- NET BALANCE -->
+    <!-- ========================= -->
 
-    <div class="row total">
-        <span>Amount</span>
-        <span>₹24,686.86</span>
-    </div>
+    <section class="card">
 
-    <h3>Diesel A2 Sale</h3>
+        <h2>Net Balance Calculator</h2>
 
-    <div class="row">
-        <span>Opening Totalizer</span>
-        <span>2307951.910</span>
-    </div>
+        <div class="toggle-box">
+            <label>
+                <input type="checkbox" id="directAmountToggle">
+                Direct Enter Amount
+            </label>
+        </div>
 
-    <div class="row">
-        <span>Closing Totalizer</span>
-        <span>2308235.280</span>
-    </div>
 
-    <div class="row">
-        <span>Sale Liter</span>
-        <span>283.370</span>
-    </div>
+        <!-- Notes Calculator -->
 
-    <div class="row total">
-        <span>Amount</span>
-        <span>₹29,209.78</span>
-    </div>
+        <div id="notesCalculator">
 
-    <h3>Diesel A1 Sale</h3>
+            <div class="simple-balance-grid">
 
-    <div class="row">
-        <span>Opening Totalizer</span>
-        <span>0</span>
-    </div>
+                <div>
+                    <label>Enter Cash Value</label>
+                    <input type="text" id="cashInput" inputmode="decimal"
+                        placeholder="500×2+200×2+100×19+50×7">
+                </div>
 
-    <div class="row">
-        <span>Closing Totalizer</span>
-        <span>0</span>
-    </div>
+                <div>
+                    <label>Enter Coin Value</label>
+                    <input type="text" id="coinInput" inputmode="decimal"
+                        placeholder="10×5+5×3+2×10+1×20">
+                </div>
 
-    <div class="row">
-        <span>Sale Liter</span>
-        <span>0.000</span>
-    </div>
+            </div>
 
-    <div class="row">
-        <span>Amount</span>
-        <span>₹0.00</span>
-    </div>
+            <div class="op-row">
+                <button type="button" class="op-btn" id="opPlus">+</button>
+                <button type="button" class="op-btn" id="opMultiply">×</button>
+            </div>
 
-    <h3>Final Summary</h3>
+            <div class="quick-hint">
+                Example: 500×2+200×2+100×19+50×7+20×17+10×34 — total calculates automatically
+            </div>
 
-    <div class="row total summary">
-        <span>Collection Amount</span>
-        <span>₹53,896.81</span>
-    </div>
+            <div class="total-box">
+                Total Notes :
+                ₹ <span id="notesTotal">0</span>
+            </div>
 
-    <div class="row total summary">
-        <span>Total Sale</span>
-        <span>₹53,896.64</span>
-    </div>
+            <div class="total-box">
+                Total Coins :
+                ₹ <span id="coinsTotal">0</span>
+            </div>
 
-    <div class="row total summary">
-        <span>Short / Excess</span>
-        <span>🟢 Excess ₹0.17</span>
-    </div>
+        </div>
 
-    <div class="thank">
-        Thank You ❤️<br>
-        Indian Oil Billing System
-    </div>
+
+        <!-- Direct Amount -->
+
+        <div id="directAmountSection">
+
+            <label>Enter Amount</label>
+
+            <input
+                type="number"
+                id="directAmountInput"
+                placeholder="Enter total amount directly"
+            >
+
+        </div>
+
+        <div class="grand-total">
+            Net Balance :
+            ₹ <span id="netBalanceTotal">0</span>
+        </div>
+
+    </section>
+
+
+
+
+    <!-- ========================= -->
+    <!-- PETROL -->
+    <!-- ========================= -->
+
+    <section class="card">
+        <h2>Petrol A2 Sale</h2>
+
+        <div class="grid">
+
+            <div>
+                <label>Opening Totalizer</label>
+                <input type="number" id="petrolOpen">
+            </div>
+
+            <div>
+                <label>Closing Totalizer</label>
+                <input type="number" id="petrolClose">
+            </div>
+
+        </div>
+
+        <div class="result-box">
+            Sale Liter :
+            <span id="petrolLiter">0</span>
+        </div>
+
+        <div class="result-box">
+            Amount :
+            ₹ <span id="petrolAmount">0</span>
+        </div>
+
+    </section>
+
+
+
+    <!-- ========================= -->
+    <!-- DIESEL 1 -->
+    <!-- ========================= -->
+
+    <section class="card">
+        <h2>Diesel A2 Sale</h2>
+
+        <div class="grid">
+
+            <div>
+                <label>Opening Totalizer</label>
+                <input type="number" id="diesel1Open">
+            </div>
+
+            <div>
+                <label>Closing Totalizer</label>
+                <input type="number" id="diesel1Close">
+            </div>
+
+        </div>
+
+        <div class="result-box">
+            Sale Liter :
+            <span id="diesel1Liter">0</span>
+        </div>
+
+        <div class="result-box">
+            Amount :
+            ₹ <span id="diesel1Amount">0</span>
+        </div>
+
+    </section>
+
+
+
+    <!-- ========================= -->
+    <!-- DIESEL 2 -->
+    <!-- ========================= -->
+
+    <section class="card">
+        <h2>Diesel A1 Sale</h2>
+
+        <div class="grid">
+
+            <div>
+                <label>Opening Totalizer</label>
+                <input type="number" id="diesel2Open">
+            </div>
+
+            <div>
+                <label>Closing Totalizer</label>
+                <input type="number" id="diesel2Close">
+            </div>
+
+        </div>
+
+        <div class="result-box">
+            Sale Liter :
+            <span id="diesel2Liter">0</span>
+        </div>
+
+        <div class="result-box">
+            Amount :
+            ₹ <span id="diesel2Amount">0</span>
+        </div>
+
+    </section>
+
+
+
+
+    <!-- ========================= -->
+    <!-- FINAL SUMMARY -->
+    <!-- ========================= -->
+
+    <section class="card summary-card">
+
+        <h2>Final Summary</h2>
+
+        <div class="summary-row">
+            Collection Amount :
+            ₹ <span id="collectionAmount">0</span>
+        </div>
+
+        <div class="summary-row">
+            Total Sale :
+            ₹ <span id="totalSale">0</span>
+        </div>
+
+        <div class="summary-row result-final">
+            Short / Excess :
+            <span id="shortExcessResult">
+                ₹0
+            </span>
+        </div>
+
+        <button id="resetBtn">
+            Reset Calculation
+        </button>
+
+    </section>
+
 
 </div>
+<script> 
+// =======================
+// Local Storage Helpers
+// =======================
 
-<button onclick="downloadBill()">
-    🖼️ Print Receipt & Download Image
-</button>
-
-</div>
-
-<script>
-function downloadBill() {
-    const bill = document.getElementById("bill");
-
-    html2canvas(bill, {
-        scale: 3,
-        useCORS: true
-    }).then(canvas => {
-        const link = document.createElement("a");
-        link.download = "Indian-Oil-Bill.png";
-        link.href = canvas.toDataURL("image/png");
-        link.click();
-    });
+function save(key, value) {
+    localStorage.setItem(key, JSON.stringify(value));
 }
+
+function load(key, defaultValue = null) {
+    const data = localStorage.getItem(key);
+    return data ? JSON.parse(data) : defaultValue;
+}
+
+
+// =======================
+// Fuel Rates
+// =======================
+
+let petrolRate = load("petrolRate", 0);
+let dieselRate = load("dieselRate", 0);
+
+const petrolRateText =
+    document.getElementById("petrolRateText");
+
+const dieselRateText =
+    document.getElementById("dieselRateText");
+
+function updateRates() {
+    petrolRateText.innerText =
+        "₹ " + petrolRate;
+
+    dieselRateText.innerText =
+        "₹ " + dieselRate;
+}
+
+document
+.getElementById("editPetrolRate")
+.onclick = () => {
+
+    const value =
+        prompt(
+            "Enter Petrol Rate",
+            petrolRate
+        );
+
+    if (value === null) return;
+
+    petrolRate =
+        parseFloat(value) || 0;
+
+    save(
+        "petrolRate",
+        petrolRate
+    );
+
+    updateRates();
+    calculate();
+};
+
+document
+.getElementById("editDieselRate")
+.onclick = () => {
+
+    const value =
+        prompt(
+            "Enter Diesel Rate",
+            dieselRate
+        );
+
+    if (value === null) return;
+
+    dieselRate =
+        parseFloat(value) || 0;
+
+    save(
+        "dieselRate",
+        dieselRate
+    );
+
+    updateRates();
+    calculate();
+};
+
+updateRates();
+
+
+// =======================
+// Fuel Rate Panel Toggle
+// =======================
+
+const fuelRatePanel =
+    document.getElementById("fuelRatePanel");
+
+document
+.getElementById("toggleRatePanel")
+.addEventListener("click", () => {
+    fuelRatePanel.classList.toggle("open");
+});
+
+
+// =======================
+// Simple Number Reader
+// =======================
+
+function num(id) {
+    return parseFloat(
+        document.getElementById(id)?.value
+    ) || 0;
+}
+
+
+// =======================
+// Expression Evaluator
+// =======================
+// Safely evaluates strings made only of numbers,
+// +, -, ×(*), spaces. Used for deposit, card,
+// cash and coin quick-add inputs.
+
+function safeEval(expr) {
+    if (!expr) return 0;
+
+    // Normalize symbols
+    const cleaned = expr
+        .replace(/×/g, "*")
+        .replace(/x/gi, "*")
+        .replace(/[^0-9+\-*.]/g, "");
+
+    if (!cleaned) return 0;
+
+    // Only allow valid characters, reject broken expressions
+    if (!/^[0-9+\-*.]+$/.test(cleaned)) return 0;
+
+    try {
+        // Split on + while respecting * groups
+        const terms = cleaned.split("+");
+
+        let total = 0;
+
+        terms.forEach(term => {
+            if (term === "") return;
+
+            const factors = term.split("*");
+            let product = 1;
+            let valid = false;
+
+            factors.forEach(f => {
+                if (f === "") return;
+                const n = parseFloat(f);
+                if (!isNaN(n)) {
+                    product *= n;
+                    valid = true;
+                }
+            });
+
+            if (valid) total += product;
+        });
+
+        return total;
+    }
+    catch (e) {
+        return 0;
+    }
+}
+
+
+// =======================
+// Deposit & Card Inputs
+// =======================
+
+const depositInput =
+    document.getElementById("depositInput");
+
+const cardInput =
+    document.getElementById("cardInput");
+
+depositInput.value = load("depositInput", "");
+cardInput.value = load("cardInput", "");
+
+depositInput.addEventListener("input", () => {
+    save("depositInput", depositInput.value);
+    calculate();
+});
+
+cardInput.addEventListener("input", () => {
+    save("cardInput", cardInput.value);
+    calculate();
+});
+
+
+// =======================
+// Net Balance (Cash / Coin)
+// =======================
+
+const cashInput =
+    document.getElementById("cashInput");
+
+const coinInput =
+    document.getElementById("coinInput");
+
+cashInput.value = load("cashInput", "");
+coinInput.value = load("coinInput", "");
+
+cashInput.addEventListener("input", () => {
+    save("cashInput", cashInput.value);
+    calculate();
+});
+
+coinInput.addEventListener("input", () => {
+    save("coinInput", coinInput.value);
+    calculate();
+});
+
+// Track last focused input among cash/coin so
+// the + and × buttons know where to insert.
+let lastFocusedMoneyInput = cashInput;
+
+[cashInput, coinInput].forEach(inp => {
+    inp.addEventListener("focus", () => {
+        lastFocusedMoneyInput = inp;
+    });
+});
+
+function insertSymbol(symbol) {
+    const input = lastFocusedMoneyInput;
+    const start = input.selectionStart ?? input.value.length;
+    const end = input.selectionEnd ?? input.value.length;
+
+    const before = input.value.slice(0, start);
+    const after = input.value.slice(end);
+
+    input.value = before + symbol + after;
+
+    const cursorPos = start + symbol.length;
+    input.focus();
+    input.setSelectionRange(cursorPos, cursorPos);
+
+    save(input.id, input.value);
+    calculate();
+}
+
+document
+.getElementById("opPlus")
+.addEventListener("click", () => insertSymbol("+"));
+
+document
+.getElementById("opMultiply")
+.addEventListener("click", () => insertSymbol("×"));
+
+
+document
+.getElementById(
+    "directAmountToggle"
+)
+.addEventListener(
+    "change",
+    calculate
+);
+
+document
+.getElementById(
+    "directAmountInput"
+)
+.addEventListener(
+    "input",
+    calculate
+);
+
+
+// =======================
+// Main Calculation
+// =======================
+
+function calculate() {
+
+    // Deposit
+
+    const depositTotal =
+        safeEval(depositInput.value);
+
+    document
+    .getElementById(
+        "depositTotal"
+    )
+    .innerText =
+        depositTotal.toFixed(2);
+
+
+    // Card
+
+    const cardTotal =
+        safeEval(cardInput.value);
+
+    document
+    .getElementById(
+        "cardTotal"
+    )
+    .innerText =
+        cardTotal.toFixed(2);
+
+
+    // Notes (Cash)
+
+    const notes =
+        safeEval(cashInput.value);
+
+    document
+    .getElementById(
+        "notesTotal"
+    )
+    .innerText =
+        notes.toFixed(2);
+
+
+    // Coins
+
+    const coins =
+        safeEval(coinInput.value);
+
+    document
+    .getElementById(
+        "coinsTotal"
+    )
+    .innerText =
+        coins.toFixed(2);
+
+
+    // Net Balance
+
+    let netBalance = 0;
+
+    const directMode =
+        document
+        .getElementById(
+            "directAmountToggle"
+        )
+        .checked;
+
+    if (directMode) {
+        netBalance =
+            num(
+                "directAmountInput"
+            );
+    }
+    else {
+        netBalance =
+            notes + coins;
+    }
+
+    document
+    .getElementById(
+        "netBalanceTotal"
+    )
+    .innerText =
+        netBalance.toFixed(2);
+
+
+    // Petrol
+
+    const petrolLiter =
+        num("petrolClose") -
+        num("petrolOpen");
+
+    const petrolAmount =
+        petrolLiter *
+        petrolRate;
+
+    document
+    .getElementById(
+        "petrolLiter"
+    )
+    .innerText =
+        petrolLiter.toFixed(3);
+
+    document
+    .getElementById(
+        "petrolAmount"
+    )
+    .innerText =
+        petrolAmount.toFixed(2);
+
+
+    // Diesel 1
+
+    const diesel1Liter =
+        num("diesel1Close") -
+        num("diesel1Open");
+
+    const diesel1Amount =
+        diesel1Liter *
+        dieselRate;
+
+    document
+    .getElementById(
+        "diesel1Liter"
+    )
+    .innerText =
+        diesel1Liter.toFixed(3);
+
+    document
+    .getElementById(
+        "diesel1Amount"
+    )
+    .innerText =
+        diesel1Amount.toFixed(2);
+
+
+    // Diesel 2
+
+    const diesel2Liter =
+        num("diesel2Close") -
+        num("diesel2Open");
+
+    const diesel2Amount =
+        diesel2Liter *
+        dieselRate;
+
+    document
+    .getElementById(
+        "diesel2Liter"
+    )
+    .innerText =
+        diesel2Liter.toFixed(3);
+
+    document
+    .getElementById(
+        "diesel2Amount"
+    )
+    .innerText =
+        diesel2Amount.toFixed(2);
+
+
+    // Final
+
+    const totalSale =
+        petrolAmount +
+        diesel1Amount +
+        diesel2Amount;
+
+    const collection =
+        depositTotal +
+        cardTotal +
+        netBalance;
+
+    document
+    .getElementById(
+        "collectionAmount"
+    )
+    .innerText =
+        collection.toFixed(2);
+
+    document
+    .getElementById(
+        "totalSale"
+    )
+    .innerText =
+        totalSale.toFixed(2);
+
+    const diff =
+        totalSale -
+        collection;
+
+    const result =
+        document
+        .getElementById(
+            "shortExcessResult"
+        );
+
+    if (diff > 0) {
+        result.innerHTML =
+            "🔴 Short ₹ " +
+            diff.toFixed(2);
+
+        result.className =
+            "short";
+    }
+    else if (diff < 0) {
+        result.innerHTML =
+            "🟢 Excess ₹ " +
+            Math.abs(
+                diff
+            ).toFixed(2);
+
+        result.className =
+            "excess";
+    }
+    else {
+        result.innerHTML =
+            "✅ Perfect Match";
+
+        result.className =
+            "";
+    }
+}
+
+
+// =======================
+// Save All Inputs
+// =======================
+
+window.addEventListener(
+    "input",
+    () => {
+
+        document
+        .querySelectorAll(
+            "input[id]"
+        )
+        .forEach(i => {
+            save(
+                i.id,
+                i.value
+            );
+        });
+
+    }
+);
+
+
+// Restore Inputs
+
+window.addEventListener(
+    "load",
+    () => {
+
+        document
+        .querySelectorAll(
+            "input[id]"
+        )
+        .forEach(i => {
+            const value =
+                load(
+                    i.id,
+                    ""
+                );
+
+            i.value = value;
+        });
+
+        calculate();
+    }
+);
+
+
+// =======================
+// Reset
+// =======================
+
+document
+.getElementById(
+    "resetBtn"
+)
+.onclick = () => {
+
+    if (
+        !confirm(
+            "Reset Calculation?"
+        )
+    ) return;
+
+    const petrol =
+        load(
+            "petrolRate",
+            0
+        );
+
+    const diesel =
+        load(
+            "dieselRate",
+            0
+        );
+
+    localStorage.clear();
+
+    save(
+        "petrolRate",
+        petrol
+    );
+
+    save(
+        "dieselRate",
+        diesel
+    );
+
+    location.reload();
+};
+
+
+calculate();
 </script>
 
+<script src="script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+<link rel="stylesheet" href="receipt.css">
+<script src="receipt.js"></script>
+
+    <div class="floating-bar">
+
+    <div class="floating-short">
+        <span>Short / Excess</span>
+        <strong id="floatingShort">
+            ₹0
+        </strong>
+    </div>
+
+    <button id="downloadReceiptBtn">
+        🧾 Receipt
+    </button>
+
+</div>
+
+
+    <div id="receiptTemplate">
+
+    <div class="receipt-card">
+
+        <h1>⛽ Fuel Sale Receipt</h1>
+
+        <div id="receiptContent">
+
+        </div>
+
+    </div>
+
+    </div>
+
+    
 </body>
 </html>
