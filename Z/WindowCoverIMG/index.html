@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Browser Frame Generator</title>
+
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+
+background:linear-gradient(135deg,#8EC5FC,#E0C3FC);
+display:flex;
+justify-content:center;
+align-items:center;
+min-height:100vh;
+padding:20px;
+
+}
+
+.container{
+
+width:900px;
+max-width:100%;
+
+}
+
+.controls{
+
+text-align:center;
+margin-bottom:25px;
+
+}
+
+button,input{
+
+padding:12px 20px;
+border:none;
+border-radius:12px;
+margin:5px;
+font-size:16px;
+
+}
+
+button{
+
+background:#222;
+color:white;
+cursor:pointer;
+
+}
+
+button:hover{
+
+transform:scale(1.05);
+
+}
+
+.window{
+
+background:white;
+border-radius:20px;
+overflow:hidden;
+box-shadow:0 20px 60px rgba(0,0,0,.25);
+
+}
+
+.topbar{
+
+height:55px;
+display:flex;
+align-items:center;
+padding:0 18px;
+background:#f2f2f2;
+border-bottom:1px solid #ddd;
+
+}
+
+.dot{
+
+width:14px;
+height:14px;
+border-radius:50%;
+margin-right:8px;
+
+}
+
+.red{background:#ff5f57;}
+.yellow{background:#ffbd2e;}
+.green{background:#28c840;}
+
+.title{
+
+margin-left:15px;
+color:#666;
+font-weight:bold;
+
+}
+
+.image-area{
+
+background:#fafafa;
+display:flex;
+justify-content:center;
+align-items:center;
+min-height:500px;
+padding:25px;
+
+}
+
+.image-area img{
+
+max-width:100%;
+max-height:650px;
+border-radius:12px;
+box-shadow:0 10px 30px rgba(0,0,0,.18);
+
+}
+
+.placeholder{
+
+font-size:22px;
+color:#999;
+
+}
+
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+<div class="controls">
+
+<input type="file" id="upload" accept="image/*">
+
+<button onclick="downloadImage()">
+Download PNG
+</button>
+
+</div>
+
+<div class="window" id="capture">
+
+<div class="topbar">
+
+<div class="dot red"></div>
+<div class="dot yellow"></div>
+<div class="dot green"></div>
+
+<div class="title">
+image.png
+</div>
+
+</div>
+
+<div class="image-area" id="preview">
+
+<div class="placeholder">
+Choose an image 📷
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+const upload=document.getElementById("upload");
+const preview=document.getElementById("preview");
+const title=document.querySelector(".title");
+
+upload.onchange=e=>{
+
+const file=e.target.files[0];
+
+if(!file)return;
+
+title.innerText=file.name;
+
+const img=document.createElement("img");
+
+img.src=URL.createObjectURL(file);
+
+preview.innerHTML="";
+
+preview.appendChild(img);
+
+}
+
+function downloadImage(){
+
+html2canvas(document.getElementById("capture"),{
+
+scale:2
+
+}).then(canvas=>{
+
+const a=document.createElement("a");
+
+a.download="browser-frame.png";
+
+a.href=canvas.toDataURL();
+
+a.click();
+
+});
+
+}
+
+</script>
+
+</body>
+</html>
