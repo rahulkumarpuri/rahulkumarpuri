@@ -503,21 +503,22 @@ function fmtDate(iso){
 }
 
 async function loadEntries(){
-  try{
-    const res = await window.storage.get(STORAGE_KEY, false);
-    entries = res ? JSON.parse(res.value) : [];
-  } catch(e){
-    entries = [];
-  }
-  render();
+    const data = localStorage.getItem(STORAGE_KEY);
+
+    if(data){
+        entries = JSON.parse(data);
+    }else{
+        entries = [];
+    }
+
+    render();
 }
 
 async function saveEntries(){
-  try{
-    await window.storage.set(STORAGE_KEY, JSON.stringify(entries), false);
-  } catch(e){
-    console.error('save failed', e);
-  }
+    localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(entries)
+    );
 }
 
 function totalSaved(){
