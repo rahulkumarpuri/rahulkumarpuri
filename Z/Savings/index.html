@@ -50,6 +50,10 @@
               <div class="sub" style="margin-top:8px">Target: ₹35,000 · <span id="remainingText">₹35,000 remaining</span></div>
             </div>
             <div class="metaGrid">
+              <div class="stat"><small>Level</small><strong id="levelText">Level 1</strong></div>
+              <div class="stat"><small>Unlocked</small><strong id="achText">0 achievements</strong></div>
+            </div>
+            <div class="metaGrid">
               <div class="stat"><small>Last deposit</small><strong id="lastDepositText">—</strong></div>
               <div class="stat"><small>Milestone</small><strong id="milestoneText">Start saving</strong></div>
             </div>
@@ -87,6 +91,7 @@
 
   <script>
     const TARGET = 35000;
+    const LEVELS = [0,3000,7000,12000,17000,22000,27000,32000,35000];
     const MILESTONES = [10,25,50,75,90,100];
     const ACHIEVEMENTS = [
       {id:'first', name:'First Deposit', test:s=>s.history.length>=1},
@@ -117,9 +122,12 @@
     }
     function save(){ localStorage.setItem(sKey, JSON.stringify(state)); localStorage.setItem(aKey, JSON.stringify(state.achievements)); localStorage.setItem(mKey, JSON.stringify(state.milestones)); }
     function percent(total){ return Math.min(100, (total/TARGET)*100); }
+    function levelFor(total){ let l = 1; for(let i=0;i<LEVELS.length;i++) if(total>=LEVELS[i]) l = i+1; return l; }
+    function levelName(l){ return 'Level ' + l; }
     function showToast(msg){ els.toast.textContent = msg; els.toast.classList.add('show'); clearTimeout(showToast.t); showToast.t = setTimeout(()=>els.toast.classList.remove('show'), 1800); }
     function showBanner(html){ els.banner.innerHTML = html; els.banner.classList.add('show'); clearTimeout(showBanner.t); showBanner.t = setTimeout(()=>els.banner.classList.remove('show'), 2200); }
     function showLevelUp(level){ els.modalTitle.textContent = 'LEVEL UP'; els.modalText.textContent = levelName(level) + ' unlocked.'; els.modal.classList.add('show'); setTimeout(()=>els.modal.classList.remove('show'), 1700); }
+    function updateLevels(){ els.levels.innerHTML = LEVELS.map((amt, i)=>`<div class="levelRow ${state.level===i+1?'active':''}"><span>${levelName(i+1)}</span><span>${fmt(amt)}</span></div>`).join(''); }
     function updateLedger(){ els.ledger.innerHTML = state.history.length ? state.history.map((d, i)=>`<div class="ledgerItem"><div><div class="date">${d.date}</div><div class="amt">${fmt(d.amount)}</div></div><div class="date">Deposit #${state.history.length - i}</div><button data-id="${d.id}">Delete</button></div>`).join('') : '<div class="sub">No deposits yet. Your vault is waiting.</div>'; }
     function updateAchievements(){ els.achText.textContent = state.achievements.length + ' achievements'; }
     function renderStatic(){ els.levelText.textContent = levelName(state.level); els.lastDepositText.textContent = state.history[0] ? state.history[0].date : '—'; updateLevels(); updateLedger(); updateAchievements(); syncNumbers(true); }
@@ -137,6 +145,7 @@
     function maybeConfetti(big=false){ if(typeof confetti==='function'){ confetti({particleCount: big?220:70, spread: big?100:70, origin:{y:.58}, colors:['#f6efdc','#f2d888','#c8a24d','#3fa679','#ffffff']}); if(big) setTimeout(()=>confetti({particleCount:140, spread:120, origin:{y:.35}}), 260); } }
     function milestoneCheck(oldP,newP){ MILESTONES.forEach(m=>{ if(newP>=m && !state.milestones.includes(m)){ state.milestones.push(m); const msg = m===50 ? 'Halfway There' : m===75 ? 'Almost Done' : m===100 ? 'Mission Complete' : `🎉 ${m}% Saved`; showBanner(`<div class="big">${msg}</div>`); maybeConfetti(m>=50); } }); }
     function achievementCheck(){ ACHIEVEMENTS.forEach(a=>{ if(a.test(state) && !state.achievements.includes(a.id)){ state.achievements.push(a.id); showToast('Achievement unlocked: ' + a.name); maybeConfetti(false); } }); }
+    function levelCheck(oldLevel,newLevel){ if(newLevel>oldLevel){ showLevelUp(newLevel); maybeConfetti(false); } }
     function missionComplete(){ if(state.total>=TARGET){ els.milestoneText.textContent='Mission Complete'; showBanner('<div class="big">MISSION COMPLETE</div><div>Vault fully funded.</div>'); maybeConfetti(true); setTimeout(()=>{document.body.style.boxShadow='inset 0 0 140px rgba(242,216,136,.12)';},100); } }
     function renderAll(){ renderStatic(); save(); }
     els.form.addEventListener('submit', e=>{ e.preventDefault(); const amount = Number(els.amountInput.value); const date = els.dateInput.value || new Date().toISOString().slice(0,10); if(!Number.isFinite(amount) || amount<=0){ showToast('Enter a positive amount.'); els.amountInput.focus(); return; } const oldTotal = state.total; const oldLevel = state.level; state.history.unshift({id:crypto.randomUUID(), amount:Math.round(amount), date}); state.total = Math.round(state.history.reduce((s,x)=>s+x.amount,0)); state.level = levelFor(state.total); updateLedger(); updateLevels(); updateAchievements(); state.history = state.history.sort((a,b)=> new Date(b.date)-new Date(a.date) || b.amount-a.amount); const newP=percent(state.total), oldP=percent(oldTotal); save(); updateAnimated(oldTotal, state.total); vaultShake(); screenFlash(); sparkles(14); flyingNote(); if(amount>1000) coinBurst(); milestoneCheck(oldP,newP); achievementCheck(); levelCheck(oldLevel, state.level); missionComplete(); els.amountInput.value=''; els.amountInput.focus(); });
