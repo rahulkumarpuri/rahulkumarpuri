@@ -1,1 +1,698 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Savings Vault</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void: #090d12;
+    --void-2: #0d131a;
+    --steel: #141c25;
+    --steel-light: #1c2733;
+    --paper: #f6efdc;
+    --ink: #211b0f;
+    --ink-soft: #6b6350;
+    --brass: #c8a24d;
+    --brass-bright: #f2d888;
+    --brass-dim: #8a6c2e;
+    --emerald: #3fa679;
+    --crimson: #b3452f;
+    --line: rgba(200,162,77,0.16);
+    --hairline-dark: rgba(255,255,255,0.06);
+  }
+
+  *{ box-sizing:border-box; }
+  html, body{ height:100%; }
+
+  body{
+    margin:0;
+    min-height:100dvh;
+    background:
+      radial-gradient(circle at 50% -10%, #1a2531 0%, var(--void-2) 42%, var(--void) 100%);
+    font-family:'Space Grotesk', sans-serif;
+    color:var(--paper);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:clamp(12px, 3vh, 36px) clamp(12px, 3vw, 24px);
+    overflow-x:hidden;
+  }
+
+  /* faint blueprint grid + vignette */
+  .bg-grid{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image:
+      linear-gradient(rgba(200,162,77,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(200,162,77,0.035) 1px, transparent 1px);
+    background-size: 34px 34px;
+    mask-image: radial-gradient(circle at 50% 35%, black 0%, transparent 72%);
+  }
+
+  .wrap{
+    position:relative;
+    z-index:1;
+    width:100%;
+    max-width:520px;
+    display:flex;
+    flex-direction:column;
+    max-height:calc(100dvh - clamp(24px, 6vh, 72px));
+  }
+
+  header{
+    text-align:center;
+    margin-bottom:clamp(14px, 2.4vh, 22px);
+    flex-shrink:0;
+  }
+
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    letter-spacing:0.32em;
+    text-transform:uppercase;
+    color:var(--brass);
+    margin-bottom:8px;
+    opacity:0.9;
+  }
+  .eyebrow::before, .eyebrow::after{ content:"◆"; font-size:6px; vertical-align:middle; margin:0 8px; opacity:0.6; }
+
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size:clamp(26px, 5vw, 36px);
+    margin:0;
+    letter-spacing:0.01em;
+    background:linear-gradient(180deg, var(--brass-bright), var(--brass) 60%, var(--brass-dim));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    text-shadow:0 2px 24px rgba(200,162,77,0.25);
+  }
+
+  h1 .sub{
+    display:block;
+    font-family:'Space Grotesk', sans-serif;
+    font-size:12.5px;
+    font-weight:500;
+    letter-spacing:0.04em;
+    color:rgba(246,239,220,0.5);
+    -webkit-text-fill-color:rgba(246,239,220,0.5);
+    margin-top:7px;
+  }
+
+  /* THE VAULT CARD */
+  .vault{
+    background: linear-gradient(160deg, var(--steel-light), var(--steel) 60%);
+    border-radius:20px;
+    box-shadow:
+      0 40px 80px -30px rgba(0,0,0,0.75),
+      0 0 0 1px rgba(200,162,77,0.22),
+      inset 0 1px 0 rgba(255,255,255,0.05);
+    padding:clamp(18px, 3.2vw, 30px);
+    position:relative;
+    flex:1;
+    min-height:0;
+    display:flex;
+    flex-direction:column;
+    gap:clamp(14px, 2vh, 20px);
+    animation: rise .7s cubic-bezier(.16,1,.3,1) both;
+  }
+
+  @keyframes rise{
+    from{ opacity:0; transform:translateY(18px) scale(0.985); }
+    to{ opacity:1; transform:translateY(0) scale(1); }
+  }
+
+  /* corner rivets */
+  .rivet{
+    position:absolute;
+    width:7px; height:7px;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, var(--brass-bright), var(--brass-dim));
+    box-shadow: inset 0 1px 1px rgba(0,0,0,0.4);
+  }
+  .rivet.tl{ top:12px; left:12px; }
+  .rivet.tr{ top:12px; right:12px; }
+  .rivet.bl{ bottom:12px; left:12px; }
+  .rivet.br{ bottom:12px; right:12px; }
+
+  /* DIAL + STATS ROW */
+  .dial-row{
+    display:flex;
+    align-items:center;
+    gap:clamp(14px, 3vw, 24px);
+    padding-bottom:clamp(14px, 2vh, 20px);
+    border-bottom:1px dashed var(--line);
+    flex-shrink:0;
+  }
+
+  .dial{
+    position:relative;
+    width:clamp(96px, 24vw, 118px);
+    height:clamp(96px, 24vw, 118px);
+    flex-shrink:0;
+  }
+
+  .dial svg{ width:100%; height:100%; transform:rotate(-90deg); overflow:visible; }
+
+  .dial-track{ fill:none; stroke:rgba(200,162,77,0.1); stroke-width:7; }
+  .dial-fill{
+    fill:none;
+    stroke:url(#brassGrad);
+    stroke-width:7;
+    stroke-linecap:round;
+    filter:drop-shadow(0 0 6px rgba(242,216,136,0.45));
+    transition:stroke-dashoffset 1.3s cubic-bezier(.16,1,.3,1);
+  }
+
+  .dial-label{
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .dial-pct{
+    font-family:'Fraunces', serif;
+    font-size:clamp(20px, 5vw, 26px);
+    font-weight:700;
+    line-height:1;
+    color:var(--paper);
+  }
+  .dial-pct span{ font-size:0.5em; opacity:0.55; font-weight:500; }
+
+  .dial-tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:8.5px;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    margin-top:3px;
+    color:rgba(246,239,220,0.45);
+  }
+
+  .figures{ flex:1; min-width:0; }
+
+  .figures .row{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:clamp(11px, 2.6vw, 12.5px);
+    padding:4px 0;
+    color:rgba(246,239,220,0.55);
+  }
+
+  .figures .row b{
+    color:var(--paper);
+    font-weight:600;
+    font-size:clamp(13px, 3vw, 15px);
+    letter-spacing:0.01em;
+  }
+  .figures .row.remaining b{ color:var(--brass-bright); }
+  .figures .row.saved b{ color:var(--emerald); }
+
+  .celebrate{
+    margin-top:6px;
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-weight:600;
+    font-size:12.5px;
+    color:var(--emerald);
+    display:none;
+    opacity:0;
+    transition:opacity .5s;
+  }
+  .celebrate.show{ display:block; opacity:1; }
+
+  /* ENTRY FORM */
+  .entry-form{ flex-shrink:0; }
+
+  .entry-form label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:9.5px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:rgba(246,239,220,0.45);
+    display:block;
+    margin-bottom:9px;
+  }
+
+  .entry-fields{
+    display:flex;
+    gap:8px;
+    align-items:stretch;
+    flex-wrap:wrap;
+  }
+
+  .amount-box, .date-box{
+    display:flex;
+    align-items:center;
+    background:rgba(9,13,18,0.55);
+    border:1.5px solid rgba(200,162,77,0.22);
+    border-radius:10px;
+    transition:border-color .2s, box-shadow .2s;
+  }
+  .amount-box:focus-within, .date-box:focus-within{
+    border-color:var(--brass);
+    box-shadow:0 0 0 3px rgba(200,162,77,0.15);
+  }
+
+  .amount-box{ flex:1 1 130px; padding:0 12px; }
+
+  .amount-box .rupee{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size:17px;
+    color:var(--brass);
+    margin-right:2px;
+  }
+
+  .amount-box input{
+    border:none;
+    outline:none;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:16px;
+    font-weight:500;
+    color:var(--paper);
+    background:transparent;
+    padding:12px 4px;
+    width:100%;
+    min-width:0;
+  }
+  .amount-box input::placeholder{ color:rgba(246,239,220,0.3); }
+
+  .date-box{ padding:0 10px; flex:1 1 128px; }
+
+  .date-box input{
+    border:none;
+    outline:none;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px;
+    color:var(--paper);
+    background:transparent;
+    padding:12px 2px;
+    width:100%;
+    color-scheme: dark;
+  }
+
+  .add-btn{
+    border:none;
+    border-radius:10px;
+    padding:0 22px;
+    background:linear-gradient(135deg, var(--brass-bright), var(--brass) 55%, var(--brass-dim));
+    color:#241c07;
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:14px;
+    cursor:pointer;
+    transition:transform .15s, box-shadow .15s, filter .15s;
+    box-shadow:0 8px 20px -8px rgba(200,162,77,0.7);
+    flex:1 1 100px;
+    position:relative;
+    overflow:hidden;
+  }
+  .add-btn:hover{ transform:translateY(-1px); filter:brightness(1.06); box-shadow:0 10px 24px -6px rgba(200,162,77,0.85); }
+  .add-btn:active{ transform:translateY(0px) scale(0.97); }
+
+  .form-error{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    color:var(--crimson);
+    margin-top:8px;
+    min-height:13px;
+  }
+
+  /* HISTORY */
+  .history{ display:flex; flex-direction:column; min-height:0; flex:1; }
+
+  .history-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom:10px;
+    flex-shrink:0;
+  }
+
+  .history-head h2{
+    font-family:'Fraunces', serif;
+    font-size:14.5px;
+    font-weight:600;
+    margin:0;
+    letter-spacing:0.03em;
+    color:var(--paper);
+  }
+
+  .history-head .count{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    color:rgba(246,239,220,0.4);
+  }
+
+  .ledger{ overflow-y:auto; min-height:60px; padding-right:4px; }
+  .ledger::-webkit-scrollbar{ width:5px; }
+  .ledger::-webkit-scrollbar-thumb{ background:rgba(200,162,77,0.3); border-radius:4px; }
+  .ledger::-webkit-scrollbar-track{ background:transparent; }
+
+  .entry-row{
+    display:grid;
+    grid-template-columns:auto 1fr auto auto;
+    align-items:center;
+    gap:10px;
+    padding:9px 2px;
+    border-bottom:1px solid var(--hairline-dark);
+    animation:slideIn .4s ease;
+  }
+  .entry-row:last-child{ border-bottom:none; }
+
+  @keyframes slideIn{
+    from{ opacity:0; transform:translateY(-6px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+
+  .stamp{
+    width:26px; height:26px;
+    border:1.4px solid var(--emerald);
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:var(--emerald);
+    font-size:12px;
+    flex-shrink:0;
+    opacity:0.9;
+  }
+
+  .entry-date{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:rgba(246,239,220,0.55);
+    white-space:nowrap;
+  }
+
+  .entry-amt{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:13.5px;
+    font-weight:600;
+    color:var(--emerald);
+    text-align:right;
+    white-space:nowrap;
+  }
+
+  .del-btn{
+    background:none;
+    border:none;
+    color:rgba(246,239,220,0.35);
+    cursor:pointer;
+    font-size:14px;
+    padding:2px 4px;
+    transition:opacity .15s, color .15s;
+  }
+  .del-btn:hover{ color:var(--crimson); }
+
+  .empty-state{
+    text-align:center;
+    padding:22px 10px;
+    color:rgba(246,239,220,0.4);
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-size:13px;
+  }
+
+  .footer-strip{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding-top:8px;
+    border-top:1px dashed var(--line);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    color:rgba(246,239,220,0.35);
+    flex-shrink:0;
+  }
+
+  .reset-link{
+    background:none;
+    border:none;
+    color:rgba(246,239,220,0.4);
+    text-decoration:underline;
+    cursor:pointer;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    padding:0;
+  }
+  .reset-link:hover{ color:var(--crimson); }
+
+  .loading-note{
+    text-align:center;
+    color:rgba(246,239,220,0.5);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    padding:40px 0;
+  }
+
+  @media (max-width:420px){
+    .dial-row{ flex-direction:column; text-align:center; gap:10px; }
+    .figures .row{ justify-content:center; gap:8px; }
+  }
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Personal Ledger</div>
+    <h1>Savings Vault
+      <span class="sub">Every deposit, one step closer to ₹35,000</span>
+    </h1>
+  </header>
+
+  <div class="vault" id="vault">
+    <span class="rivet tl"></span><span class="rivet tr"></span>
+    <span class="rivet bl"></span><span class="rivet br"></span>
+    <div class="loading-note" id="loadingNote">Opening the vault…</div>
+  </div>
+
+</div>
+
+<script>
+const TARGET = 35000;
+const STORAGE_KEY = 'passbook-entries';
+
+let entries = [];
+
+function todayStr(){
+  const d = new Date();
+  const off = d.getTimezoneOffset();
+  const local = new Date(d.getTime() - off*60000);
+  return local.toISOString().slice(0,10);
+}
+
+function fmtINR(n){
+  return '₹' + Math.round(n).toLocaleString('en-IN');
+}
+
+function fmtDate(iso){
+  const d = new Date(iso + 'T00:00:00');
+  return d.toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'2-digit'});
+}
+
+async function loadEntries(){
+  try{
+    const res = await window.storage.get(STORAGE_KEY, false);
+    entries = res ? JSON.parse(res.value) : [];
+  } catch(e){
+    entries = [];
+  }
+  render();
+}
+
+async function saveEntries(){
+  try{
+    await window.storage.set(STORAGE_KEY, JSON.stringify(entries), false);
+  } catch(e){
+    console.error('save failed', e);
+  }
+}
+
+function totalSaved(){
+  return entries.reduce((s,e)=>s+e.amount,0);
+}
+
+function buildUI(){
+  const el = document.getElementById('vault');
+  el.innerHTML = `
+    <span class="rivet tl"></span><span class="rivet tr"></span>
+    <span class="rivet bl"></span><span class="rivet br"></span>
+
+    <div class="dial-row">
+      <div class="dial">
+        <svg viewBox="0 0 118 118">
+          <defs>
+            <linearGradient id="brassGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#f2d888"/>
+              <stop offset="100%" stop-color="#8a6c2e"/>
+            </linearGradient>
+          </defs>
+          <circle class="dial-track" cx="59" cy="59" r="49"/>
+          <circle class="dial-fill" id="dialFill" cx="59" cy="59" r="49"
+            stroke-dasharray="307.9" stroke-dashoffset="307.9"/>
+        </svg>
+        <div class="dial-label">
+          <div class="dial-pct"><span id="pctNum">0</span><span>%</span></div>
+          <div class="dial-tag">saved</div>
+        </div>
+      </div>
+      <div class="figures">
+        <div class="row saved"><span>Total saved</span><b id="savedAmt">₹0</b></div>
+        <div class="row"><span>Target</span><b>${fmtINR(TARGET)}</b></div>
+        <div class="row remaining"><span>Remaining</span><b id="remainAmt">${fmtINR(TARGET)}</b></div>
+        <div class="celebrate" id="celebrateMsg">🎉 Target reached — well saved!</div>
+      </div>
+    </div>
+
+    <div class="entry-form">
+      <label>Enter savings amount</label>
+      <div class="entry-fields">
+        <div class="amount-box">
+          <span class="rupee">₹</span>
+          <input type="number" id="amountInput" placeholder="e.g. 500" min="1" step="1">
+        </div>
+        <div class="date-box">
+          <input type="date" id="dateInput">
+        </div>
+        <button class="add-btn" id="addBtn">Add Entry →</button>
+      </div>
+      <div class="form-error" id="formError"></div>
+    </div>
+
+    <div class="history">
+      <div class="history-head">
+        <h2>History</h2>
+        <span class="count" id="entryCount">0 entries</span>
+      </div>
+      <div class="ledger" id="ledger"></div>
+    </div>
+
+    <div class="footer-strip">
+      <span>Saved automatically to your vault</span>
+      <button class="reset-link" id="resetBtn">Reset all</button>
+    </div>
+  `;
+
+  document.getElementById('dateInput').value = todayStr();
+  document.getElementById('dateInput').max = todayStr();
+
+  document.getElementById('addBtn').addEventListener('click', handleAdd);
+  document.getElementById('amountInput').addEventListener('keydown', (e)=>{
+    if(e.key === 'Enter') handleAdd();
+  });
+  document.getElementById('resetBtn').addEventListener('click', handleReset);
+}
+
+async function handleAdd(){
+  const amtInput = document.getElementById('amountInput');
+  const dateInput = document.getElementById('dateInput');
+  const errBox = document.getElementById('formError');
+
+  const amount = parseFloat(amtInput.value);
+  const date = dateInput.value || todayStr();
+
+  if(!amount || amount <= 0){
+    errBox.textContent = 'Please enter a valid amount (greater than 0)';
+    return;
+  }
+  errBox.textContent = '';
+
+  const entry = {
+    id: Date.now() + '-' + Math.random().toString(36).slice(2,7),
+    date,
+    amount,
+    createdAt: Date.now()
+  };
+  entries.push(entry);
+  await saveEntries();
+
+  amtInput.value = '';
+  amtInput.focus();
+  renderDial();
+  renderLedger();
+}
+
+async function handleDelete(id){
+  entries = entries.filter(e => e.id !== id);
+  await saveEntries();
+  renderDial();
+  renderLedger();
+}
+
+async function handleReset(){
+  if(!confirm('Reset the entire vault? This cannot be undone.')) return;
+  entries = [];
+  await saveEntries();
+  renderDial();
+  renderLedger();
+}
+
+function renderDial(){
+  const total = totalSaved();
+  const pct = Math.min(100, Math.round((total/TARGET)*100));
+  const circumference = 307.9;
+  const offset = circumference - (Math.min(pct,100)/100)*circumference;
+
+  document.getElementById('dialFill').style.strokeDashoffset = offset;
+  document.getElementById('pctNum').textContent = pct;
+  document.getElementById('savedAmt').textContent = fmtINR(total);
+  document.getElementById('remainAmt').textContent = fmtINR(Math.max(0, TARGET-total));
+
+  const celebrate = document.getElementById('celebrateMsg');
+  if(total >= TARGET){
+    celebrate.classList.add('show');
+  } else {
+    celebrate.classList.remove('show');
+  }
+}
+
+function renderLedger(){
+  const ledgerEl = document.getElementById('ledger');
+  document.getElementById('entryCount').textContent = entries.length + ' entries';
+
+  if(entries.length === 0){
+    ledgerEl.innerHTML = `<div class="empty-state">No entries yet — add your first deposit above</div>`;
+    return;
+  }
+
+  const sorted = [...entries].sort((a,b)=>{
+    if(a.date !== b.date) return b.date.localeCompare(a.date);
+    return b.createdAt - a.createdAt;
+  });
+
+  ledgerEl.innerHTML = sorted.map(e => `
+    <div class="entry-row">
+      <div class="stamp">✓</div>
+      <div class="entry-date">${fmtDate(e.date)}</div>
+      <div class="entry-amt">+${fmtINR(e.amount)}</div>
+      <button class="del-btn" data-id="${e.id}" title="Delete">✕</button>
+    </div>
+  `).join('');
+
+  ledgerEl.querySelectorAll('.del-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=> handleDelete(btn.getAttribute('data-id')));
+  });
+}
+
+function render(){
+  buildUI();
+  renderDial();
+  renderLedger();
+}
+
+loadEntries();
+</script>
+</body>
+</html>
