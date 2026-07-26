@@ -1,700 +1,159 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Savings Vault</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --void: #090d12;
-    --void-2: #0d131a;
-    --steel: #141c25;
-    --steel-light: #1c2733;
-    --paper: #f6efdc;
-    --ink: #211b0f;
-    --ink-soft: #6b6350;
-    --brass: #c8a24d;
-    --brass-bright: #f2d888;
-    --brass-dim: #8a6c2e;
-    --emerald: #3fa679;
-    --crimson: #b3452f;
-    --line: rgba(200,162,77,0.16);
-    --hairline-dark: rgba(255,255,255,0.06);
-  }
-
-  *{ box-sizing:border-box; }
-  html, body{ height:100%; }
-
-  body{
-    margin:0;
-    min-height:100dvh;
-    background:
-      radial-gradient(circle at 50% -10%, #1a2531 0%, var(--void-2) 42%, var(--void) 100%);
-    font-family:'Space Grotesk', sans-serif;
-    color:var(--paper);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:clamp(12px, 3vh, 36px) clamp(12px, 3vw, 24px);
-    overflow-x:hidden;
-  }
-
-  /* faint blueprint grid + vignette */
-  .bg-grid{
-    position:fixed; inset:0; z-index:0; pointer-events:none;
-    background-image:
-      linear-gradient(rgba(200,162,77,0.035) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(200,162,77,0.035) 1px, transparent 1px);
-    background-size: 34px 34px;
-    mask-image: radial-gradient(circle at 50% 35%, black 0%, transparent 72%);
-  }
-
-  .wrap{
-    position:relative;
-    z-index:1;
-    width:100%;
-    max-width:520px;
-    display:flex;
-    flex-direction:column;
-    max-height:calc(100dvh - clamp(24px, 6vh, 72px));
-  }
-
-  header{
-    text-align:center;
-    margin-bottom:clamp(14px, 2.4vh, 22px);
-    flex-shrink:0;
-  }
-
-  .eyebrow{
-    font-family:'IBM Plex Mono', monospace;
-    font-size:10.5px;
-    letter-spacing:0.32em;
-    text-transform:uppercase;
-    color:var(--brass);
-    margin-bottom:8px;
-    opacity:0.9;
-  }
-  .eyebrow::before, .eyebrow::after{ content:"◆"; font-size:6px; vertical-align:middle; margin:0 8px; opacity:0.6; }
-
-  h1{
-    font-family:'Fraunces', serif;
-    font-weight:700;
-    font-size:clamp(26px, 5vw, 36px);
-    margin:0;
-    letter-spacing:0.01em;
-    background:linear-gradient(180deg, var(--brass-bright), var(--brass) 60%, var(--brass-dim));
-    -webkit-background-clip:text;
-    background-clip:text;
-    color:transparent;
-    text-shadow:0 2px 24px rgba(200,162,77,0.25);
-  }
-
-  h1 .sub{
-    display:block;
-    font-family:'Space Grotesk', sans-serif;
-    font-size:12.5px;
-    font-weight:500;
-    letter-spacing:0.04em;
-    color:rgba(246,239,220,0.5);
-    -webkit-text-fill-color:rgba(246,239,220,0.5);
-    margin-top:7px;
-  }
-
-  /* THE VAULT CARD */
-  .vault{
-    background: linear-gradient(160deg, var(--steel-light), var(--steel) 60%);
-    border-radius:20px;
-    box-shadow:
-      0 40px 80px -30px rgba(0,0,0,0.75),
-      0 0 0 1px rgba(200,162,77,0.22),
-      inset 0 1px 0 rgba(255,255,255,0.05);
-    padding:clamp(18px, 3.2vw, 30px);
-    position:relative;
-    flex:1;
-    min-height:0;
-    display:flex;
-    flex-direction:column;
-    gap:clamp(14px, 2vh, 20px);
-    animation: rise .7s cubic-bezier(.16,1,.3,1) both;
-  }
-
-  @keyframes rise{
-    from{ opacity:0; transform:translateY(18px) scale(0.985); }
-    to{ opacity:1; transform:translateY(0) scale(1); }
-  }
-
-  /* corner rivets */
-  .rivet{
-    position:absolute;
-    width:7px; height:7px;
-    border-radius:50%;
-    background:radial-gradient(circle at 35% 30%, var(--brass-bright), var(--brass-dim));
-    box-shadow: inset 0 1px 1px rgba(0,0,0,0.4);
-  }
-  .rivet.tl{ top:12px; left:12px; }
-  .rivet.tr{ top:12px; right:12px; }
-  .rivet.bl{ bottom:12px; left:12px; }
-  .rivet.br{ bottom:12px; right:12px; }
-
-  /* DIAL + STATS ROW */
-  .dial-row{
-    display:flex;
-    align-items:center;
-    gap:clamp(14px, 3vw, 24px);
-    padding-bottom:clamp(14px, 2vh, 20px);
-    border-bottom:1px dashed var(--line);
-    flex-shrink:0;
-  }
-
-  .dial{
-    position:relative;
-    width:clamp(96px, 24vw, 118px);
-    height:clamp(96px, 24vw, 118px);
-    flex-shrink:0;
-  }
-
-  .dial svg{ width:100%; height:100%; transform:rotate(-90deg); overflow:visible; }
-
-  .dial-track{ fill:none; stroke:rgba(200,162,77,0.1); stroke-width:7; }
-  .dial-fill{
-    fill:none;
-    stroke:url(#brassGrad);
-    stroke-width:7;
-    stroke-linecap:round;
-    filter:drop-shadow(0 0 6px rgba(242,216,136,0.45));
-    transition:stroke-dashoffset 1.3s cubic-bezier(.16,1,.3,1);
-  }
-
-  .dial-label{
-    position:absolute;
-    inset:0;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-  }
-
-  .dial-pct{
-    font-family:'Fraunces', serif;
-    font-size:clamp(20px, 5vw, 26px);
-    font-weight:700;
-    line-height:1;
-    color:var(--paper);
-  }
-  .dial-pct span{ font-size:0.5em; opacity:0.55; font-weight:500; }
-
-  .dial-tag{
-    font-family:'IBM Plex Mono', monospace;
-    font-size:8.5px;
-    letter-spacing:0.16em;
-    text-transform:uppercase;
-    margin-top:3px;
-    color:rgba(246,239,220,0.45);
-  }
-
-  .figures{ flex:1; min-width:0; }
-
-  .figures .row{
-    display:flex;
-    justify-content:space-between;
-    align-items:baseline;
-    font-family:'IBM Plex Mono', monospace;
-    font-size:clamp(11px, 2.6vw, 12.5px);
-    padding:4px 0;
-    color:rgba(246,239,220,0.55);
-  }
-
-  .figures .row b{
-    color:var(--paper);
-    font-weight:600;
-    font-size:clamp(13px, 3vw, 15px);
-    letter-spacing:0.01em;
-  }
-  .figures .row.remaining b{ color:var(--brass-bright); }
-  .figures .row.saved b{ color:var(--emerald); }
-
-  .celebrate{
-    margin-top:6px;
-    font-family:'Fraunces', serif;
-    font-style:italic;
-    font-weight:600;
-    font-size:12.5px;
-    color:var(--emerald);
-    display:none;
-    opacity:0;
-    transition:opacity .5s;
-  }
-  .celebrate.show{ display:block; opacity:1; }
-
-  /* ENTRY FORM */
-  .entry-form{ flex-shrink:0; }
-
-  .entry-form label{
-    font-family:'IBM Plex Mono', monospace;
-    font-size:9.5px;
-    letter-spacing:0.14em;
-    text-transform:uppercase;
-    color:rgba(246,239,220,0.45);
-    display:block;
-    margin-bottom:9px;
-  }
-
-  .entry-fields{
-    display:flex;
-    gap:8px;
-    align-items:stretch;
-    flex-wrap:wrap;
-  }
-
-  .amount-box, .date-box{
-    display:flex;
-    align-items:center;
-    background:rgba(9,13,18,0.55);
-    border:1.5px solid rgba(200,162,77,0.22);
-    border-radius:10px;
-    transition:border-color .2s, box-shadow .2s;
-  }
-  .amount-box:focus-within, .date-box:focus-within{
-    border-color:var(--brass);
-    box-shadow:0 0 0 3px rgba(200,162,77,0.15);
-  }
-
-  .amount-box{ flex:1 1 130px; padding:0 12px; }
-
-  .amount-box .rupee{
-    font-family:'Fraunces', serif;
-    font-weight:700;
-    font-size:17px;
-    color:var(--brass);
-    margin-right:2px;
-  }
-
-  .amount-box input{
-    border:none;
-    outline:none;
-    font-family:'IBM Plex Mono', monospace;
-    font-size:16px;
-    font-weight:500;
-    color:var(--paper);
-    background:transparent;
-    padding:12px 4px;
-    width:100%;
-    min-width:0;
-  }
-  .amount-box input::placeholder{ color:rgba(246,239,220,0.3); }
-
-  .date-box{ padding:0 10px; flex:1 1 128px; }
-
-  .date-box input{
-    border:none;
-    outline:none;
-    font-family:'IBM Plex Mono', monospace;
-    font-size:12.5px;
-    color:var(--paper);
-    background:transparent;
-    padding:12px 2px;
-    width:100%;
-    color-scheme: dark;
-  }
-
-  .add-btn{
-    border:none;
-    border-radius:10px;
-    padding:0 22px;
-    background:linear-gradient(135deg, var(--brass-bright), var(--brass) 55%, var(--brass-dim));
-    color:#241c07;
-    font-family:'Space Grotesk', sans-serif;
-    font-weight:700;
-    font-size:14px;
-    cursor:pointer;
-    transition:transform .15s, box-shadow .15s, filter .15s;
-    box-shadow:0 8px 20px -8px rgba(200,162,77,0.7);
-    flex:1 1 100px;
-    position:relative;
-    overflow:hidden;
-  }
-  .add-btn:hover{ transform:translateY(-1px); filter:brightness(1.06); box-shadow:0 10px 24px -6px rgba(200,162,77,0.85); }
-  .add-btn:active{ transform:translateY(0px) scale(0.97); }
-
-  .form-error{
-    font-family:'IBM Plex Mono', monospace;
-    font-size:10.5px;
-    color:var(--crimson);
-    margin-top:8px;
-    min-height:13px;
-  }
-
-  /* HISTORY */
-  .history{ display:flex; flex-direction:column; min-height:0; flex:1; }
-
-  .history-head{
-    display:flex;
-    justify-content:space-between;
-    align-items:baseline;
-    margin-bottom:10px;
-    flex-shrink:0;
-  }
-
-  .history-head h2{
-    font-family:'Fraunces', serif;
-    font-size:14.5px;
-    font-weight:600;
-    margin:0;
-    letter-spacing:0.03em;
-    color:var(--paper);
-  }
-
-  .history-head .count{
-    font-family:'IBM Plex Mono', monospace;
-    font-size:10.5px;
-    color:rgba(246,239,220,0.4);
-  }
-
-  .ledger{ overflow-y:auto; min-height:60px; padding-right:4px; }
-  .ledger::-webkit-scrollbar{ width:5px; }
-  .ledger::-webkit-scrollbar-thumb{ background:rgba(200,162,77,0.3); border-radius:4px; }
-  .ledger::-webkit-scrollbar-track{ background:transparent; }
-
-  .entry-row{
-    display:grid;
-    grid-template-columns:auto 1fr auto auto;
-    align-items:center;
-    gap:10px;
-    padding:9px 2px;
-    border-bottom:1px solid var(--hairline-dark);
-    animation:slideIn .4s ease;
-  }
-  .entry-row:last-child{ border-bottom:none; }
-
-  @keyframes slideIn{
-    from{ opacity:0; transform:translateY(-6px); }
-    to{ opacity:1; transform:translateY(0); }
-  }
-
-  .stamp{
-    width:26px; height:26px;
-    border:1.4px solid var(--emerald);
-    border-radius:50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:var(--emerald);
-    font-size:12px;
-    flex-shrink:0;
-    opacity:0.9;
-  }
-
-  .entry-date{
-    font-family:'IBM Plex Mono', monospace;
-    font-size:12px;
-    color:rgba(246,239,220,0.55);
-    white-space:nowrap;
-  }
-
-  .entry-amt{
-    font-family:'IBM Plex Mono', monospace;
-    font-size:13.5px;
-    font-weight:600;
-    color:var(--emerald);
-    text-align:right;
-    white-space:nowrap;
-  }
-
-  .del-btn{
-    background:none;
-    border:none;
-    color:rgba(246,239,220,0.35);
-    cursor:pointer;
-    font-size:14px;
-    padding:2px 4px;
-    transition:opacity .15s, color .15s;
-  }
-  .del-btn:hover{ color:var(--crimson); }
-
-  .empty-state{
-    text-align:center;
-    padding:22px 10px;
-    color:rgba(246,239,220,0.4);
-    font-family:'Fraunces', serif;
-    font-style:italic;
-    font-size:13px;
-  }
-
-  .footer-strip{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding-top:8px;
-    border-top:1px dashed var(--line);
-    font-family:'IBM Plex Mono', monospace;
-    font-size:10px;
-    color:rgba(246,239,220,0.35);
-    flex-shrink:0;
-  }
-
-  .reset-link{
-    background:none;
-    border:none;
-    color:rgba(246,239,220,0.4);
-    text-decoration:underline;
-    cursor:pointer;
-    font-family:'IBM Plex Mono', monospace;
-    font-size:10px;
-    padding:0;
-  }
-  .reset-link:hover{ color:var(--crimson); }
-
-  .loading-note{
-    text-align:center;
-    color:rgba(246,239,220,0.5);
-    font-family:'IBM Plex Mono', monospace;
-    font-size:12px;
-    padding:40px 0;
-  }
-
-  @media (max-width:420px){
-    .dial-row{ flex-direction:column; text-align:center; gap:10px; }
-    .figures .row{ justify-content:center; gap:8px; }
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Savings Vault</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,700&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <style>
+    :root{--bg:#090d12;--bg2:#141c25;--card:#1c2733;--gold:#c8a24d;--gold2:#f2d888;--cream:#f6efdc;--green:#3fa679;--red:#b3452f;--line:rgba(246,239,220,.1);--shadow:0 24px 80px rgba(0,0,0,.45);--r:24px;--ease:cubic-bezier(.2,.8,.2,1)}*{box-sizing:border-box}html,body{height:100%}body{margin:0;color:var(--cream);font-family:'Space Grotesk',system-ui,sans-serif;background:radial-gradient(circle at top,#18202b 0%,var(--bg) 42%) fixed;overflow-x:hidden}body::before{content:'';position:fixed;inset:0;background:linear-gradient(135deg,rgba(200,162,77,.08),transparent 30%,rgba(255,255,255,.03));pointer-events:none} .app{max-width:1200px;margin:0 auto;padding:24px;position:relative} .topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:22px}.brand{display:flex;align-items:center;gap:14px}.sigil{width:42px;height:42px;border-radius:14px;background:linear-gradient(145deg,rgba(242,216,136,.22),rgba(200,162,77,.06));border:1px solid rgba(242,216,136,.2);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 10px 30px rgba(0,0,0,.25)}h1{margin:0;font-family:'Fraunces',serif;font-weight:700;letter-spacing:.02em;font-size:clamp(1.55rem,3vw,2.4rem)}.sub{color:rgba(246,239,220,.66);font-size:.95rem}.layout{display:grid;grid-template-columns:1.1fr .9fr;gap:22px}.panel{background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));border:1px solid rgba(246,239,220,.08);border-radius:var(--r);box-shadow:var(--shadow);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);overflow:hidden}.hero{padding:28px}.vaultWrap{display:grid;grid-template-columns:minmax(240px,320px) 1fr;gap:24px;align-items:center}.ringBox{position:relative;width:min(320px,100%);aspect-ratio:1;border-radius:50%;display:grid;place-items:center;justify-self:center}.ringBox::before{content:'';position:absolute;inset:14px;border-radius:50%;background:radial-gradient(circle at 35% 30%,rgba(242,216,136,.12),transparent 52%),linear-gradient(180deg,rgba(255,255,255,.03),rgba(0,0,0,.22));box-shadow:inset 0 0 0 1px rgba(246,239,220,.07),inset 0 18px 40px rgba(0,0,0,.35),0 0 30px rgba(200,162,77,.08)}.ringGlow{position:absolute;inset:-2px;border-radius:50%;filter:blur(22px);background:radial-gradient(circle,rgba(242,216,136,.28),transparent 58%);opacity:0;transition:opacity .35s var(--ease)}.ringBox.updating .ringGlow{opacity:1;animation:pulse .9s var(--ease)}svg{width:100%;height:100%;transform:rotate(-90deg)}.track{stroke:rgba(255,255,255,.08)}.progress{stroke:url(#goldGrad);filter:url(#softGlow);stroke-dasharray:628;stroke-dashoffset:628;transition:stroke-dashoffset 1s var(--ease)}.center{position:absolute;inset:22%;border-radius:50%;display:grid;place-items:center;text-align:center;background:radial-gradient(circle at 35% 25%,rgba(255,255,255,.06),rgba(255,255,255,.02) 52%,rgba(0,0,0,.18));box-shadow:inset 0 0 0 1px rgba(255,255,255,.05),0 18px 50px rgba(0,0,0,.25)}.percent{font-family:'IBM Plex Mono',monospace;font-size:clamp(1.5rem,3vw,2.5rem);font-weight:700;color:var(--gold2)}.label{font-size:.82rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(246,239,220,.55)}.vaultMeta{display:grid;gap:12px}.money{font-family:'Fraunces',serif;font-size:clamp(2.1rem,5vw,4rem);font-weight:700;line-height:1.05}.money.pulse{animation:moneyPulse .55s var(--ease)}.metaGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.stat{padding:16px;border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.018));border:1px solid rgba(255,255,255,.06)}.stat small{display:block;color:rgba(246,239,220,.55);margin-bottom:6px}.stat strong{font-family:'IBM Plex Mono',monospace;font-size:1.05rem}.goldBtn,.ghostBtn,.dangerBtn{appearance:none;border:0;border-radius:16px;padding:14px 18px;font:600 .98rem 'Space Grotesk',sans-serif;color:var(--cream);cursor:pointer;transition:transform .18s var(--ease),box-shadow .18s var(--ease),background .18s var(--ease),border-color .18s var(--ease)}.goldBtn{background:linear-gradient(135deg,#ddbe72,#a87a2a);box-shadow:0 14px 28px rgba(200,162,77,.24)}.goldBtn:hover,.ghostBtn:hover,.dangerBtn:hover,.ledgerItem button:hover{transform:translateY(-1px)}.goldBtn:active,.ghostBtn:active,.dangerBtn:active{transform:translateY(1px) scale(.99)}.ghostBtn,.dangerBtn{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}.dangerBtn{color:#ffb4a7}.section{padding:22px}.form{display:grid;grid-template-columns:1fr 1fr auto;gap:12px;align-items:end}.field{display:grid;gap:8px}.field label{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(246,239,220,.62)}input{width:100%;padding:14px 15px;border-radius:16px;background:rgba(9,13,18,.55);border:1px solid rgba(246,239,220,.1);color:var(--cream);outline:none;font:500 1rem 'Space Grotesk',sans-serif;transition:border-color .18s var(--ease),box-shadow .18s var(--ease),transform .18s var(--ease)}input:focus{border-color:rgba(242,216,136,.55);box-shadow:0 0 0 4px rgba(242,216,136,.09),0 8px 28px rgba(0,0,0,.22);transform:translateY(-1px)}.ledgerHeader{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}.ledger{display:grid;gap:10px;max-height:520px;overflow:auto;padding-right:4px}.ledgerItem{display:grid;grid-template-columns:1.1fr .9fr auto;gap:10px;align-items:center;padding:14px 14px;border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.06)}.ledgerItem .date{font-family:'IBM Plex Mono',monospace;color:rgba(246,239,220,.6);font-size:.88rem}.ledgerItem .amt{font-weight:700}.ledgerItem button{justify-self:end;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.08);background:rgba(179,69,47,.13);color:#ffcabf;cursor:pointer;transition:transform .18s var(--ease)}.levels{display:grid;gap:10px}.levelRow{display:flex;justify-content:space-between;gap:10px;padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.05)}.levelRow.active{border-color:rgba(242,216,136,.38);box-shadow:inset 0 0 0 1px rgba(242,216,136,.08),0 0 0 4px rgba(242,216,136,.05)}.toast,.banner{position:fixed;left:50%;transform:translateX(-50%) translateY(24px);opacity:0;pointer-events:none;z-index:50;transition:opacity .35s var(--ease),transform .35s var(--ease)}.toast{top:18px;background:rgba(12,16,21,.86);border:1px solid rgba(242,216,136,.22);color:var(--cream);padding:14px 18px;border-radius:999px;box-shadow:0 14px 40px rgba(0,0,0,.35)}.banner{bottom:20px;background:linear-gradient(135deg,rgba(242,216,136,.18),rgba(200,162,77,.08));border:1px solid rgba(242,216,136,.2);padding:16px 20px;border-radius:18px;backdrop-filter:blur(14px)}.show{opacity:1;transform:translateX(-50%) translateY(0)}.big{font-size:1.2rem;font-weight:700}.spark,.coin,.note,.flash,.particle{position:fixed;pointer-events:none;z-index:40}.spark{width:6px;height:6px;border-radius:50%;background:radial-gradient(circle,var(--gold2),var(--gold));box-shadow:0 0 12px rgba(242,216,136,.9)}.coin{width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#fff4c8 0%,#f3d87d 30%,#b88423 100%);box-shadow:0 0 14px rgba(242,216,136,.65)}.note{font-family:'IBM Plex Mono',monospace;font-weight:700;color:#ffe89a;text-shadow:0 0 10px rgba(242,216,136,.4)}.flash{inset:0;background:radial-gradient(circle at center,rgba(242,216,136,.18),rgba(242,216,136,.04) 40%,transparent 68%);opacity:0;animation:flash .6s ease-out}.particle{border-radius:50%;background:rgba(242,216,136,.95);box-shadow:0 0 12px rgba(242,216,136,.75)}.vaultShake{animation:shake .65s cubic-bezier(.2,.8,.2,1)}.levelModal{position:fixed;inset:0;display:grid;place-items:center;background:rgba(2,5,9,.5);backdrop-filter:blur(10px);opacity:0;pointer-events:none;transition:opacity .25s var(--ease);z-index:60}.levelModal.show{opacity:1;pointer-events:auto}.modalCard{width:min(92vw,420px);padding:28px;border-radius:28px;background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.03));border:1px solid rgba(242,216,136,.18);box-shadow:0 30px 90px rgba(0,0,0,.55);text-align:center;transform:translateY(16px) scale(.96);transition:transform .35s var(--ease)}.levelModal.show .modalCard{transform:translateY(0) scale(1)}.modalCard h2{font-family:'Fraunces',serif;font-size:2.1rem;margin:0 0 8px}.modalCard p{margin:0;color:rgba(246,239,220,.7)}.footerNote{margin-top:14px;font-family:'IBM Plex Mono',monospace;color:rgba(246,239,220,.45);font-size:.8rem;text-align:center}@keyframes shake{10%,90%{transform:translate3d(-1px,0,0)}20%,80%{transform:translate3d(2px,0,0)}30%,50%,70%{transform:translate3d(-4px,0,0)}40%,60%{transform:translate3d(4px,0,0)}}@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.02)}}@keyframes moneyPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}@keyframes flash{0%{opacity:0}20%{opacity:1}100%{opacity:0}}@media (max-width: 980px){.layout,.vaultWrap,.form{grid-template-columns:1fr}.topbar{align-items:flex-start;flex-direction:column}.ringBox{max-width:360px}.metaGrid{grid-template-columns:1fr 1fr}}@media (max-width: 640px){.app{padding:16px}.hero,.section{padding:18px}.metaGrid,.ledgerItem{grid-template-columns:1fr}.ledgerItem button{justify-self:start}.ledgerHeader{flex-direction:column;align-items:flex-start}.money{font-size:clamp(2rem,12vw,3.3rem)}}
+  </style>
 </head>
 <body>
-<div class="bg-grid"></div>
-<div class="wrap">
+  <div class="app">
+    <div class="topbar">
+      <div class="brand"><div class="sigil"></div><div><h1>Savings Vault</h1><div class="sub">Luxury saving experience · secure local vault</div></div></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="ghostBtn" id="resetBtn">Reset Vault</button><button class="goldBtn" id="missionBtn">Mission Status</button></div>
+    </div>
 
-  <header>
-    <div class="eyebrow">Personal Ledger</div>
-    <h1>Savings Vault
-      <span class="sub">Every deposit, one step closer to ₹35,000</span>
-    </h1>
-  </header>
+    <div class="layout">
+      <section class="panel hero" id="vaultPanel">
+        <div class="vaultWrap">
+          <div class="ringBox" id="ringBox">
+            <div class="ringGlow"></div>
+            <svg viewBox="0 0 220 220" aria-hidden="true">
+              <defs>
+                <linearGradient id="goldGrad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#f6efdc"/>
+                  <stop offset="45%" stop-color="#f2d888"/>
+                  <stop offset="100%" stop-color="#c8a24d"/>
+                </linearGradient>
+                <filter id="softGlow"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              </defs>
+              <circle class="track" cx="110" cy="110" r="100" fill="none" stroke-width="14"/>
+              <circle id="progressRing" class="progress" cx="110" cy="110" r="100" fill="none" stroke-width="14" stroke-linecap="round"/>
+            </svg>
+            <div class="center">
+              <div>
+                <div class="percent" id="percentText">0.00%</div>
+                <div class="label">Saved</div>
+              </div>
+            </div>
+          </div>
+          <div class="vaultMeta">
+            <div>
+              <div class="sub">Current vault balance</div>
+              <div class="money" id="savedText">₹0</div>
+              <div class="sub" style="margin-top:8px">Target: ₹35,000 · <span id="remainingText">₹35,000 remaining</span></div>
+            </div>
+            <div class="metaGrid">
+              <div class="stat"><small>Level</small><strong id="levelText">Level 1</strong></div>
+              <div class="stat"><small>Unlocked</small><strong id="achText">0 achievements</strong></div>
+            </div>
+            <div class="metaGrid">
+              <div class="stat"><small>Last deposit</small><strong id="lastDepositText">—</strong></div>
+              <div class="stat"><small>Milestone</small><strong id="milestoneText">Start saving</strong></div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-  <div class="vault" id="vault">
-    <span class="rivet tl"></span><span class="rivet tr"></span>
-    <span class="rivet bl"></span><span class="rivet br"></span>
-    <div class="loading-note" id="loadingNote">Opening the vault…</div>
+      <aside class="panel section">
+        <div class="ledgerHeader"><h2 style="margin:0;font-family:'Fraunces',serif">Vault Levels</h2><div class="sub">RPG progress ladder</div></div>
+        <div class="levels" id="levels"></div>
+      </aside>
+    </div>
+
+    <div class="layout" style="margin-top:22px;grid-template-columns:1.05fr .95fr;align-items:start">
+      <section class="panel section">
+        <div class="ledgerHeader"><h2 style="margin:0;font-family:'Fraunces',serif">Deposit Funds</h2><div class="sub">Enter amount and date</div></div>
+        <form class="form" id="depositForm">
+          <div class="field"><label for="amountInput">Amount</label><input id="amountInput" inputmode="decimal" type="number" min="1" step="1" placeholder="e.g. 2500" autocomplete="off" autofocus></div>
+          <div class="field"><label for="dateInput">Date</label><input id="dateInput" type="date"></div>
+          <button class="goldBtn" id="depositBtn" type="submit">Deposit</button>
+        </form>
+        <div class="footerNote">Press Enter to deposit. Data persists in localStorage.</div>
+      </section>
+
+      <section class="panel section">
+        <div class="ledgerHeader"><h2 style="margin:0;font-family:'Fraunces',serif">Ledger</h2><button class="dangerBtn" id="clearAchBtn" title="Clear achievement cache only">Clear Achievements</button></div>
+        <div class="ledger" id="ledger"></div>
+      </section>
+    </div>
   </div>
 
-</div>
+  <div class="toast" id="toast"></div>
+  <div class="banner" id="banner"></div>
+  <div class="levelModal" id="levelModal"><div class="modalCard"><h2 id="modalTitle">LEVEL UP</h2><p id="modalText">New power unlocked.</p></div></div>
 
-<script>
-const TARGET = 35000;
-const STORAGE_KEY = 'passbook-entries';
+  <script>
+    const TARGET = 35000;
+    const LEVELS = [0,3000,7000,12000,17000,22000,27000,32000,35000];
+    const MILESTONES = [10,25,50,75,90,100];
+    const ACHIEVEMENTS = [
+      {id:'first', name:'First Deposit', test:s=>s.history.length>=1},
+      {id:'1k', name:'Saved ₹1000', test:s=>s.total>=1000},
+      {id:'5k', name:'Saved ₹5000', test:s=>s.total>=5000},
+      {id:'10k', name:'Saved ₹10000', test:s=>s.total>=10000},
+      {id:'20k', name:'Saved ₹20000', test:s=>s.total>=20000},
+      {id:'master', name:'Vault Master', test:s=>s.total>=TARGET}
+    ];
 
-let entries = [];
+    const els = {
+      vaultPanel: document.getElementById('vaultPanel'), ringBox: document.getElementById('ringBox'), ring: document.getElementById('progressRing'), percentText: document.getElementById('percentText'), savedText: document.getElementById('savedText'), remainingText: document.getElementById('remainingText'), levelText: document.getElementById('levelText'), achText: document.getElementById('achText'), lastDepositText: document.getElementById('lastDepositText'), milestoneText: document.getElementById('milestoneText'), levels: document.getElementById('levels'), ledger: document.getElementById('ledger'), form: document.getElementById('depositForm'), amountInput: document.getElementById('amountInput'), dateInput: document.getElementById('dateInput'), toast: document.getElementById('toast'), banner: document.getElementById('banner'), modal: document.getElementById('levelModal'), modalTitle: document.getElementById('modalTitle'), modalText: document.getElementById('modalText'), resetBtn: document.getElementById('resetBtn'), missionBtn: document.getElementById('missionBtn'), clearAchBtn: document.getElementById('clearAchBtn')
+    };
 
-function todayStr(){
-  const d = new Date();
-  const off = d.getTimezoneOffset();
-  const local = new Date(d.getTime() - off*60000);
-  return local.toISOString().slice(0,10);
-}
+    const fmt = n => '₹' + Math.round(n).toLocaleString('en-IN');
+    const sKey = 'savingsVaultStateV1';
+    const aKey = 'savingsVaultAchievementsV1';
+    const mKey = 'savingsVaultMilestonesV1';
+    let state = load();
+    let anim = {from: state.total, to: state.total, start: 0, dur: 850, running: false};
+    let percentAnim = {from: percent(state.total), to: percent(state.total), start: 0, dur: 900, running: false};
+    const C = 2*Math.PI*100;
+    els.ring.style.strokeDasharray = C;
 
-function fmtINR(n){
-  return '₹' + Math.round(n).toLocaleString('en-IN');
-}
-
-function fmtDate(iso){
-  const d = new Date(iso + 'T00:00:00');
-  return d.toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'2-digit'});
-}
-
-async function loadEntries(){
-    const data = localStorage.getItem(STORAGE_KEY);
-
-    if(data){
-        entries = JSON.parse(data);
-    }else{
-        entries = [];
+    function load(){
+      const saved = JSON.parse(localStorage.getItem(sKey) || 'null');
+      return saved && Array.isArray(saved.history) ? saved : {total:0, history:[], level:1, milestones:[], achievements:[]};
     }
-
-    render();
-}
-
-async function saveEntries(){
-    localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(entries)
-    );
-}
-
-function totalSaved(){
-  return entries.reduce((s,e)=>s+e.amount,0);
-}
-
-function buildUI(){
-  const el = document.getElementById('vault');
-  el.innerHTML = `
-    <span class="rivet tl"></span><span class="rivet tr"></span>
-    <span class="rivet bl"></span><span class="rivet br"></span>
-
-    <div class="dial-row">
-      <div class="dial">
-        <svg viewBox="0 0 118 118">
-          <defs>
-            <linearGradient id="brassGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#f2d888"/>
-              <stop offset="100%" stop-color="#8a6c2e"/>
-            </linearGradient>
-          </defs>
-          <circle class="dial-track" cx="59" cy="59" r="49"/>
-          <circle class="dial-fill" id="dialFill" cx="59" cy="59" r="49"
-            stroke-dasharray="307.9" stroke-dashoffset="307.9"/>
-        </svg>
-        <div class="dial-label">
-          <div class="dial-pct"><span id="pctNum">0</span><span>%</span></div>
-          <div class="dial-tag">saved</div>
-        </div>
-      </div>
-      <div class="figures">
-        <div class="row saved"><span>Total saved</span><b id="savedAmt">₹0</b></div>
-        <div class="row"><span>Target</span><b>${fmtINR(TARGET)}</b></div>
-        <div class="row remaining"><span>Remaining</span><b id="remainAmt">${fmtINR(TARGET)}</b></div>
-        <div class="celebrate" id="celebrateMsg">🎉 Target reached — well saved!</div>
-      </div>
-    </div>
-
-    <div class="entry-form">
-      <label>Enter savings amount</label>
-      <div class="entry-fields">
-        <div class="amount-box">
-          <span class="rupee">₹</span>
-          <input type="number" id="amountInput" placeholder="e.g. 500" min="1" step="1">
-        </div>
-        <div class="date-box">
-          <input type="date" id="dateInput">
-        </div>
-        <button class="add-btn" id="addBtn">Add Entry →</button>
-      </div>
-      <div class="form-error" id="formError"></div>
-    </div>
-
-    <div class="history">
-      <div class="history-head">
-        <h2>History</h2>
-        <span class="count" id="entryCount">0 entries</span>
-      </div>
-      <div class="ledger" id="ledger"></div>
-    </div>
-
-    <div class="footer-strip">
-      <span>Saved automatically to your vault</span>
-      <button class="reset-link" id="resetBtn">Reset all</button>
-    </div>
-  `;
-
-  document.getElementById('dateInput').value = todayStr();
-  document.getElementById('dateInput').max = todayStr();
-
-  document.getElementById('addBtn').addEventListener('click', handleAdd);
-  document.getElementById('amountInput').addEventListener('keydown', (e)=>{
-    if(e.key === 'Enter') handleAdd();
-  });
-  document.getElementById('resetBtn').addEventListener('click', handleReset);
-}
-
-async function handleAdd(){
-  const amtInput = document.getElementById('amountInput');
-  const dateInput = document.getElementById('dateInput');
-  const errBox = document.getElementById('formError');
-
-  const amount = parseFloat(amtInput.value);
-  const date = dateInput.value || todayStr();
-
-  if(!amount || amount <= 0){
-    errBox.textContent = 'Please enter a valid amount (greater than 0)';
-    return;
-  }
-  errBox.textContent = '';
-
-  const entry = {
-    id: Date.now() + '-' + Math.random().toString(36).slice(2,7),
-    date,
-    amount,
-    createdAt: Date.now()
-  };
-  entries.push(entry);
-  await saveEntries();
-
-  amtInput.value = '';
-  amtInput.focus();
-  renderDial();
-  renderLedger();
-}
-
-async function handleDelete(id){
-  entries = entries.filter(e => e.id !== id);
-  await saveEntries();
-  renderDial();
-  renderLedger();
-}
-
-async function handleReset(){
-  if(!confirm('Reset the entire vault? This cannot be undone.')) return;
-  entries = [];
-  await saveEntries();
-  renderDial();
-  renderLedger();
-}
-
-function renderDial(){
-  const total = totalSaved();
-  const rawPct = (total / TARGET) * 100;
-const pct = Math.min(100, rawPct);
-  const circumference = 307.9;
-  const offset = circumference - (Math.min(pct,100) / 100) * circumference;
-
-  document.getElementById('dialFill').style.strokeDashoffset = offset;
-  document.getElementById('pctNum').textContent = pct.toFixed(2);
-  document.getElementById('savedAmt').textContent = fmtINR(total);
-  document.getElementById('remainAmt').textContent = fmtINR(Math.max(0, TARGET-total));
-
-  const celebrate = document.getElementById('celebrateMsg');
-  if(total >= TARGET){
-    celebrate.classList.add('show');
-  } else {
-    celebrate.classList.remove('show');
-  }
-}
-
-function renderLedger(){
-  const ledgerEl = document.getElementById('ledger');
-  document.getElementById('entryCount').textContent = entries.length + ' entries';
-
-  if(entries.length === 0){
-    ledgerEl.innerHTML = `<div class="empty-state">No entries yet — add your first deposit above</div>`;
-    return;
-  }
-
-  const sorted = [...entries].sort((a,b)=>{
-    if(a.date !== b.date) return b.date.localeCompare(a.date);
-    return b.createdAt - a.createdAt;
-  });
-
-  ledgerEl.innerHTML = sorted.map(e => `
-    <div class="entry-row">
-      <div class="stamp">✓</div>
-      <div class="entry-date">${fmtDate(e.date)}</div>
-      <div class="entry-amt">+${fmtINR(e.amount)}</div>
-      <button class="del-btn" data-id="${e.id}" title="Delete">✕</button>
-    </div>
-  `).join('');
-
-  ledgerEl.querySelectorAll('.del-btn').forEach(btn=>{
-    btn.addEventListener('click', ()=> handleDelete(btn.getAttribute('data-id')));
-  });
-}
-
-function render(){
-  buildUI();
-  renderDial();
-  renderLedger();
-}
-
-loadEntries();
-</script>
+    function save(){ localStorage.setItem(sKey, JSON.stringify(state)); localStorage.setItem(aKey, JSON.stringify(state.achievements)); localStorage.setItem(mKey, JSON.stringify(state.milestones)); }
+    function percent(total){ return Math.min(100, (total/TARGET)*100); }
+    function levelFor(total){ let l = 1; for(let i=0;i<LEVELS.length;i++) if(total>=LEVELS[i]) l = i+1; return l; }
+    function levelName(l){ return 'Level ' + l; }
+    function showToast(msg){ els.toast.textContent = msg; els.toast.classList.add('show'); clearTimeout(showToast.t); showToast.t = setTimeout(()=>els.toast.classList.remove('show'), 1800); }
+    function showBanner(html){ els.banner.innerHTML = html; els.banner.classList.add('show'); clearTimeout(showBanner.t); showBanner.t = setTimeout(()=>els.banner.classList.remove('show'), 2200); }
+    function showLevelUp(level){ els.modalTitle.textContent = 'LEVEL UP'; els.modalText.textContent = levelName(level) + ' unlocked.'; els.modal.classList.add('show'); setTimeout(()=>els.modal.classList.remove('show'), 1700); }
+    function updateLevels(){ els.levels.innerHTML = LEVELS.map((amt, i)=>`<div class="levelRow ${state.level===i+1?'active':''}"><span>${levelName(i+1)}</span><span>${fmt(amt)}</span></div>`).join(''); }
+    function updateLedger(){ els.ledger.innerHTML = state.history.length ? state.history.map((d, i)=>`<div class="ledgerItem"><div><div class="date">${d.date}</div><div class="amt">${fmt(d.amount)}</div></div><div class="date">Deposit #${state.history.length - i}</div><button data-id="${d.id}">Delete</button></div>`).join('') : '<div class="sub">No deposits yet. Your vault is waiting.</div>'; }
+    function updateAchievements(){ els.achText.textContent = state.achievements.length + ' achievements'; }
+    function renderStatic(){ els.levelText.textContent = levelName(state.level); els.lastDepositText.textContent = state.history[0] ? state.history[0].date : '—'; updateLevels(); updateLedger(); updateAchievements(); syncNumbers(true); }
+    function syncNumbers(immediate=false){ const p = percent(state.total); const dash = C * (1 - p/100); els.ring.style.strokeDashoffset = dash; els.percentText.textContent = p.toFixed(2) + '%'; els.savedText.textContent = fmt(state.total); els.remainingText.textContent = p>=100 ? 'Target achieved' : fmt(Math.max(0, TARGET - state.total)) + ' remaining'; els.levelText.textContent = levelName(state.level); els.milestoneText.textContent = p>=100 ? 'Mission Complete' : nearestMilestoneText(p); if(immediate){ els.ring.style.transition='none'; requestAnimationFrame(()=>els.ring.style.transition='stroke-dashoffset 1s var(--ease)'); } }
+    function nearestMilestoneText(p){ const hit = [...MILESTONES].reverse().find(m=>p>=m); if(!hit) return 'Start saving'; if(hit===100) return 'Mission Complete'; if(hit===50) return 'Halfway There'; if(hit===75) return 'Almost Done'; return hit + '% Saved'; }
+    function animateValue(from, to, onUpdate, duration=850){ const start = performance.now(); function frame(now){ const t = Math.min(1,(now-start)/duration); const eased = 1 - Math.pow(1-t, 3); onUpdate(from + (to-from)*eased); if(t<1) requestAnimationFrame(frame); } requestAnimationFrame(frame); }
+    function updateAnimated(oldTotal,newTotal){ anim={from:oldTotal,to:newTotal,start:performance.now(),dur:900,running:true}; percentAnim={from:percent(oldTotal),to:percent(newTotal),start:performance.now(),dur:900,running:true}; els.ringBox.classList.add('updating'); els.savedText.classList.add('pulse'); setTimeout(()=>{els.ringBox.classList.remove('updating'); els.savedText.classList.remove('pulse')}, 950); requestAnimationFrame(tick); }
+    function tick(now){ if(anim.running){ const t=Math.min(1,(now-anim.start)/anim.dur); const e=1-Math.pow(1-t,3); const val=anim.from+(anim.to-anim.from)*e; els.savedText.textContent=fmt(val); const rp=percentAnim.from+(percentAnim.to-percentAnim.from)*e; els.percentText.textContent=rp.toFixed(2)+'%'; els.ring.style.strokeDashoffset=C*(1-rp/100); els.remainingText.textContent=rp>=100?'Target achieved':fmt(Math.max(0,TARGET-val))+' remaining'; if(t<1) requestAnimationFrame(tick); else anim.running=false; } }
+    function coinBurst(){ for(let i=0;i<16;i++) spawnParticle('coin',els.ringBox); }
+    function spawnParticle(cls, origin){ const r=origin.getBoundingClientRect(); const el=document.createElement('div'); el.className=cls; document.body.appendChild(el); const x=r.left+r.width/2+(Math.random()*160-80); const y=r.top+r.height/2+(Math.random()*160-80); el.style.left=x+'px'; el.style.top=y+'px'; const dx=(Math.random()*140-70), dy=-(120+Math.random()*160), s=0.7+Math.random()*1.2, dur=900+Math.random()*900; const start=performance.now(); function f(now){ const t=Math.min(1,(now-start)/dur); const e=t*t*(3-2*t); el.style.transform=`translate(${dx*e}px, ${dy*e}px) scale(${s*(1-t)}) rotate(${t*240}deg)`; el.style.opacity=String(1-t); if(t<1) requestAnimationFrame(f); else el.remove(); } requestAnimationFrame(f); }
+    function sparkles(count=10){ for(let i=0;i<count;i++) spawnParticle('spark', els.ringBox); }
+    function flyingNote(){ const btn=els.form.querySelector('button'); const b=btn.getBoundingClientRect(), r=els.ringBox.getBoundingClientRect(); const el=document.createElement('div'); el.className='note'; el.textContent='₹'; document.body.appendChild(el); el.style.left=(b.left+b.width/2)+'px'; el.style.top=(b.top+b.height/2)+'px'; const sx=b.left+b.width/2, sy=b.top+b.height/2, ex=r.left+r.width/2, ey=r.top+r.height/2; const start=performance.now(); const dur=900; function f(now){ const t=Math.min(1,(now-start)/dur); const e=1-Math.pow(1-t,3); const x=sx+(ex-sx)*e + Math.sin(t*8)*30; const y=sy+(ey-sy)*e - Math.sin(t*Math.PI)*70; el.style.transform=`translate(${x-sx}px, ${y-sy}px) scale(${1-t*.2})`; el.style.opacity=String(1-t*.1); if(t<1) requestAnimationFrame(f); else el.remove(); } requestAnimationFrame(f); }
+    function screenFlash(){ const f=document.createElement('div'); f.className='flash'; document.body.appendChild(f); setTimeout(()=>f.remove(),650); }
+    function vaultShake(){ els.vaultPanel.classList.remove('vaultShake'); void els.vaultPanel.offsetWidth; els.vaultPanel.classList.add('vaultShake'); }
+    function maybeConfetti(big=false){ if(typeof confetti==='function'){ confetti({particleCount: big?220:70, spread: big?100:70, origin:{y:.58}, colors:['#f6efdc','#f2d888','#c8a24d','#3fa679','#ffffff']}); if(big) setTimeout(()=>confetti({particleCount:140, spread:120, origin:{y:.35}}), 260); } }
+    function milestoneCheck(oldP,newP){ MILESTONES.forEach(m=>{ if(newP>=m && !state.milestones.includes(m)){ state.milestones.push(m); const msg = m===50 ? 'Halfway There' : m===75 ? 'Almost Done' : m===100 ? 'Mission Complete' : `🎉 ${m}% Saved`; showBanner(`<div class="big">${msg}</div>`); maybeConfetti(m>=50); } }); }
+    function achievementCheck(){ ACHIEVEMENTS.forEach(a=>{ if(a.test(state) && !state.achievements.includes(a.id)){ state.achievements.push(a.id); showToast('Achievement unlocked: ' + a.name); maybeConfetti(false); } }); }
+    function levelCheck(oldLevel,newLevel){ if(newLevel>oldLevel){ showLevelUp(newLevel); maybeConfetti(false); } }
+    function missionComplete(){ if(state.total>=TARGET){ els.milestoneText.textContent='Mission Complete'; showBanner('<div class="big">MISSION COMPLETE</div><div>Vault fully funded.</div>'); maybeConfetti(true); setTimeout(()=>{document.body.style.boxShadow='inset 0 0 140px rgba(242,216,136,.12)';},100); } }
+    function renderAll(){ renderStatic(); save(); }
+    els.form.addEventListener('submit', e=>{ e.preventDefault(); const amount = Number(els.amountInput.value); const date = els.dateInput.value || new Date().toISOString().slice(0,10); if(!Number.isFinite(amount) || amount<=0){ showToast('Enter a positive amount.'); els.amountInput.focus(); return; } const oldTotal = state.total; const oldLevel = state.level; state.history.unshift({id:crypto.randomUUID(), amount:Math.round(amount), date}); state.total = Math.round(state.history.reduce((s,x)=>s+x.amount,0)); state.level = levelFor(state.total); updateLedger(); updateLevels(); updateAchievements(); state.history = state.history.sort((a,b)=> new Date(b.date)-new Date(a.date) || b.amount-a.amount); const newP=percent(state.total), oldP=percent(oldTotal); save(); updateAnimated(oldTotal, state.total); vaultShake(); screenFlash(); sparkles(14); flyingNote(); if(amount>1000) coinBurst(); milestoneCheck(oldP,newP); achievementCheck(); levelCheck(oldLevel, state.level); missionComplete(); els.amountInput.value=''; els.amountInput.focus(); });
+    els.ledger.addEventListener('click', e=>{ const btn = e.target.closest('button[data-id]'); if(!btn) return; const id=btn.dataset.id; const oldTotal = state.total; const oldLevel = state.level; state.history = state.history.filter(x=>x.id!==id); state.total = Math.round(state.history.reduce((s,x)=>s+x.amount,0)); state.level = levelFor(state.total); save(); updateLedger(); updateLevels(); updateAchievements(); updateAnimated(oldTotal,state.total); levelCheck(oldLevel,state.level); renderAll(); });
+    els.resetBtn.addEventListener('click', ()=>{ state={total:0,history:[],level:1,milestones:[],achievements:[]}; localStorage.removeItem(sKey); localStorage.removeItem(aKey); localStorage.removeItem(mKey); renderAll(); showToast('Vault reset.'); els.amountInput.focus(); });
+    els.clearAchBtn.addEventListener('click', ()=>{ state.achievements=[]; localStorage.removeItem(aKey); updateAchievements(); showToast('Achievements cleared.'); });
+    els.missionBtn.addEventListener('click', ()=>{ if(state.total>=TARGET) missionComplete(); else showBanner(`<div class="big">${fmt(TARGET-state.total)} left</div><div>to unlock the full vault.</div>`); });
+    els.amountInput.focus(); els.dateInput.value = new Date().toISOString().slice(0,10); renderAll();
+  </script>
 </body>
 </html>
