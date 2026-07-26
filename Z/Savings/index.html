@@ -641,12 +641,13 @@ async function handleReset(){
 
 function renderDial(){
   const total = totalSaved();
-  const pct = Math.min(100, Math.round((total/TARGET)*100));
+  const rawPct = (total / TARGET) * 100;
+const pct = Math.min(100, rawPct);
   const circumference = 307.9;
-  const offset = circumference - (Math.min(pct,100)/100)*circumference;
+  const offset = circumference - (Math.min(pct,100) / 100) * circumference;
 
   document.getElementById('dialFill').style.strokeDashoffset = offset;
-  document.getElementById('pctNum').textContent = pct;
+  document.getElementById('pctNum').textContent = pct.toFixed(2);
   document.getElementById('savedAmt').textContent = fmtINR(total);
   document.getElementById('remainAmt').textContent = fmtINR(Math.max(0, TARGET-total));
 
