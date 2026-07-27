@@ -47,7 +47,7 @@
             <div>
               <div class="sub">Current vault balance</div>
               <div class="money" id="savedText">₹0</div>
-              <div class="sub" style="margin-top:8px">Target: ₹35,000 · <span id="remainingText">₹35,000 remaining</span></div>
+              <div class="sub" style="margin-top:8px">Target: ₹30,000 · <span id="remainingText">₹30,000 remaining</span></div>
             </div>
             <div class="metaGrid">
               <div class="stat"><small>Level</small><strong id="levelText">Level 1</strong></div>
@@ -90,8 +90,8 @@
   <div class="levelModal" id="levelModal"><div class="modalCard"><h2 id="modalTitle">LEVEL UP</h2><p id="modalText">New power unlocked.</p></div></div>
 
   <script>
-    const TARGET = 35000;
-    const LEVELS = [0,3000,7000,12000,17000,22000,27000,32000,35000];
+    const TARGET = 30000;
+    const LEVELS = [0,3000,6000,9000,12000,18000,22000,26000,30000];
     const MILESTONES = [10,25,50,75,90,100];
     const ACHIEVEMENTS = [
       {id:'first', name:'First Deposit', test:s=>s.history.length>=1},
