@@ -1,0 +1,95 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Petrol Pump Short / Excess</title>
+<style>
+body{font-family:Arial,sans-serif;background:#f4f4f4;margin:20px}
+.container{max-width:500px;margin:auto;background:#fff;padding:20px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+h2{text-align:center}
+label{display:block;margin-top:10px;font-weight:bold}
+input{width:100%;padding:10px;box-sizing:border-box}
+.result{margin-top:15px;padding:10px;background:#f7f7f7;border-radius:6px;font-weight:bold}
+.short{color:#c00}
+.excess{color:#090}
+</style>
+</head>
+<body>
+<div class="container">
+<h2>Petrol Pump Short / Excess</h2>
+
+<h3>Nozzle 1</h3>
+<label>Opening CumSale</label><input type="number" step="0.001" id="o1">
+<label>Closing CumSale</label><input type="number" step="0.001" id="c1">
+
+<h3>Nozzle 2</h3>
+<label>Opening CumSale</label><input type="number" step="0.001" id="o2">
+<label>Closing CumSale</label><input type="number" step="0.001" id="c2">
+
+<div class="result">Today's Sale: ₹ <span id="sale">0.00</span></div>
+
+<h3>Collections</h3>
+
+<label>Credit Vehicles</label><input type="number" step="0.01" id="credit">
+<label>Credit Lite Vehicles</label><input type="number" step="0.01" id="creditlite">
+<label>Total UPI</label><input type="number" step="0.01" id="upi">
+<label>Total Card</label><input type="number" step="0.01" id="card">
+<label>Deposited Cash</label><input type="number" step="0.01" id="deposit">
+<label>Rest Physical Cash</label><input type="number" step="0.01" id="cash">
+<label>Rest Physical Coin</label><input type="number" step="0.01" id="coin">
+
+<div class="result">Collected: ₹ <span id="collected">0.00</span></div>
+<div class="result" id="status">Difference: ₹0.00</div>
+
+<button onclick="clearData()" style="margin-top:15px;width:100%;padding:10px;">Clear Today's Data</button>
+
+</div>
+
+<script>
+const ids=["o1","c1","o2","c2","credit","creditlite","upi","card","deposit","cash","coin"];
+const today=new Date().toISOString().slice(0,10);
+if(localStorage.day!==today){
+ localStorage.clear();
+ localStorage.day=today;
+}
+ids.forEach(id=>{
+ const el=document.getElementById(id);
+ el.value=localStorage.getItem(id)||"";
+ el.oninput=()=>{
+   localStorage.setItem(id,el.value);
+   calc();
+ };
+});
+function num(id){return parseFloat(document.getElementById(id).value)||0;}
+function fmt(x){return x.toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function calc(){
+ let sale=(num("c1")-num("o1"))+(num("c2")-num("o2"));
+ if(sale<0)sale=0;
+ let collected=num("credit")+num("creditlite")+num("upi")+num("card")+num("deposit")+num("cash")+num("coin");
+ document.getElementById("sale").textContent=fmt(sale);
+ document.getElementById("collected").textContent=fmt(collected);
+ let diff=collected-sale;
+ let s=document.getElementById("status");
+ if(diff>0){
+   s.className="result excess";
+   s.innerHTML="🟢 Excess: ₹ "+fmt(diff);
+ }else if(diff<0){
+   s.className="result short";
+   s.innerHTML="🔴 Short: ₹ "+fmt(Math.abs(diff));
+ }else{
+   s.className="result";
+   s.innerHTML="✅ Perfect Balance";
+ }
+}
+function clearData(){
+ if(confirm("Clear today's data?")){
+   ids.forEach(id=>{localStorage.removeItem(id);document.getElementById(id).value="";});
+   calc();
+ }
+}
+calc();
+</script>
+</body>
+</html>
