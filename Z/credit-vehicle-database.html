@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Credit Vehicle Database</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --surface: #f7f7f7;
+      --border: #d8d8d8;
+      --text: #111111;
+      --muted: #666666;
+      --ok-bg: #eefaf0;
+      --ok-text: #146c2e;
+      --no-bg: #fff1f1;
+      --no-text: #b00020;
+      --btn: #efefef;
+      --btn-hover: #e3e3e3;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 16px;
+      line-height: 1.45;
+    }
+    .wrap {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+    h1 {
+      font-size: 24px;
+      margin: 0 0 16px;
+      font-weight: 700;
+    }
+    .box {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    .label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+    input, textarea, button {
+      font: inherit;
+    }
+    .search-input, .note-input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+    }
+    textarea.note-input {
+      min-height: 90px;
+      resize: vertical;
+    }
+    .suggestions {
+      border: 1px solid var(--border);
+      border-top: 0;
+      background: #fff;
+      max-height: 280px;
+      overflow-y: auto;
+      display: none;
+    }
+    .suggestion-item {
+      padding: 10px;
+      border-top: 1px solid #eee;
+      cursor: pointer;
+    }
+    .suggestion-item:first-child { border-top: 0; }
+    .suggestion-item:hover, .suggestion-item.active {
+      background: #f1f1f1;
+    }
+    .small {
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .status {
+      padding: 12px;
+      border: 1px solid var(--border);
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+    .verified { background: var(--ok-bg); color: var(--ok-text); }
+    .not-verified { background: var(--no-bg); color: var(--no-text); }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+    .row {
+      border: 1px solid var(--border);
+      background: #fff;
+      padding: 10px;
+    }
+    .row strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    button {
+      border: 1px solid var(--border);
+      background: var(--btn);
+      padding: 9px 12px;
+      cursor: pointer;
+    }
+    button:hover { background: var(--btn-hover); }
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .hidden { display: none; }
+    .meta { margin-top: 8px; }
+    .note-status { margin-top: 8px; color: var(--muted); font-size: 14px; min-height: 20px; }
+    @media (max-width: 480px) {
+      .wrap { padding: 12px; }
+      h1 { font-size: 22px; }
+      .actions button { flex: 1 1 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Credit Vehicle Database</h1>
+
+    <div class="box">
+      <label class="label" for="searchInput">Search</label>
+      <input id="searchInput" class="search-input" type="text" placeholder="Search by vehicle number, owner name, or category" autocomplete="off" />
+      <div id="suggestions" class="suggestions" aria-live="polite"></div>
+      <div class="small" style="margin-top:8px;">Live search with partial matching.</div>
+    </div>
+
+    <div id="statusBox" class="status not-verified">❌ NOT A CREDIT VEHICLE</div>
+
+    <div id="resultBox" class="box hidden">
+      <div class="grid">
+        <div class="row"><strong>Owner</strong><span id="ownerValue">-</span></div>
+        <div class="row"><strong>Vehicle Number</strong><span id="vehicleValue">-</span></div>
+        <div class="row"><strong>Category</strong><span id="categoryValue">-</span></div>
+        <div class="row">
+          <strong>Saved Note</strong>
+          <span id="savedNoteValue">No note saved.</span>
+          <div id="savedAtValue" class="meta small"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="noteBox" class="box hidden">
+      <label class="label" for="noteInput">Note</label>
+      <textarea id="noteInput" class="note-input" placeholder="Add note, edit note, or leave empty."></textarea>
+      <div class="actions">
+        <button id="saveBtn" type="button">Save</button>
+        <button id="editBtn" type="button">Edit</button>
+        <button id="deleteBtn" type="button">Delete</button>
+        <button id="copyBtn" type="button">Copy Details</button>
+      </div>
+      <div id="noteStatus" class="note-status"></div>
+    </div>
+  </div>
+
+  <script>
+    const ONE_YEAR_MS = 365 * 24 * 60 * 60 * 1000;
+
+    const vehicles = [
+      { owner: "Azus Tipper", vehicle: "KL11BK5949", category: "Tipper" },
+      { owner: "Azus Tipper", vehicle: "KL10AZ6758", category: "Tipper" },
+      { owner: "Azus Tipper", vehicle: "KL53M8438", category: "Tipper" },
+
+      { owner: "Athimannil", vehicle: "HR70D7337", category: "Vehicle" },
+      { owner: "Athimannil", vehicle: "KL01CF3773", category: "Vehicle" },
+      { owner: "Athimannil", vehicle: "KL10AG2063", category: "Vehicle" },
+      { owner: "Athimannil", vehicle: "KL10AN5454", category: "Vehicle" },
+      { owner: "Athimannil", vehicle: "KL10BB5116", category: "Vehicle" },
+      { owner: "Athimannil", vehicle: "KL10BD5255", category: "Vehicle" },
+      { owner: "Athimannil", vehicle: "KL10BJ7706", category: "Vehicle" },
+      { owner: "Athimannil", vehicle: "KL13AR1515", category: "Vehicle" },
+      { owner: "Athimannil", vehicle: "KL840607", category: "Vehicle" },
+
+      { owner: "AN traders", vehicle: "KL53T1768", category: "Lorry" },
+      { owner: "AN traders", vehicle: "KL53T1793", category: "Lorry" },
+      { owner: "AN traders", vehicle: "KL53T2067", category: "Lorry" },
+      { owner: "AN traders", vehicle: "KL53U1008", category: "Lorry" },
+      { owner: "AN traders", vehicle: "KL53U6971", category: "Lorry" },
+      { owner: "AN traders", vehicle: "KL53V2527", category: "Lorry" },
+
+      { owner: "Beyond", vehicle: "KL05AL7887", category: "Vehicle" },
+      { owner: "Beyond", vehicle: "KL10AR2905", category: "Vehicle" },
+      { owner: "Beyond", vehicle: "KL10AV6100", category: "Vehicle" },
+      { owner: "Beyond", vehicle: "KL10AV6136", category: "Vehicle" },
+      { owner: "Beyond", vehicle: "KL10AX58", category: "Vehicle" },
+      { owner: "Beyond", vehicle: "KL10AY6583", category: "Vehicle" },
+      { owner: "Beyond", vehicle: "KL10BA7713", category: "Vehicle" },
+      { owner: "Beyond", vehicle: "KL10BB5919", category: "Vehicle" },
+      { owner: "Beyond", vehicle: "KL10BE6634", category: "Vehicle" },
+      { owner: "Beyond", vehicle: "KL10BF5690", category: "Vehicle" },
+      { owner: "Beyond", vehicle: "KL10BG8347", category: "Vehicle" },
+      { owner: "Beyond", vehicle: "KL10BG8444", category: "Vehicle" },
+      { owner: "Beyond", vehicle: "KL10BJ6628", category: "Vehicle" },
+      { owner: "Beyond", vehicle: "KL13AM0313", category: "Vehicle" },
+      { owner: "Beyond", vehicle: "KL21K9099", category: "Vehicle" },
+      { owner: "Beyond", vehicle: "KL29G5043", category: "Vehicle" },
+      { owner: "Beyond", vehicle: "KL40M3287", category: "Vehicle" },
+      { owner: "Beyond", vehicle: "KL53L2000", category: "Vehicle" },
+      { owner: "Beyond", vehicle: "KL71H6798", category: "Vehicle" },
+      { owner: "Beyond", vehicle: "KL76B4428", category: "Vehicle" },
+
+      { owner: "Azwa", vehicle: "KL29R9069", category: "Vehicle" },
+      { owner: "Forzza", vehicle: "KL17K8681", category: "Vehicle" },
+
+      { owner: "Oriyana", vehicle: "KL10BM2263", category: "Vehicle" },
+      { owner: "Oriyana", vehicle: "KL10BM2679", category: "Vehicle" },
+      { owner: "Oriyana", vehicle: "KL18D4880", category: "Vehicle" },
+      { owner: "Oriyana", vehicle: "KL71E9688", category: "Vehicle" },
+
+      { owner: "Suhail Bharath Benz", vehicle: "KL53U8767", category: "Bharath Benz" },
+      { owner: "Abdjimujeed Bharath Benz", vehicle: "KL485S5555", category: "Bharath Benz" },
+
+      { owner: "Crystal", vehicle: "KL38L0078", category: "Vehicle" },
+      { owner: "Crystal", vehicle: "KL38L2443", category: "Vehicle" },
+      { owner: "Crystal", vehicle: "KL38L7572", category: "Vehicle" },
+
+      { owner: "Alip Tipper", vehicle: "KL10BD8178", category: "Tipper" },
+      { owner: "Alip Tipper", vehicle: "KL10BJ3892", category: "Tipper" },
+
+      { owner: "Alfalah School", vehicle: "KL58F0475", category: "School" },
+      { owner: "Alfalah School", vehicle: "KL08BR342", category: "School" },
+
+      { owner: "Thilakuns Traveller", vehicle: "KL393802", category: "Traveller" },
+      { owner: "Nazareth School", vehicle: "KL10BE0212", category: "School" },
+      { owner: "Japar JLD", vehicle: "KL58Q9677", category: "Can" },
+
+      { owner: "Peevees School bus", vehicle: "KL10AB7002", category: "School Bus" },
+      { owner: "Peevees School bus", vehicle: "KL71K9303", category: "School Bus" },
+
+      { owner: "Radhar Bus", vehicle: "KL55L2555", category: "Bus" },
+
+      { owner: "Jamia School bus", vehicle: "KL10AQ6393", category: "School Bus" },
+      { owner: "Jamia School bus", vehicle: "KL10BD3254", category: "School Bus" },
+
+      { owner: "TIOHEY Bee Bus", vehicle: "KL41K5815", category: "Bus" },
+
+      { owner: "Alavikkuty", vehicle: "KL10BL6338", category: "Vehicle" },
+      { owner: "Alavikkuty", vehicle: "KL10BN0461", category: "Vehicle" },
+
+      { owner: "Pananilath Mill", vehicle: "KL46R3425", category: "Mill" },
+      { owner: "PCM Sons Lorry", vehicle: "KA01AN34RD", category: "Lorry" },
+      { owner: "Giresh Karukkunn", vehicle: "KL05AF1199", category: "Vehicle" },
+
+      { owner: "Two Star Bus/Traveller", vehicle: "KL01BQ7912", category: "Bus/Traveller" },
+      { owner: "Two Star Bus/Traveller", vehicle: "KL06F7032", category: "Bus/Traveller" },
+      { owner: "Two Star Bus/Traveller", vehicle: "KL10AG5081", category: "Bus/Traveller" }
+    ];
+
+    const dedupedVehicles = Array.from(new Map(vehicles.map(item => [item.vehicle.toUpperCase(), {
+      owner: item.owner,
+      vehicle: item.vehicle.toUpperCase(),
+      category: item.category
+    }])).values());
+
+    const searchableVehicles = dedupedVehicles.map(item => ({
+      ...item,
+      searchBlob: `${item.owner} ${item.vehicle} ${item.category}`.toLowerCase()
+    }));
+
+    const notesKey = 'creditVehicleNotesV1';
+    const searchInput = document.getElementById('searchInput');
+    const suggestions = document.getElementById('suggestions');
+    const statusBox = document.getElementById('statusBox');
+    const resultBox = document.getElementById('resultBox');
+    const noteBox = document.getElementById('noteBox');
+    const ownerValue = document.getElementById('ownerValue');
+    const vehicleValue = document.getElementById('vehicleValue');
+    const categoryValue = document.getElementById('categoryValue');
+    const savedNoteValue = document.getElementById('savedNoteValue');
+    const savedAtValue = document.getElementById('savedAtValue');
+    const noteInput = document.getElementById('noteInput');
+    const noteStatus = document.getElementById('noteStatus');
+    const saveBtn = document.getElementById('saveBtn');
+    const editBtn = document.getElementById('editBtn');
+    const deleteBtn = document.getElementById('deleteBtn');
+    const copyBtn = document.getElementById('copyBtn');
+
+    let selectedVehicle = null;
+    let activeSuggestionIndex = -1;
+
+    function loadNotes() {
+      try {
+        const raw = localStorage.getItem(notesKey);
+        const parsed = raw ? JSON.parse(raw) : {};
+        return cleanupExpiredNotes(parsed, false);
+      } catch {
+        return {};
+      }
+    }
+
+    function saveNotes(notes) {
+      localStorage.setItem(notesKey, JSON.stringify(notes));
+    }
+
+    function cleanupExpiredNotes(notes, persist = true) {
+      const now = Date.now();
+      const cleaned = {};
+      Object.entries(notes || {}).forEach(([vehicle, value]) => {
+        if (value && typeof value.note === 'string' && typeof value.timestamp === 'number' && (now - value.timestamp) < ONE_YEAR_MS) {
+          cleaned[vehicle] = value;
+        }
+      });
+      if (persist) saveNotes(cleaned);
+      return cleaned;
+    }
+
+    function getNotes() {
+      return cleanupExpiredNotes(loadNotes());
+    }
+
+    function getVehicleNote(vehicleNumber) {
+      const notes = getNotes();
+      return notes[vehicleNumber.toUpperCase()] || null;
+    }
+
+    function setVehicleNote(vehicleNumber, noteText) {
+      const notes = getNotes();
+      const key = vehicleNumber.toUpperCase();
+      const trimmed = noteText.trim();
+      if (!trimmed) {
+        delete notes[key];
+      } else {
+        notes[key] = { note: trimmed, timestamp: Date.now() };
+      }
+      saveNotes(notes);
+    }
+
+    function deleteVehicleNote(vehicleNumber) {
+      const notes = getNotes();
+      delete notes[vehicleNumber.toUpperCase()];
+      saveNotes(notes);
+    }
+
+    function formatDate(ts) {
+      return new Date(ts).toLocaleString();
+    }
+
+    function renderStatus(found) {
+      if (found) {
+        statusBox.className = 'status verified';
+        statusBox.textContent = '✅ VERIFIED CREDIT VEHICLE';
+      } else {
+        statusBox.className = 'status not-verified';
+        statusBox.textContent = '❌ NOT A CREDIT VEHICLE';
+      }
+    }
+
+    function renderSelectedVehicle() {
+      if (!selectedVehicle) {
+        resultBox.classList.add('hidden');
+        noteBox.classList.add('hidden');
+        renderStatus(false);
+        return;
+      }
+      renderStatus(true);
+      resultBox.classList.remove('hidden');
+      noteBox.classList.remove('hidden');
+      ownerValue.textContent = selectedVehicle.owner;
+      vehicleValue.textContent = selectedVehicle.vehicle;
+      categoryValue.textContent = selectedVehicle.category;
+
+      const saved = getVehicleNote(selectedVehicle.vehicle);
+      if (saved) {
+        savedNoteValue.textContent = saved.note;
+        savedAtValue.textContent = 'Saved: ' + formatDate(saved.timestamp);
+        noteInput.value = saved.note;
+      } else {
+        savedNoteValue.textContent = 'No note saved.';
+        savedAtValue.textContent = '';
+        noteInput.value = '';
+      }
+      noteStatus.textContent = '';
+    }
+
+    function selectVehicle(vehicle) {
+      selectedVehicle = vehicle;
+      searchInput.value = vehicle.vehicle;
+      suggestions.style.display = 'none';
+      suggestions.innerHTML = '';
+      activeSuggestionIndex = -1;
+      renderSelectedVehicle();
+    }
+
+    function matchVehicles(query) {
+      const q = query.trim().toLowerCase();
+      if (!q) return [];
+      return searchableVehicles.filter(item => item.searchBlob.includes(q)).slice(0, 50);
+    }
+
+    function renderSuggestions(matches) {
+      suggestions.innerHTML = '';
+      activeSuggestionIndex = -1;
+      if (!matches.length) {
+        suggestions.style.display = 'none';
+        return;
+      }
+      const frag = document.createDocumentFragment();
+      matches.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'suggestion-item';
+        div.dataset.index = index;
+        div.innerHTML = `<div><strong>${item.vehicle}</strong></div><div class="small">${item.owner} - ${item.category}</div>`;
+        div.addEventListener('click', () => selectVehicle(item));
+        frag.appendChild(div);
+      });
+      suggestions.appendChild(frag);
+      suggestions.style.display = 'block';
+    }
+
+    function verifyExactVehicle(query) {
+      const clean = query.trim().toUpperCase();
+      if (!clean) return null;
+      return searchableVehicles.find(item => item.vehicle === clean) || null;
+    }
+
+    searchInput.addEventListener('input', () => {
+      const query = searchInput.value;
+      const matches = matchVehicles(query);
+      renderSuggestions(matches);
+
+      const exactVehicle = verifyExactVehicle(query);
+      if (exactVehicle) {
+        selectedVehicle = exactVehicle;
+        renderSelectedVehicle();
+      } else if (!query.trim()) {
+        selectedVehicle = null;
+        renderSelectedVehicle();
+      } else {
+        selectedVehicle = null;
+        resultBox.classList.add('hidden');
+        noteBox.classList.add('hidden');
+        renderStatus(false);
+      }
+    });
+
+    searchInput.addEventListener('keydown', (e) => {
+      const items = [...suggestions.querySelectorAll('.suggestion-item')];
+      if (!items.length) return;
+
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        activeSuggestionIndex = (activeSuggestionIndex + 1) % items.length;
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        activeSuggestionIndex = (activeSuggestionIndex - 1 + items.length) % items.length;
+      } else if (e.key === 'Enter') {
+        if (activeSuggestionIndex >= 0) {
+          e.preventDefault();
+          items[activeSuggestionIndex].click();
+        }
+        return;
+      } else {
+        return;
+      }
+
+      items.forEach((item, idx) => item.classList.toggle('active', idx === activeSuggestionIndex));
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!suggestions.contains(e.target) && e.target !== searchInput) {
+        suggestions.style.display = 'none';
+      }
+    });
+
+    saveBtn.addEventListener('click', () => {
+      if (!selectedVehicle) return;
+      setVehicleNote(selectedVehicle.vehicle, noteInput.value);
+      renderSelectedVehicle();
+      noteStatus.textContent = noteInput.value.trim() ? 'Note saved automatically.' : 'Empty note removed.';
+    });
+
+    editBtn.addEventListener('click', () => {
+      noteInput.focus();
+      noteStatus.textContent = 'Editing note.';
+    });
+
+    deleteBtn.addEventListener('click', () => {
+      if (!selectedVehicle) return;
+      deleteVehicleNote(selectedVehicle.vehicle);
+      renderSelectedVehicle();
+      noteStatus.textContent = 'Note deleted.';
+    });
+
+    copyBtn.addEventListener('click', async () => {
+      if (!selectedVehicle) return;
+      const saved = getVehicleNote(selectedVehicle.vehicle);
+      const text = [
+        `Owner: ${selectedVehicle.owner}`,
+        `Vehicle Number: ${selectedVehicle.vehicle}`,
+        `Category: ${selectedVehicle.category}`,
+        `Note: ${saved ? saved.note : ''}`
+      ].join('\n');
+      try {
+        await navigator.clipboard.writeText(text);
+        noteStatus.textContent = 'Details copied.';
+      } catch {
+        noteStatus.textContent = 'Copy failed.';
+      }
+    });
+
+    noteInput.addEventListener('input', () => {
+      if (!selectedVehicle) return;
+      setVehicleNote(selectedVehicle.vehicle, noteInput.value);
+      const saved = getVehicleNote(selectedVehicle.vehicle);
+      savedNoteValue.textContent = saved ? saved.note : 'No note saved.';
+      savedAtValue.textContent = saved ? 'Saved: ' + formatDate(saved.timestamp) : '';
+      noteStatus.textContent = noteInput.value.trim() ? 'Saved automatically.' : 'Empty note removed.';
+    });
+
+    cleanupExpiredNotes(loadNotes());
+    renderSelectedVehicle();
+  </script>
+</body>
+</html>
