@@ -66,34 +66,50 @@ ids.forEach(id=>{
 function num(id){return parseFloat(document.getElementById(id).value)||0;}
 function fmt(x){return x.toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function calc(){
- let sale=(num("c1")-num("o1"))+(num("c2")-num("o2"));
 
-sale -= num("testing");
+  // Meter se total sale
+  let sale=(num("c1")-num("o1"))+(num("c2")-num("o2"));
+  if(sale<0) sale=0;
 
- if(sale<0)sale=0;
- let collected=num("credit")+num("creditlite")+num("upi")+num("card")+num("deposit")+num("cash")+num("coin");
- document.getElementById("sale").textContent=fmt(sale);
- document.getElementById("collected").textContent=fmt(collected);
- let diff=collected-sale;
- let s=document.getElementById("status");
- if(diff>0){
-   s.className="result excess";
-   s.innerHTML="🟢 Excess: ₹ "+fmt(diff);
- }else if(diff<0){
-   s.className="result short";
-   s.innerHTML="🔴 Short: ₹ "+fmt(Math.abs(diff));
- }else{
-   s.className="result";
-   s.innerHTML="✅ Perfect Balance";
- }
+  // Testing amount
+  let testing=num("testing");
+
+  // Collection
+  let collected=
+      num("credit")+
+      num("creditlite")+
+      num("upi")+
+      num("card")+
+      num("deposit")+
+      num("cash")+
+      num("coin");
+
+  // Display original sale
+  document.getElementById("sale").textContent=fmt(sale);
+
+  // Display collection
+  document.getElementById("collected").textContent=fmt(collected);
+
+  // Sale after deducting testing
+  let actualSale=sale-testing;
+  if(actualSale<0) actualSale=0;
+
+  // Short / Excess
+  let diff=collected-actualSale;
+
+  let s=document.getElementById("status");
+
+  if(diff>0){
+    s.className="result excess";
+    s.innerHTML="🟢 Excess: ₹ "+fmt(diff);
+  }else if(diff<0){
+    s.className="result short";
+    s.innerHTML="🔴 Short: ₹ "+fmt(Math.abs(diff));
+  }else{
+    s.className="result";
+    s.innerHTML="✅ Perfect Balance";
+  }
 }
-function clearData(){
- if(confirm("Clear today's data?")){
-   ids.forEach(id=>{localStorage.removeItem(id);document.getElementById(id).value="";});
-   calc();
- }
-}
-calc();
 </script>
 </body>
 </html>
