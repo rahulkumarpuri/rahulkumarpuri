@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Duty Tracker 💰</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --accent: #22c55e;
+      --yellow: #facc15;
+      --pink: #fb7185;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top, #1e3a5f, transparent 50%),
+        var(--bg);
+
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      padding: 25px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1100px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+    }
+
+    .subtitle {
+      text-align: center;
+      color: var(--muted);
+      margin-bottom: 35px;
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 25px;
+    }
+
+    .card {
+      background: rgba(30, 41, 59, 0.9);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 25px;
+
+      padding: 30px;
+
+      box-shadow:
+        0 20px 60px rgba(0,0,0,0.3);
+
+      backdrop-filter: blur(10px);
+    }
+
+    .section-title {
+      font-size: 1.2rem;
+      color: var(--muted);
+      margin-bottom: 25px;
+      text-align: center;
+    }
+
+    /* =====================
+       COUNTDOWN
+    ====================== */
+
+    .countdown {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .time-box {
+      background: #0f172a;
+      padding: 20px 10px;
+      border-radius: 15px;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .time-value {
+      display: block;
+      font-size: clamp(1.4rem, 4vw, 2.5rem);
+      font-weight: bold;
+      color: var(--accent);
+    }
+
+    .time-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 8px;
+      display: block;
+      text-transform: uppercase;
+    }
+
+    .status {
+      margin-top: 25px;
+      text-align: center;
+      padding: 15px;
+      border-radius: 12px;
+      background: rgba(34, 197, 94, 0.1);
+      color: var(--accent);
+      font-weight: bold;
+    }
+
+    /* =====================
+       EARNINGS
+    ====================== */
+
+    .earnings {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .earning-label {
+      color: var(--muted);
+      font-size: 1rem;
+      margin-bottom: 10px;
+    }
+
+    .balance {
+      font-size: clamp(2.5rem, 7vw, 4.5rem);
+      font-weight: bold;
+      color: var(--yellow);
+
+      text-shadow:
+        0 0 20px rgba(250, 204, 21, 0.25);
+    }
+
+    .rate {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    /* =====================
+       GULLAK AREA
+    ====================== */
+
+    .piggy-area {
+      height: 330px;
+      position: relative;
+
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+
+      overflow: hidden;
+    }
+
+    /* Falling coin */
+
+    .coin {
+      position: absolute;
+
+      width: 42px;
+      height: 42px;
+
+      border-radius: 50%;
+
+      background:
+        radial-gradient(circle at 35% 30%, #fff7a5, #facc15 45%, #b8860b 80%);
+
+      border: 3px solid #d4a300;
+
+      box-shadow:
+        0 0 15px rgba(250,204,21,0.6);
+
+      top: -60px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      color: #7c5c00;
+      font-weight: bold;
+
+      animation: fall 1.2s ease-in forwards;
+    }
+
+    @keyframes fall {
+
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+      }
+
+      80% {
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateY(260px) rotate(720deg);
+        opacity: 0;
+      }
+    }
+
+    /* =====================
+       CSS PIGGY BANK
+    ====================== */
+
+    .piggy {
+      position: relative;
+
+      width: 260px;
+      height: 150px;
+
+      background: linear-gradient(145deg, #ff8fa3, #fb7185);
+
+      border-radius:
+        130px
+        130px
+        80px
+        80px;
+
+      box-shadow:
+        inset -15px -15px 25px rgba(0,0,0,0.12),
+        0 15px 30px rgba(0,0,0,0.3);
+    }
+
+    /* Ear */
+
+    .piggy::before {
+      content: "";
+
+      position: absolute;
+
+      width: 55px;
+      height: 55px;
+
+      background: #fb7185;
+
+      border-radius: 15px 50px;
+
+      top: -25px;
+      left: 45px;
+
+      transform: rotate(-20deg);
+    }
+
+    /* Eye */
+
+    .eye {
+      position: absolute;
+
+      width: 18px;
+      height: 18px;
+
+      background: #111827;
+
+      border-radius: 50%;
+
+      top: 42px;
+      right: 55px;
+    }
+
+    /* Snout */
+
+    .snout {
+      position: absolute;
+
+      width: 65px;
+      height: 55px;
+
+      background: #ffb0bd;
+
+      border-radius: 50%;
+
+      right: -20px;
+      top: 60px;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nostril {
+      width: 8px;
+      height: 8px;
+
+      background: #d84d67;
+
+      border-radius: 50%;
+    }
+
+    /* Legs */
+
+    .leg {
+      position: absolute;
+
+      width: 35px;
+      height: 45px;
+
+      background: #e85b72;
+
+      bottom: -25px;
+
+      border-radius: 10px;
+    }
+
+    .leg.left {
+      left: 40px;
+    }
+
+    .leg.right {
+      right: 40px;
+    }
+
+    /* Coin slot */
+
+    .coin-slot {
+      position: absolute;
+
+      width: 75px;
+      height: 12px;
+
+      background: #7f1d1d;
+
+      border-radius: 10px;
+
+      top: -5px;
+      left: 90px;
+
+      box-shadow:
+        inset 0 2px 5px rgba(0,0,0,0.5);
+    }
+
+    /* Pig balance display */
+
+    .pig-balance {
+      position: absolute;
+
+      left: 50%;
+      top: 65px;
+
+      transform: translateX(-50%);
+
+      font-size: 1.5rem;
+      font-weight: bold;
+
+      color: white;
+
+      text-shadow:
+        0 2px 5px rgba(0,0,0,0.3);
+    }
+
+    /* Progress */
+
+    .progress-wrapper {
+      margin-top: 30px;
+    }
+
+    .progress-info {
+      display: flex;
+      justify-content: space-between;
+
+      color: var(--muted);
+
+      margin-bottom: 8px;
+
+      font-size: 0.85rem;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 12px;
+
+      background: #0f172a;
+
+      border-radius: 20px;
+
+      overflow: hidden;
+    }
+
+    .progress {
+      height: 100%;
+      width: 0%;
+
+      background:
+        linear-gradient(
+          90deg,
+          #22c55e,
+          #facc15
+        );
+
+      border-radius: 20px;
+
+      transition: width 0.2s linear;
+    }
+
+    /* Responsive */
+
+    @media (max-width: 800px) {
+
+      .dashboard {
+        grid-template-columns: 1fr;
+      }
+
+    }
+
+    @media (max-width: 480px) {
+
+      .card {
+        padding: 20px;
+      }
+
+      .countdown {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .piggy {
+        transform: scale(0.85);
+      }
+
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <h1>⏳ Duty Tracker</h1>
+
+    <p class="subtitle">
+      7:00 AM → 7:00 PM • 12 Hours of Grind 💀💰
+    </p>
+
+
+    <div class="dashboard">
+
+
+      <!-- COUNTDOWN CARD -->
+
+      <div class="card">
+
+        <div class="section-title">
+          Time Remaining
+        </div>
+
+
+        <div class="countdown">
+
+          <div class="time-box">
+
+            <span
+              class="time-value"
+              id="hours"
+            >
+              00
+            </span>
+
+            <span class="time-label">
+              Hours
+            </span>
+
+          </div>
+
+
+          <div class="time-box">
+
+            <span
+              class="time-value"
+              id="minutes"
+            >
+              00
+            </span>
+
+            <span class="time-label">
+              Minutes
+            </span>
+
+          </div>
+
+
+          <div class="time-box">
+
+            <span
+              class="time-value"
+              id="seconds"
+            >
+              00
+            </span>
+
+            <span class="time-label">
+              Seconds
+            </span>
+
+          </div>
+
+
+          <div class="time-box">
+
+            <span
+              class="time-value"
+              id="milliseconds"
+            >
+              000
+            </span>
+
+            <span class="time-label">
+              Milliseconds
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div
+          class="status"
+          id="status"
+        >
+          Checking your shift...
+        </div>
+
+
+        <div class="progress-wrapper">
+
+          <div class="progress-info">
+
+            <span>
+              Duty Progress
+            </span>
+
+            <span id="progressText">
+              0%
+            </span>
+
+          </div>
+
+
+          <div class="progress-bar">
+
+            <div
+              class="progress"
+              id="progress"
+            ></div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- GULLAK CARD -->
+
+      <div class="card">
+
+        <div class="earnings">
+
+          <div class="earning-label">
+            Money Earned Today 💰
+          </div>
+
+
+          <div
+            class="balance"
+            id="balance"
+          >
+            ₹0.000
+          </div>
+
+
+          <div class="rate">
+            ₹600 for 12 hours
+          </div>
+
+        </div>
+
+
+
+        <div
+          class="piggy-area"
+          id="piggyArea"
+        >
+
+          <div
+            class="piggy"
+            id="piggy"
+          >
+
+            <div class="coin-slot"></div>
+
+            <div
+              class="pig-balance"
+              id="pigBalance"
+            >
+              ₹0.000
+            </div>
+
+            <div class="eye"></div>
+
+            <div class="snout">
+
+              <div class="nostril"></div>
+              <div class="nostril"></div>
+
+            </div>
+
+            <div class="leg left"></div>
+            <div class="leg right"></div>
+
+          </div>
+
+        </div>
+
+
+      </div>
+
+
+    </div>
+
+  </div>
+
+
+
+  <script>
+
+    // =====================================
+    // CONFIGURATION
+    // =====================================
+
+    const SHIFT_START_HOUR = 7;
+    const SHIFT_END_HOUR = 19;
+
+    const TOTAL_SHIFT_HOURS = 12;
+
+    const TOTAL_EARNING = 600;
+
+
+    // 12 hours → seconds
+
+    const TOTAL_SHIFT_SECONDS =
+      TOTAL_SHIFT_HOURS * 60 * 60;
+
+
+    // Earnings per second
+
+    const EARNING_PER_SECOND =
+      TOTAL_EARNING /
+      TOTAL_SHIFT_SECONDS;
+
+
+    // =====================================
+    // ELEMENTS
+    // =====================================
+
+    const hoursEl =
+      document.getElementById("hours");
+
+    const minutesEl =
+      document.getElementById("minutes");
+
+    const secondsEl =
+      document.getElementById("seconds");
+
+    const millisecondsEl =
+      document.getElementById("milliseconds");
+
+    const balanceEl =
+      document.getElementById("balance");
+
+    const pigBalanceEl =
+      document.getElementById("pigBalance");
+
+    const statusEl =
+      document.getElementById("status");
+
+    const progressEl =
+      document.getElementById("progress");
+
+    const progressTextEl =
+      document.getElementById("progressText");
+
+    const piggyArea =
+      document.getElementById("piggyArea");
+
+
+    // =====================================
+    // UTILITY
+    // =====================================
+
+    function pad(number, length = 2) {
+
+      return String(number)
+        .padStart(length, "0");
+
+    }
+
+
+    // =====================================
+    // MAIN DUTY TRACKER
+    // =====================================
+
+    function updateTracker() {
+
+      const now = new Date();
+
+
+      // Today's shift start
+
+      const shiftStart =
+        new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate(),
+          SHIFT_START_HOUR,
+          0,
+          0,
+          0
+        );
+
+
+      // Today's shift end
+
+      const shiftEnd =
+        new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate(),
+          SHIFT_END_HOUR,
+          0,
+          0,
+          0
+        );
+
+
+      let remaining = 0;
+      let earned = 0;
+      let progress = 0;
+
+
+      // =====================================
+      // BEFORE SHIFT
+      // =====================================
+
+      if (now < shiftStart) {
+
+        remaining =
+          shiftStart - now;
+
+
+        earned = 0;
+
+        progress = 0;
+
+
+        statusEl.innerHTML =
+          "😴 Duty hasn't started yet. Enjoy your freedom while it lasts.";
+
+      }
+
+
+      // =====================================
+      // DURING SHIFT
+      // =====================================
+
+      else if (
+        now >= shiftStart &&
+        now < shiftEnd
+      ) {
+
+        remaining =
+          shiftEnd - now;
+
+
+        const workedMilliseconds =
+          now - shiftStart;
+
+
+        const workedSeconds =
+          workedMilliseconds / 1000;
+
+
+        // Calculate earnings
+
+        earned =
+          workedSeconds *
+          EARNING_PER_SECOND;
+
+
+        progress =
+          (workedMilliseconds /
+            (TOTAL_SHIFT_SECONDS * 1000))
+          * 100;
+
+
+        statusEl.innerHTML =
+          "🔥 You're on duty. Keep grinding, soldier.";
+
+      }
+
+
+      // =====================================
+      // AFTER SHIFT
+      // =====================================
+
+      else {
+
+        remaining = 0;
+
+        earned =
+          TOTAL_EARNING;
+
+        progress = 100;
+
+
+        statusEl.innerHTML =
+          "🎉 Shift completed! ₹600 secured. Go home, you magnificent wage slave.";
+
+      }
+
+
+      // =====================================
+      // COUNTDOWN CALCULATION
+      // =====================================
+
+      const hours =
+        Math.floor(
+          remaining /
+          (1000 * 60 * 60)
+        );
+
+
+      const minutes =
+        Math.floor(
+          (remaining %
+            (1000 * 60 * 60))
+          /
+          (1000 * 60)
+        );
+
+
+      const seconds =
+        Math.floor(
+          (remaining %
+            (1000 * 60))
+          /
+          1000
+        );
+
+
+      const milliseconds =
+        Math.floor(
+          remaining % 1000
+        );
+
+
+      // Update countdown
+
+      hoursEl.textContent =
+        pad(hours);
+
+
+      minutesEl.textContent =
+        pad(minutes);
+
+
+      secondsEl.textContent =
+        pad(seconds);
+
+
+      millisecondsEl.textContent =
+        pad(milliseconds, 3);
+
+
+      // =====================================
+      // UPDATE MONEY
+      // =====================================
+
+      const formattedBalance =
+        `₹${earned.toFixed(3)}`;
+
+
+      balanceEl.textContent =
+        formattedBalance;
+
+
+      pigBalanceEl.textContent =
+        formattedBalance;
+
+
+      // =====================================
+      // UPDATE PROGRESS
+      // =====================================
+
+      progress =
+        Math.min(
+          Math.max(progress, 0),
+          100
+        );
+
+
+      progressEl.style.width =
+        `${progress}%`;
+
+
+      progressTextEl.textContent =
+        `${progress.toFixed(2)}%`;
+
+    }
+
+
+    // =====================================
+    // COIN ANIMATION
+    // =====================================
+
+    function dropCoin() {
+
+      const now = new Date();
+
+
+      // Only drop coins during duty
+
+      const hour =
+        now.getHours();
+
+
+      if (
+        hour < SHIFT_START_HOUR ||
+        hour >= SHIFT_END_HOUR
+      ) {
+
+        return;
+
+      }
+
+
+      const coin =
+        document.createElement("div");
+
+
+      coin.classList.add("coin");
+
+
+      coin.textContent =
+        "₹";
+
+
+      // Random slight movement
+
+      const randomX =
+        Math.random() * 60 - 30;
+
+
+      coin.style.left =
+        `calc(50% + ${randomX}px)`;
+
+
+      piggyArea.appendChild(
+        coin
+      );
+
+
+      // Remove coin after animation
+
+      setTimeout(() => {
+
+        coin.remove();
+
+      }, 1300);
+
+    }
+
+
+    // =====================================
+    // START APP
+    // =====================================
+
+
+    // Smooth countdown
+
+    setInterval(
+      updateTracker,
+      10
+    );
+
+
+    // Drop coin every second
+
+    setInterval(
+      dropCoin,
+      1000
+    );
+
+
+    // Initial load
+
+    updateTracker();
+
+
+  </script>
+
+</body>
+            </html>
