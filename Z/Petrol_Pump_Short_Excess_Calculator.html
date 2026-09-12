@@ -2,1301 +2,428 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Petrol Pump Short / Excess</title>
-
 <style>
-*{
-  box-sizing:border-box;
-}
-
-body{
-  font-family:Arial,sans-serif;
-  background:#f4f4f4;
-  margin:20px;
-  color:#222;
-}
-
-.container{
-  max-width:500px;
-  margin:auto;
-  background:#fff;
-  padding:20px;
-  border-radius:10px;
-  box-shadow:0 2px 8px rgba(0,0,0,.15);
-}
-
-h2{
-  text-align:center;
-  margin-top:0;
-}
-
-h3{
-  margin-top:22px;
-  margin-bottom:10px;
-}
-
-label{
-  display:block;
-  margin-top:10px;
-  font-weight:bold;
-}
-
-input{
-  width:100%;
-  padding:10px;
-  margin-top:5px;
-  border:1px solid #ccc;
-  border-radius:5px;
-  font-size:15px;
-}
-
-button{
-  cursor:pointer;
-}
-
-.section-toggle{
-  width:100%;
-  border:0;
-  background:#f7f7f7;
-  padding:12px;
-  margin-top:15px;
-  border-radius:6px;
-  font-size:15px;
-  font-weight:bold;
-  text-align:left;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
-
-.arrow{
-  font-size:18px;
-  transition:.2s;
-}
-
-.arrow.open{
-  transform:rotate(90deg);
-}
-
-.section-content{
-  margin-top:10px;
-}
-
-.nozzle-box{
-  border:1px solid #eee;
-  border-radius:7px;
-  padding:10px;
-  margin-bottom:10px;
-}
-
-.nozzle-title{
-  font-weight:bold;
-  margin-bottom:8px;
-}
-
-.fuel-rate{
-  font-size:12px;
-  color:#777;
-  font-weight:normal;
-}
-
-.result{
-  margin-top:15px;
-  padding:10px;
-  background:#f7f7f7;
-  border-radius:6px;
-  font-weight:bold;
-}
-
-.short{
-  color:#c00;
-}
-
-.excess{
-  color:#090;
-}
-
-.add-entry-btn{
-  width:100%;
-  margin-top:10px;
-  padding:11px;
-  border:1px solid #ccc;
-  background:#fff;
-  border-radius:6px;
-  font-size:15px;
-}
-
-.entry-form{
-  display:none;
-  border:1px solid #eee;
-  padding:12px;
-  border-radius:7px;
-  margin-top:10px;
-}
-
-.entry-form.active{
-  display:block;
-}
-
-.form-buttons{
-  display:flex;
-  gap:8px;
-  margin-top:10px;
-}
-
-.form-buttons button{
-  flex:1;
-  padding:10px;
-  border-radius:5px;
-  border:1px solid #ccc;
-}
-
-.save-btn{
-  background:#222;
-  color:#fff;
-}
-
-.cancel-btn{
-  background:#fff;
-}
-
-.tag-search-wrap{
-  position:relative;
-}
-
-.tag-suggestions{
-  position:absolute;
-  left:0;
-  right:0;
-  top:100%;
-  background:#fff;
-  border:1px solid #ccc;
-  border-top:0;
-  z-index:10;
-  max-height:180px;
-  overflow-y:auto;
-}
-
-.tag-suggestion{
-  padding:9px 10px;
-  cursor:pointer;
-}
-
-.tag-suggestion:hover{
-  background:#f2f2f2;
-}
-
-.entries-list{
-  margin-top:15px;
-}
-
-.collection-entry{
-  border:1px solid #eee;
-  border-radius:7px;
-  padding:10px;
-  margin-bottom:8px;
-}
-
-.entry-main{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-}
-
-.entry-tag{
-  font-weight:bold;
-}
-
-.entry-amount{
-  font-weight:bold;
-}
-
-.entry-actions{
-  display:flex;
-  gap:5px;
-}
-
-.icon-btn{
-  border:0;
-  background:transparent;
-  font-size:17px;
-  padding:3px;
-}
-
-.tags-list{
-  margin-top:15px;
-}
-
-.tag-row{
-  border:1px solid #eee;
-  border-radius:7px;
-  margin-bottom:8px;
-  overflow:hidden;
-}
-
-.tag-header{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:11px;
-  cursor:pointer;
-}
-
-.tag-left{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  min-width:0;
-}
-
-.tag-name{
-  font-weight:bold;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-}
-
-.tag-total{
-  font-weight:bold;
-  white-space:nowrap;
-}
-
-.tag-details{
-  display:none;
-  border-top:1px solid #eee;
-  padding:8px 10px;
-  background:#fafafa;
-}
-
-.tag-details.open{
-  display:block;
-}
-
-.detail-entry{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:7px 0;
-  border-bottom:1px solid #eee;
-}
-
-.detail-entry:last-child{
-  border-bottom:0;
-}
-
-.detail-actions{
-  display:flex;
-  gap:5px;
-}
-
-.empty-message{
-  color:#777;
-  font-size:14px;
-  padding:8px 0;
-}
-
-.hidden{
-  display:none;
-}
-
-.small-note{
-  color:#777;
-  font-size:12px;
-  margin-top:5px;
-}
-
-#status{
-  text-align:center;
-}
-
-.clear-btn{
-  margin-top:15px;
-  width:100%;
-  padding:10px;
-  border:1px solid #ccc;
-  background:#fff;
-  border-radius:6px;
-}
-
-@media(max-width:520px){
-  body{
-    margin:10px;
-  }
-
-  .container{
-    padding:15px;
-  }
-}
+body{font-family:Arial,sans-serif;background:#f4f4f4;margin:20px}
+.container{max-width:500px;margin:auto;background:#fff;padding:20px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+h2{text-align:center;margin-top:0}
+h3{margin-bottom:6px}
+label{display:block;margin-top:10px;font-weight:bold;font-size:.9em}
+input[type=number],input[type=text]{width:100%;padding:10px;box-sizing:border-box;border:1px solid #ccc;border-radius:6px;margin-top:4px}
+.result{margin-top:15px;padding:10px;background:#f7f7f7;border-radius:6px;font-weight:bold}
+.result.sub{font-weight:normal;font-size:.85em;color:#555;margin-top:6px;background:none;padding:0}
+.short{color:#c00}
+.excess{color:#090}
+.btn{width:100%;padding:10px;margin-top:12px;border:none;border-radius:6px;background:#2563eb;color:#fff;font-weight:bold;cursor:pointer}
+.btn.secondary{background:#555}
+.btn.small{width:auto;padding:6px 12px;margin-top:0;font-size:.85em}
+.section{margin-top:14px;border:1px solid #e5e5e5;border-radius:8px;padding:10px 12px}
+.toggle-header{display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-weight:bold}
+.arrow{transition:transform .15s;font-size:.9em}
+.arrow.open{transform:rotate(90deg)}
+.locked-note{font-size:.8em;color:#777;font-weight:normal}
+.tag-input-wrap{position:relative}
+.suggestions{position:absolute;left:0;right:0;background:#fff;border:1px solid #ccc;border-top:none;border-radius:0 0 6px 6px;max-height:150px;overflow-y:auto;z-index:10}
+.suggestions div{padding:8px 10px;cursor:pointer;font-size:.9em}
+.suggestions div:hover{background:#eef2ff}
+.tag-row{border:1px solid #e5e5e5;border-radius:6px;margin-top:8px;overflow:hidden}
+.tag-header{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;cursor:pointer;background:#fafafa}
+.tag-body{padding:0 12px}
+.entry-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid #eee;font-size:.9em}
+.entry-row:first-child{border-top:none}
+.entry-left{color:#333}
+.entry-time{color:#999;font-size:.8em;display:block}
+.entry-icons span{cursor:pointer;margin-left:8px;font-size:1em}
+.edit-row{display:flex;gap:6px;align-items:center;padding:8px 0;border-top:1px solid #eee;flex-wrap:wrap}
+.edit-row input{width:auto;flex:1;padding:6px;margin-top:0;min-width:80px}
+.hidden{display:none !important}
+.grid4{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.nozzle-box{background:#fafafa;border-radius:6px;padding:8px}
+.nozzle-box label{margin-top:0}
 </style>
 </head>
-
 <body>
-
 <div class="container">
-
 <h2>Petrol Pump Short / Excess</h2>
 
+<div id="openingSection"></div>
+<div id="closingSection"></div>
 
-<!-- =========================
-     OPENING CUM VOLUME
-========================= -->
+<div class="result">Today's Sale: ₹ <span id="sale">0.00</span></div>
+<div class="result sub" id="saleBreakdown"></div>
 
-<button class="section-toggle" onclick="toggleSection('openingSection','openingArrow')">
-  <span id="openingTitle">Opening CumVolume</span>
-  <span class="arrow" id="openingArrow">›</span>
-</button>
-
-<div id="openingSection" class="section-content">
-
-  <div class="nozzle-box">
-    <div class="nozzle-title">
-      Nozzle 1
-      <span class="fuel-rate">Petrol · ₹114.28/L</span>
-    </div>
-    <label>Opening CumVolume</label>
-    <input type="number" step="0.001" id="open1">
-  </div>
-
-  <div class="nozzle-box">
-    <div class="nozzle-title">
-      Nozzle 2
-      <span class="fuel-rate">Diesel · ₹103.19/L</span>
-    </div>
-    <label>Opening CumVolume</label>
-    <input type="number" step="0.001" id="open2">
-  </div>
-
-  <div class="nozzle-box">
-    <div class="nozzle-title">
-      Nozzle 3
-      <span class="fuel-rate">Petrol · ₹114.28/L</span>
-    </div>
-    <label>Opening CumVolume</label>
-    <input type="number" step="0.001" id="open3">
-  </div>
-
-  <div class="nozzle-box">
-    <div class="nozzle-title">
-      Nozzle 4
-      <span class="fuel-rate">Diesel · ₹103.19/L</span>
-    </div>
-    <label>Opening CumVolume</label>
-    <input type="number" step="0.001" id="open4">
-  </div>
-
-</div>
-
-
-<!-- =========================
-     CLOSING CUM VOLUME
-========================= -->
-
-<button class="section-toggle" onclick="toggleSection('closingSection','closingArrow')">
-  <span id="closingTitle">Closing CumVolume</span>
-  <span class="arrow" id="closingArrow">›</span>
-</button>
-
-<div id="closingSection" class="section-content">
-
-  <div class="nozzle-box">
-    <div class="nozzle-title">
-      Nozzle 1
-      <span class="fuel-rate">Petrol · ₹114.28/L</span>
-    </div>
-    <label>Closing CumVolume</label>
-    <input type="number" step="0.001" id="close1">
-  </div>
-
-  <div class="nozzle-box">
-    <div class="nozzle-title">
-      Nozzle 2
-      <span class="fuel-rate">Diesel · ₹103.19/L</span>
-    </div>
-    <label>Closing CumVolume</label>
-    <input type="number" step="0.001" id="close2">
-  </div>
-
-  <div class="nozzle-box">
-    <div class="nozzle-title">
-      Nozzle 3
-      <span class="fuel-rate">Petrol · ₹114.28/L</span>
-    </div>
-    <label>Closing CumVolume</label>
-    <input type="number" step="0.001" id="close3">
-  </div>
-
-  <div class="nozzle-box">
-    <div class="nozzle-title">
-      Nozzle 4
-      <span class="fuel-rate">Diesel · ₹103.19/L</span>
-    </div>
-    <label>Closing CumVolume</label>
-    <input type="number" step="0.001" id="close4">
-  </div>
-
-</div>
-
-
-<!-- =========================
-     SALE RESULT
-========================= -->
-
-<div class="result">
-  Today's Sale: ₹ <span id="sale">0.00</span>
-</div>
-
-
-<!-- =========================
-     COLLECTIONS
-========================= -->
-
-<h3>Collections</h3>
-
-<button class="add-entry-btn" onclick="showEntryForm()">
-  + Add Entry
-</button>
-
-<div id="entryForm" class="entry-form">
-
+<h3 style="margin-top:20px">Collections</h3>
+<button class="btn" id="addEntryBtn" onclick="toggleAddForm()">+ Add Entry</button>
+<div id="addForm" class="hidden">
   <label>Amount</label>
-  <input
-    type="number"
-    step="0.01"
-    id="entryAmount"
-    placeholder="Enter amount"
-  >
-
+  <input type="number" step="0.01" id="entryAmount" placeholder="0.00">
   <label>Tags</label>
-
-  <div class="tag-search-wrap">
-
-    <input
-      type="text"
-      id="entryTag"
-      placeholder="Enter or search tag"
-      autocomplete="off"
-      oninput="searchTags()"
-      onfocus="searchTags()"
-    >
-
-    <div id="tagSuggestions" class="tag-suggestions"></div>
-
+  <div class="tag-input-wrap">
+    <input type="text" id="entryTag" autocomplete="off" placeholder="Type a tag...">
+    <div id="tagSuggestions" class="suggestions hidden"></div>
   </div>
-
-  <div class="small-note">
-    Existing tags will appear while typing. New tags are added automatically.
-  </div>
-
-  <div class="form-buttons">
-
-    <button class="save-btn" onclick="saveEntry()">
-      Save
-    </button>
-
-    <button class="cancel-btn" onclick="cancelEntry()">
-      Cancel
-    </button>
-
-  </div>
-
+  <button class="btn" onclick="addEntry()">Add</button>
 </div>
 
+<div id="tagsList"></div>
 
-<!-- =========================
-     TAG SUMMARY
-========================= -->
+<div class="result">Collected: ₹ <span id="collected">0.00</span></div>
+<div class="result" id="status">Difference: ₹0.00</div>
 
-<div class="result">
-  Collected: ₹ <span id="collected">0.00</span>
+<button class="btn secondary" onclick="clearData()">Clear Today's Data</button>
 </div>
-
-<div id="tagsList" class="tags-list"></div>
-
-
-<!-- =========================
-     STATUS
-========================= -->
-
-<div class="result" id="status">
-  Difference: ₹0.00
-</div>
-
-
-<!-- =========================
-     CLEAR
-========================= -->
-
-<button class="clear-btn" onclick="clearData()">
-  Clear Today's Data
-</button>
-
-</div>
-
 
 <script>
+/* ---------- constants ---------- */
+const RATES = [114.28, 103.19, 114.28, 103.19]; // nozzle 1,2,3,4 (index 0-3)
+const FUEL  = ["Petrol","Diesel","Petrol","Diesel"];
+const DEFAULT_TAGS = ["Card","Credit Vehicles","Test","Deposited Cash","Phonepe","Cash","Coin"];
+const todayStr = new Date().toISOString().slice(0,10);
 
-/* =========================================
-   CONFIGURATION
-========================================= */
-
-const rates = {
-  1: 114.28,
-  2: 103.19,
-  3: 114.28,
-  4: 103.19
-};
-
-const fuelNames = {
-  1: "Petrol",
-  2: "Diesel",
-  3: "Petrol",
-  4: "Diesel"
-};
-
-const openingIds = [
-  "open1",
-  "open2",
-  "open3",
-  "open4"
-];
-
-const closingIds = [
-  "close1",
-  "close2",
-  "close3",
-  "close4"
-];
-
-const defaultTags = [
-  "Card",
-  "Credit Vehicles",
-  "Test",
-  "Deposited Cash",
-  "Phonepe",
-  "Cash",
-  "Coin"
-];
-
-const today = new Date().toISOString().slice(0,10);
-
-
-/* =========================================
-   DAILY STORAGE
-========================================= */
-
-if(localStorage.pumpDay !== today){
-
-  localStorage.clear();
-
-  localStorage.pumpDay = today;
-
-  localStorage.collectionEntries = JSON.stringify([]);
-
-  localStorage.customTags = JSON.stringify(defaultTags);
-
-  localStorage.openingCollapsed = "false";
-
-  localStorage.closingCollapsed = "false";
-
-}else{
-
-  if(!localStorage.collectionEntries){
-    localStorage.collectionEntries = JSON.stringify([]);
-  }
-
-  if(!localStorage.customTags){
-    localStorage.customTags = JSON.stringify(defaultTags);
-  }
-
-}
-
-
-/* =========================================
-   HELPERS
-========================================= */
-
-function num(id){
-
-  const value = parseFloat(
-    document.getElementById(id).value
-  );
-
-  return isNaN(value) ? 0 : value;
-}
-
-
-function fmt(value){
-
-  return value.toLocaleString("en-IN",{
-    minimumFractionDigits:2,
-    maximumFractionDigits:2
-  });
-
-}
-
-
-function getEntries(){
-
+/* ---------- storage helpers ---------- */
+function getJSON(key, def){
   try{
+    const v = localStorage.getItem(key);
+    return v ? JSON.parse(v) : def;
+  }catch(e){ return def; }
+}
+function setJSON(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
 
-    return JSON.parse(
-      localStorage.collectionEntries || "[]"
-    );
-
-  }catch(e){
-
-    return [];
-
+function ensureDay(){
+  const storedDay = localStorage.getItem("pumpDay");
+  if(storedDay !== todayStr){
+    localStorage.removeItem("pumpOpening");
+    localStorage.removeItem("pumpClosing");
+    localStorage.removeItem("pumpCollections");
+    localStorage.setItem("pumpDay", todayStr);
   }
-
-}
-
-
-function saveEntries(entries){
-
-  localStorage.collectionEntries =
-    JSON.stringify(entries);
-
-}
-
-
-function getTags(){
-
-  try{
-
-    return JSON.parse(
-      localStorage.customTags || "[]"
-    );
-
-  }catch(e){
-
-    return [...defaultTags];
-
+  if(!localStorage.getItem("pumpTags")){
+    setJSON("pumpTags", DEFAULT_TAGS);
   }
+}
+ensureDay();
 
+function getOpening(){ return getJSON("pumpOpening", {saved:false, values:[null,null,null,null]}); }
+function setOpening(d){ setJSON("pumpOpening", d); }
+function getClosing(){ return getJSON("pumpClosing", {saved:false, values:[null,null,null,null]}); }
+function setClosing(d){ setJSON("pumpClosing", d); }
+function getCollections(){ return getJSON("pumpCollections", []); }
+function setCollections(a){ setJSON("pumpCollections", a); }
+function getTags(){ return getJSON("pumpTags", DEFAULT_TAGS.slice()); }
+function setTags(a){ setJSON("pumpTags", a); }
+
+/* ---------- transient UI state (resets each page load) ---------- */
+let openingExpanded = false;
+let closingExpanded = false;
+let tagExpanded = {};
+let editingId = null;
+let editBuffer = {amount:"", tag:""};
+
+/* ---------- formatting ---------- */
+function fmt(x){ return (x||0).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function num(v){ const n = parseFloat(v); return isNaN(n) ? 0 : n; }
+
+/* ---------- rendering: opening / closing nozzle sections ---------- */
+function renderNozzleSection(kind){
+  const containerId = kind === "opening" ? "openingSection" : "closingSection";
+  const label = kind === "opening" ? "Opening CumVolume" : "Closing CumVolume";
+  const data = kind === "opening" ? getOpening() : getClosing();
+  const expanded = kind === "opening" ? openingExpanded : closingExpanded;
+  const container = document.getElementById(containerId);
+
+  if(!data.saved){
+    let boxes = "";
+    for(let i=0;i<4;i++){
+      const v = data.values[i] !== null && data.values[i] !== undefined ? data.values[i] : "";
+      boxes += `<div class="nozzle-box">
+        <label>Nozzle ${i+1} (${FUEL[i]})</label>
+        <input type="number" step="0.001" id="${kind}_${i}" value="${v}">
+      </div>`;
+    }
+    container.innerHTML = `
+      <div class="section">
+        <h3 style="margin-top:0">${label}</h3>
+        <div class="grid4">${boxes}</div>
+        <button class="btn" onclick="save${cap(kind)}()">Save ${label}</button>
+      </div>`;
+  } else {
+    let boxes = "";
+    for(let i=0;i<4;i++){
+      boxes += `<div class="nozzle-box">
+        <label>Nozzle ${i+1} (${FUEL[i]})</label>
+        <input type="number" step="0.001" id="${kind}_${i}" value="${data.values[i]}">
+      </div>`;
+    }
+    container.innerHTML = `
+      <div class="section">
+        <div class="toggle-header" onclick="toggleNozzle('${kind}')">
+          <span>${label} <span class="locked-note">(saved)</span></span>
+          <span class="arrow ${expanded ? 'open' : ''}">▸</span>
+        </div>
+        <div class="${expanded ? '' : 'hidden'}" style="margin-top:10px">
+          <div class="grid4">${boxes}</div>
+          <button class="btn" onclick="update${cap(kind)}()">Update ${label}</button>
+        </div>
+      </div>`;
+  }
+}
+function cap(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+
+function readNozzleInputs(kind){
+  const vals = [];
+  for(let i=0;i<4;i++){
+    const el = document.getElementById(`${kind}_${i}`);
+    vals.push(el ? num(el.value) : 0);
+  }
+  return vals;
 }
 
-
-function saveTags(tags){
-
-  localStorage.customTags =
-    JSON.stringify(tags);
-
+function saveOpening(){
+  const vals = readNozzleInputs("opening");
+  setOpening({saved:true, values:vals});
+  openingExpanded = false;
+  renderAll();
+}
+function updateOpening(){
+  const vals = readNozzleInputs("opening");
+  setOpening({saved:true, values:vals});
+  openingExpanded = false;
+  renderAll();
+}
+function saveClosing(){
+  const vals = readNozzleInputs("closing");
+  setClosing({saved:true, values:vals});
+  closingExpanded = false;
+  renderAll();
+}
+function updateClosing(){
+  const vals = readNozzleInputs("closing");
+  setClosing({saved:true, values:vals});
+  closingExpanded = false;
+  renderAll();
+}
+function toggleNozzle(kind){
+  if(kind === "opening") openingExpanded = !openingExpanded;
+  else closingExpanded = !closingExpanded;
+  renderNozzleSection(kind);
 }
 
+/* ---------- sale calculation ---------- */
+function calcSale(){
+  const opening = getOpening();
+  const closing = getClosing();
+  if(!opening.saved || !closing.saved) return {ready:false, sale:0, petrol:0, diesel:0};
+  let petrol=0, diesel=0;
+  for(let i=0;i<4;i++){
+    let vol = num(closing.values[i]) - num(opening.values[i]);
+    if(vol < 0) vol = 0;
+    const amt = vol * RATES[i];
+    if(FUEL[i] === "Petrol") petrol += amt; else diesel += amt;
+  }
+  return {ready:true, sale: petrol+diesel, petrol, diesel};
+}
 
-/* =========================================
-   LOAD NOZZLE VALUES
-========================================= */
+/* ---------- collections / tags ---------- */
+function toggleAddForm(){
+  const f = document.getElementById("addForm");
+  f.classList.toggle("hidden");
+  if(!f.classList.contains("hidden")){
+    document.getElementById("entryAmount").value = "";
+    document.getElementById("entryTag").value = "";
+    document.getElementById("tagSuggestions").classList.add("hidden");
+  }
+}
 
-[
-  ...openingIds,
-  ...closingIds
-].forEach(id => {
-
-  const el = document.getElementById(id);
-
-  el.value =
-    localStorage.getItem(id) || "";
-
-  el.addEventListener("input",function(){
-
-    localStorage.setItem(id,el.value);
-
-    calc();
-
-    checkOpeningComplete();
-    checkClosingComplete();
-
-  });
-
+function onTagInput(){
+  const input = document.getElementById("entryTag");
+  const val = input.value.trim().toLowerCase();
+  const box = document.getElementById("tagSuggestions");
+  if(!val){ box.classList.add("hidden"); box.innerHTML=""; return; }
+  const tags = getTags();
+  const matches = tags.filter(t => t.toLowerCase().includes(val));
+  if(matches.length === 0){ box.classList.add("hidden"); box.innerHTML=""; return; }
+  box.innerHTML = matches.map(t => `<div onclick="selectTag('${t.replace(/'/g,"\\'")}')">${t}</div>`).join("");
+  box.classList.remove("hidden");
+}
+function selectTag(t){
+  document.getElementById("entryTag").value = t;
+  const box = document.getElementById("tagSuggestions");
+  box.classList.add("hidden");
+  box.innerHTML = "";
+}
+document.addEventListener("click", function(e){
+  const wrap = document.querySelector(".tag-input-wrap");
+  if(wrap && !wrap.contains(e.target)){
+    document.getElementById("tagSuggestions")?.classList.add("hidden");
+  }
 });
 
+function addEntry(){
+  const amount = num(document.getElementById("entryAmount").value);
+  let tagRaw = document.getElementById("entryTag").value.trim();
+  if(amount <= 0 || !tagRaw){ alert("Please enter a valid amount and tag."); return; }
 
-/* =========================================
-   TOGGLE
-========================================= */
-
-function toggleSection(sectionId,arrowId){
-
-  const section =
-    document.getElementById(sectionId);
-
-  const arrow =
-    document.getElementById(arrowId);
-
-  const isHidden =
-    section.style.display === "none";
-
-  if(isHidden){
-
-    section.style.display = "block";
-
-    arrow.classList.add("open");
-
-    if(sectionId === "openingSection"){
-      localStorage.openingCollapsed = "false";
-    }
-
-    if(sectionId === "closingSection"){
-      localStorage.closingCollapsed = "false";
-    }
-
-  }else{
-
-    section.style.display = "none";
-
-    arrow.classList.remove("open");
-
-    if(sectionId === "openingSection"){
-      localStorage.openingCollapsed = "true";
-    }
-
-    if(sectionId === "closingSection"){
-      localStorage.closingCollapsed = "true";
-    }
-
+  const tags = getTags();
+  const existing = tags.find(t => t.toLowerCase() === tagRaw.toLowerCase());
+  const finalTag = existing ? existing : tagRaw;
+  if(!existing){
+    tags.push(finalTag);
+    setTags(tags);
   }
 
+  const collections = getCollections();
+  collections.push({ id: Date.now() + "_" + Math.random().toString(36).slice(2,7), amount, tag: finalTag, time: new Date().toISOString() });
+  setCollections(collections);
+
+  document.getElementById("addForm").classList.add("hidden");
+  renderAll();
 }
 
+function toggleTag(tag){
+  tagExpanded[tag] = !tagExpanded[tag];
+  renderTagsList();
+}
 
-/* =========================================
-   OPENING COMPLETE CHECK
-========================================= */
+function fmtTime(iso){
+  const d = new Date(iso);
+  return d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+}
 
-function checkOpeningComplete(){
+function renderTagsList(){
+  const collections = getCollections();
+  const tags = getTags();
+  const container = document.getElementById("tagsList");
 
-  const complete =
-    openingIds.every(id => {
+  const order = [];
+  tags.forEach(t => { if(collections.some(c=>c.tag===t)) order.push(t); });
+  collections.forEach(c => { if(!order.includes(c.tag)) order.push(c.tag); });
 
-      return document.getElementById(id).value !== "";
+  if(order.length === 0){
+    container.innerHTML = `<div class="result sub" style="margin-top:8px">No entries yet.</div>`;
+    return;
+  }
 
+  container.innerHTML = order.map(tag => {
+    const entries = collections.filter(c => c.tag === tag);
+    const total = entries.reduce((s,e)=>s+e.amount,0);
+    const expanded = !!tagExpanded[tag];
+    let body = "";
+    entries.forEach(e => {
+      if(editingId === e.id){
+        body += `<div class="edit-row">
+          <input type="number" step="0.01" id="edit_amount_${e.id}" value="${e.amount}">
+          <input type="text" id="edit_tag_${e.id}" value="${e.tag}">
+          <span onclick="saveEdit('${e.id}')" style="cursor:pointer">✅</span>
+          <span onclick="cancelEdit()" style="cursor:pointer">❌</span>
+        </div>`;
+      } else {
+        body += `<div class="entry-row">
+          <div class="entry-left">₹ ${fmt(e.amount)}<span class="entry-time">${fmtTime(e.time)}</span></div>
+          <div class="entry-icons">
+            <span onclick="editEntry('${e.id}')">✏️</span>
+            <span onclick="deleteEntry('${e.id}')">🗑️</span>
+          </div>
+        </div>`;
+      }
     });
-
-  if(complete){
-
-    document.getElementById("openingTitle").textContent =
-      "Opening CumVolume ✓";
-
-    if(
-      localStorage.openingCollapsed === "true"
-    ){
-      collapseSection(
-        "openingSection",
-        "openingArrow"
-      );
-    }
-
-  }
-
+    return `<div class="tag-row">
+      <div class="tag-header" onclick="toggleTag('${tag.replace(/'/g,"\\'")}')">
+        <span>${tag} ₹ ${fmt(total)}</span>
+        <span class="arrow ${expanded ? 'open' : ''}">▸</span>
+      </div>
+      <div class="tag-body ${expanded ? '' : 'hidden'}">${body}</div>
+    </div>`;
+  }).join("");
 }
 
+function editEntry(id){
+  editingId = id;
+  renderTagsList();
+}
+function cancelEdit(){
+  editingId = null;
+  renderTagsList();
+}
+function saveEdit(id){
+  const amount = num(document.getElementById(`edit_amount_${id}`).value);
+  let tagRaw = document.getElementById(`edit_tag_${id}`).value.trim();
+  if(amount <= 0 || !tagRaw){ alert("Please enter a valid amount and tag."); return; }
 
-/* =========================================
-   CLOSING COMPLETE CHECK
-========================================= */
+  const tags = getTags();
+  const existing = tags.find(t => t.toLowerCase() === tagRaw.toLowerCase());
+  const finalTag = existing ? existing : tagRaw;
+  if(!existing){ tags.push(finalTag); setTags(tags); }
 
-function checkClosingComplete(){
-
-  const complete =
-    closingIds.every(id => {
-
-      return document.getElementById(id).value !== "";
-
-    });
-
-  if(complete){
-
-    document.getElementById("closingTitle").textContent =
-      "Closing CumVolume ✓";
-
-    if(
-      localStorage.closingCollapsed === "true"
-    ){
-      collapseSection(
-        "closingSection",
-        "closingArrow"
-      );
-    }
-
+  const collections = getCollections();
+  const idx = collections.findIndex(c => c.id === id);
+  if(idx > -1){
+    collections[idx].amount = amount;
+    collections[idx].tag = finalTag;
+    setCollections(collections);
   }
-
+  editingId = null;
+  renderAll();
+}
+function deleteEntry(id){
+  if(!confirm("Delete this entry?")) return;
+  let collections = getCollections();
+  collections = collections.filter(c => c.id !== id);
+  setCollections(collections);
+  renderAll();
 }
 
+/* ---------- totals & status ---------- */
+function renderTotals(){
+  const saleData = calcSale();
+  document.getElementById("sale").textContent = fmt(saleData.sale);
+  const bd = document.getElementById("saleBreakdown");
+  bd.textContent = saleData.ready
+    ? `Petrol: ₹ ${fmt(saleData.petrol)}   |   Diesel: ₹ ${fmt(saleData.diesel)}`
+    : "Enter & save both Opening and Closing readings to calculate sale.";
 
-/* =========================================
-   COLLAPSE SECTION
-========================================= */
+  const collections = getCollections();
+  const collected = collections.reduce((s,e)=>s+e.amount,0);
+  document.getElementById("collected").textContent = fmt(collected);
 
-function collapseSection(sectionId,arrowId){
-
-  const section =
-    document.getElementById(sectionId);
-
-  const arrow =
-    document.getElementById(arrowId);
-
-  section.style.display = "none";
-
-  arrow.classList.remove("open");
-
+  const diff = collected - saleData.sale;
+  const s = document.getElementById("status");
+  if(!saleData.ready){
+    s.className = "result";
+    s.innerHTML = "Difference: ₹ 0.00";
+  } else if(diff > 0){
+    s.className = "result excess";
+    s.innerHTML = "🟢 Excess: ₹ " + fmt(diff);
+  } else if(diff < 0){
+    s.className = "result short";
+    s.innerHTML = "🔴 Short: ₹ " + fmt(Math.abs(diff));
+  } else {
+    s.className = "result";
+    s.innerHTML = "✅ Perfect Balance";
+  }
 }
 
-
-/* =========================================
-   SALE CALCULATION
-========================================= */
-
-function calculateSale(){
-
-  let totalSale = 0;
-
-  for(let nozzle = 1; nozzle <= 4; nozzle++){
-
-    const opening =
-      num("open" + nozzle);
-
-    const closing =
-      num("close" + nozzle);
-
-    let volume =
-      closing - opening;
-
-    if(volume < 0){
-      volume = 0;
-    }
-
-    totalSale +=
-      volume * rates[nozzle];
-
-  }
-
-  return totalSale;
-
+/* ---------- clear ---------- */
+function clearData(){
+  if(!confirm("Clear today's data? (Tags list will be kept)")) return;
+  localStorage.removeItem("pumpOpening");
+  localStorage.removeItem("pumpClosing");
+  localStorage.removeItem("pumpCollections");
+  openingExpanded = false;
+  closingExpanded = false;
+  tagExpanded = {};
+  editingId = null;
+  renderAll();
 }
 
-
-/* =========================================
-   COLLECTION TOTAL
-========================================= */
-
-function calculateCollected(){
-
-  const entries = getEntries();
-
-  return entries.reduce(
-    (total,entry) =>
-      total + Number(entry.amount || 0),
-    0
-  );
-
+/* ---------- master render ---------- */
+function renderAll(){
+  renderNozzleSection("opening");
+  renderNozzleSection("closing");
+  renderTagsList();
+  renderTotals();
 }
-
-
-/* =========================================
-   MAIN CALC
-========================================= */
-
-function calc(){
-
-  const sale =
-    calculateSale();
-
-  const collected =
-    calculateCollected();
-
-  document.getElementById("sale").textContent =
-    fmt(sale);
-
-  document.getElementById("collected").textContent =
-    fmt(collected);
-
-  const diff =
-    collected - sale;
-
-  const status =
-    document.getElementById("status");
-
-  if(diff > 0){
-
-    status.className =
-      "result excess";
-
-    status.innerHTML =
-      "🟢 Excess: ₹ " + fmt(diff);
-
-  }else if(diff < 0){
-
-    status.className =
-      "result short";
-
-    status.innerHTML =
-      "🔴 Short: ₹ " + fmt(Math.abs(diff));
-
-  }else{
-
-    status.className =
-      "result";
-
-    status.innerHTML =
-      "✅ Perfect Balance";
-
-  }
-
-  renderTags();
-
-}
-
-
-/* =========================================
-   ADD ENTRY FORM
-========================================= */
-
-let editingEntryId = null;
-
-
-function showEntryForm(){
-
-  editingEntryId = null;
-
-  document.getElementById("entryAmount").value = "";
-
-  document.getElementById("entryTag").value = "";
-
-  document.getElementById("entryForm")
-    .classList.add("active");
-
-  document.getElementById("entryAmount")
-    .focus();
-
-}
-
-
-function cancelEntry(){
-
-  editingEntryId = null;
-
-  document.getElementById("entryForm")
-    .classList.remove("active");
-
-  document.getElementById("tagSuggestions")
-    .innerHTML = "";
-
-}
-
-
-/* =========================================
-   TAG SEARCH
-========================================= */
-
-function searchTags(){
-
-  const input =
-    document.getElementById("entryTag");
-
-  const query =
-    input.value.trim().toLowerCase();
-
-  const suggestions =
-    document.getElementById("tagSuggestions");
-
-  const tags =
-    getTags();
-
-  const matches =
-    tags.filter(tag =>
-      tag.toLowerCase().includes(query)
-    );
-
-  suggestions.innerHTML = "";
-
-  if(matches.length === 0){
-    return;
-  }
-
-  matches.forEach(tag => {
-
-    const div =
-      document.createElement("div");
-
-    div.className =
-      "tag-suggestion";
-
-    div.textContent =
-      tag;
-
-    div.onclick = function(){
-
-      input.value = tag;
-
-      suggestions.innerHTML = "";
-
-      input.focus();
-
-    };
-
-    suggestions.appendChild(div);
-
-  });
-
-}
-
-
-/* =========================================
-   SAVE ENTRY
-========================================= */
-
-function saveEntry(){
-
-  const amount =
-    parseFloat(
-      document.getElementById("entryAmount").value
-    );
-
-  const tagInput =
-    document.getElementById("entryTag");
-
-  const tag =
-    tagInput.value.trim();
-
-  if(isNaN(amount) || amount <= 0){
-
-    alert("Please enter a valid amount.");
-
-    return;
-
-  }
-
-  if(!tag){
-
-    alert("Please enter a tag.");
-
-    return;
-
-  }
-
-
-  const entries =
-    getEntries();
-
-
-  /* =======================================
-     EDIT EXISTING ENTRY
-  ======================================= */
-
-  if(editingEntryId !== null){
-
-    const index =
-      entries.findIndex(
-        entry =>
-          entry.id === editingEntryId
-      );
-
-    if(index !== -1){
-
-      const oldTag =
-        entries[index].tag;
-
-      entries[index].amount =
-        amount;
-
-      entries[index].tag =
-        tag;
-
-      saveEntries(entries);
-
-      ensureTagExists(tag);
-
-      cleanupUnusedTag(oldTag);
-
-    }
-
-  }else{
-
-    /* =====================================
-       NEW ENTRY
-    ===================================== */
-
-    entries.push({
-
-      id:
-        Date.now() +
-        Math.random()
-          .toString(36)
-          .substring(2),
-
-      amount:amount,
-
-      tag:tag
-
-    });
-
-    saveEntries(entries);
-
-    ensureTagExists(tag);
-
-  }
-
-
-  editingEntryId = null;
-
-  document.getElementById("entryForm")
-    .classList.remove("active");
-
-  document.getElementById("tagSuggestions")
-    .innerHTML = "";
-
-  calc();
-
-}
-
-
-/* =========================================
-   ENSURE TAG EXISTS
-========================================= */
-
-function ensureTagExists(tag){
-
-  const tags =
-    getTags();
-
-  const exists =
-    tags.some(
-      existing =>
-        existing.toLowerCase() ===
-        tag.toLowerCase()
-    );
-
-  if(!exists){
-
-    tags.push(tag);
-
-    saveTags(tags);
-
-  }
-
-}
-
-
-/* =========================================
-   CLEAN UNUSED TAG
-========================================= */
-
-function cleanupUnusedTag(tag){
-
-  if(!tag){
-    return;
-  }
-
-  const entries =
-    getEntries();
-
-  const stillUsed =
-    entries.some(
-      entry =>
-        entry.tag.toLowerCase() ===
-        tag.toLowerCase()
-    );
-
-  if(!stillUsed){
-
-    const tags =
-      getTags().filter(
-        t =>
-          t.toLowerCase() !==
-          tag.toLowerCase()
-      );
-
-    saveTags(tags);
-
-  }
-
-}
-
-
-/* =========================================
-   RENDER TAG SUMMARY
-========================================= */
-
-function renderTags(){
-
-  const container =
-    document.getElementById("tagsList");
-
-  const entries =
-    getEntries();
-
-  const tags =
-    getTags();
-
-  container.innerHTML = "";
-
-
-  if(entries.length === 0){
-
-    container.innerHTML =
-      '<div class="empty-message">' +
-      'No collection entries yet.' +
-      '</div>';
-
-    return;
-
-  }
-
-
-  tags.forEach((tag,index) => {
-
-    const tagEntries =
-      entries.filter(
-        entry =>
-          entry.tag.toLowerCase() ===
-          tag.toLowerCase()
-      );
-
-    if(tagEntries.length === 0){
-      return;
-    }
-
-
-    const total =
-      tagEntries.reduce(
-        (sum,entry) =>
-          sum + Number(entry.amount || 0),
-        0
-      );
-
-
-    const row =
-      document.createElement("div");
-
-    row.className =
-      "tag-row";
-
-
-    /* =====================================
-       TAG HEADER
-    ===================================== */
-
-    const header =
-      document.createElement("div");
-
-    header.className =
-      "tag-header";
-
-    header.onclick =
-      function(){
-
-        toggleTagDetails(
-          "details-" + index,
-          "tag-arrow-" + index
-        );
-
-      };
-
-
-    const left =
-      document.createElement("div")
+renderAll();
+</script>
+</body>
+</html>
