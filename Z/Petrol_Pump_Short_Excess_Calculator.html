@@ -36,3 +36,456 @@ input[type=number],input[type=text]{width:100%;padding:10px;box-sizing:border-bo
 .entry-time{color:#999;font-size:.8em;display:block}
 .entry-icons span{cursor:pointer;margin-left:8px;font-size:1em}
 .edit-row{display:flex;gap:6px;align-items:center;padding:8px 0;border-top:1px solid #eee;flex-wrap:wrap}
+.edit-row input{width:auto;flex:1;padding:6px;margin-top:0;min-width:80px}
+.hidden{display:none !important}
+.grid4{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.nozzle-box{background:#fafafa;border-radius:6px;padding:8px}
+.nozzle-box label{margin-top:0}
+.row-flex{display:flex;justify-content:space-between;align-items:center}
+.switch{position:relative;display:inline-block;width:44px;height:24px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:#ccc;transition:.2s;border-radius:24px}
+.slider:before{position:absolute;content:"";height:18px;width:18px;left:3px;bottom:3px;background-color:#fff;transition:.2s;border-radius:50%}
+input:checked + .slider{background-color:#2563eb}
+input:checked + .slider:before{transform:translateX(20px)}
+</style>
+</head>
+<body>
+<div class="container">
+<h2>Petrol Pump Short / Excess</h2>
+
+<div id="openingSection"></div>
+<div id="closingSection"></div>
+
+<div class="result">Today's Sale: ₹ <span id="sale">0.00</span></div>
+<div class="result sub" id="saleBreakdown"></div>
+
+<div class="section">
+  <label style="margin-top:0">Total Oil Sale (ml)</label>
+  <input type="number" step="1" id="oilMl" placeholder="0">
+</div>
+
+<div class="section row-flex">
+  <span style="font-weight:bold">TESTING</span>
+  <label class="switch">
+    <input type="checkbox" id="testingToggle">
+    <span class="slider"></span>
+  </label>
+</div>
+
+<h3 style="margin-top:20px">Collections</h3>
+<button class="btn" id="addEntryBtn" onclick="toggleAddForm()">+ Add Entry</button>
+<div id="addForm" class="hidden">
+  <label>Amount</label>
+  <input type="number" step="0.01" id="entryAmount" placeholder="0.00">
+  <label>Tags</label>
+  <div class="tag-input-wrap">
+    <input type="text" id="entryTag" autocomplete="off" placeholder="Type a tag...">
+    <div id="tagSuggestions" class="suggestions hidden"></div>
+  </div>
+  <button class="btn" onclick="addEntry()">Add</button>
+</div>
+
+<div id="tagsList"></div>
+
+<div class="result">Collected: ₹ <span id="collected">0.00</span></div>
+<div class="result sub" id="testingNote"></div>
+<div class="result" id="status">Difference: ₹0.00</div>
+
+<button class="btn secondary" onclick="clearData()">Clear Today's Data</button>
+</div>
+
+<script>
+/* ---------- constants ---------- */
+const RATES = [114.28, 103.19, 114.28, 103.19]; // nozzle 1,2,3,4 (index 0-3)
+const FUEL  = ["Petrol","Diesel","Petrol","Diesel"];
+const DEFAULT_TAGS = ["Card","Credit Vehicles","Test","Deposited Cash","Phonepe","Cash","Coin"];
+const OIL_RATE_PER_LITER = 400;
+const TESTING_AMOUNT = 2174.7;
+const todayStr = new Date().toISOString().slice(0,10);
+
+/* ---------- storage helpers ---------- */
+function getJSON(key, def){
+  try{
+    const v = localStorage.getItem(key);
+    return v ? JSON.parse(v) : def;
+  }catch(e){ return def; }
+}
+function setJSON(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
+
+function ensureDay(){
+  const storedDay = localStorage.getItem("pumpDay");
+  if(storedDay !== todayStr){
+    localStorage.removeItem("pumpOpening");
+    localStorage.removeItem("pumpClosing");
+    localStorage.removeItem("pumpCollections");
+    localStorage.removeItem("pumpOilMl");
+    localStorage.setItem("pumpDay", todayStr);
+  }
+  if(!localStorage.getItem("pumpTags")){
+    setJSON("pumpTags", DEFAULT_TAGS);
+  }
+}
+ensureDay();
+
+function getOpening(){ return getJSON("pumpOpening", {saved:false, values:[null,null,null,null]}); }
+function setOpening(d){ setJSON("pumpOpening", d); }
+function getClosing(){ return getJSON("pumpClosing", {saved:false, values:[null,null,null,null]}); }
+function setClosing(d){ setJSON("pumpClosing", d); }
+function getCollections(){ return getJSON("pumpCollections", []); }
+function setCollections(a){ setJSON("pumpCollections", a); }
+function getTags(){ return getJSON("pumpTags", DEFAULT_TAGS.slice()); }
+function setTags(a){ setJSON("pumpTags", a); }
+function getOilMl(){ return getJSON("pumpOilMl", 0); }
+function setOilMl(v){ setJSON("pumpOilMl", v); }
+function getTesting(){ return getJSON("pumpTestingOn", false); }
+function setTesting(v){ setJSON("pumpTestingOn", v); }
+
+/* ---------- transient UI state (resets each page load) ---------- */
+let openingExpanded = false;
+let closingExpanded = false;
+let tagExpanded = {};
+let editingId = null;
+let editBuffer = {amount:"", tag:""};
+
+/* ---------- formatting ---------- */
+function fmt(x){ return (x||0).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function num(v){ const n = parseFloat(v); return isNaN(n) ? 0 : n; }
+
+/* ---------- rendering: opening / closing nozzle sections ---------- */
+function renderNozzleSection(kind){
+  const containerId = kind === "opening" ? "openingSection" : "closingSection";
+  const label = kind === "opening" ? "Opening CumVolume" : "Closing CumVolume";
+  const data = kind === "opening" ? getOpening() : getClosing();
+  const expanded = kind === "opening" ? openingExpanded : closingExpanded;
+  const container = document.getElementById(containerId);
+
+  if(!data.saved){
+    let boxes = "";
+    for(let i=0;i<4;i++){
+      const v = data.values[i] !== null && data.values[i] !== undefined ? data.values[i] : "";
+      boxes += `<div class="nozzle-box">
+        <label>Nozzle ${i+1} (${FUEL[i]})</label>
+        <input type="number" step="0.001" id="${kind}_${i}" value="${v}">
+      </div>`;
+    }
+    container.innerHTML = `
+      <div class="section">
+        <h3 style="margin-top:0">${label}</h3>
+        <div class="grid4">${boxes}</div>
+        <button class="btn" onclick="save${cap(kind)}()">Save ${label}</button>
+      </div>`;
+  } else {
+    let boxes = "";
+    for(let i=0;i<4;i++){
+      boxes += `<div class="nozzle-box">
+        <label>Nozzle ${i+1} (${FUEL[i]})</label>
+        <input type="number" step="0.001" id="${kind}_${i}" value="${data.values[i]}">
+      </div>`;
+    }
+    container.innerHTML = `
+      <div class="section">
+        <div class="toggle-header" onclick="toggleNozzle('${kind}')">
+          <span>${label} <span class="locked-note">(saved)</span></span>
+          <span class="arrow ${expanded ? 'open' : ''}">▸</span>
+        </div>
+        <div class="${expanded ? '' : 'hidden'}" style="margin-top:10px">
+          <div class="grid4">${boxes}</div>
+          <button class="btn" onclick="update${cap(kind)}()">Update ${label}</button>
+        </div>
+      </div>`;
+  }
+}
+function cap(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+
+function readNozzleInputs(kind){
+  const vals = [];
+  for(let i=0;i<4;i++){
+    const el = document.getElementById(`${kind}_${i}`);
+    vals.push(el ? num(el.value) : 0);
+  }
+  return vals;
+}
+
+function saveOpening(){
+  const vals = readNozzleInputs("opening");
+  setOpening({saved:true, values:vals});
+  openingExpanded = false;
+  renderAll();
+}
+function updateOpening(){
+  const vals = readNozzleInputs("opening");
+  setOpening({saved:true, values:vals});
+  openingExpanded = false;
+  renderAll();
+}
+function saveClosing(){
+  const vals = readNozzleInputs("closing");
+  setClosing({saved:true, values:vals});
+  closingExpanded = false;
+  renderAll();
+}
+function updateClosing(){
+  const vals = readNozzleInputs("closing");
+  setClosing({saved:true, values:vals});
+  closingExpanded = false;
+  renderAll();
+}
+function toggleNozzle(kind){
+  if(kind === "opening") openingExpanded = !openingExpanded;
+  else closingExpanded = !closingExpanded;
+  renderNozzleSection(kind);
+}
+
+/* ---------- sale calculation ---------- */
+function calcSale(){
+  const opening = getOpening();
+  const closing = getClosing();
+  const fuelReady = opening.saved && closing.saved;
+  let petrol=0, diesel=0;
+  if(fuelReady){
+    for(let i=0;i<4;i++){
+      let vol = num(closing.values[i]) - num(opening.values[i]);
+      if(vol < 0) vol = 0;
+      const amt = vol * RATES[i];
+      if(FUEL[i] === "Petrol") petrol += amt; else diesel += amt;
+    }
+  }
+  const oilMl = num(getOilMl());
+  const oilAmount = (oilMl/1000) * OIL_RATE_PER_LITER;
+  const sale = petrol + diesel + oilAmount;
+  return {ready: fuelReady, sale, petrol, diesel, oilAmount};
+}
+
+/* ---------- collections / tags ---------- */
+function toggleAddForm(){
+  const f = document.getElementById("addForm");
+  f.classList.toggle("hidden");
+  if(!f.classList.contains("hidden")){
+    document.getElementById("entryAmount").value = "";
+    document.getElementById("entryTag").value = "";
+    document.getElementById("tagSuggestions").classList.add("hidden");
+  }
+}
+
+function onTagInput(){
+  const input = document.getElementById("entryTag");
+  const val = input.value.trim().toLowerCase();
+  const box = document.getElementById("tagSuggestions");
+  if(!val){ box.classList.add("hidden"); box.innerHTML=""; return; }
+  const tags = getTags();
+  const matches = tags.filter(t => t.toLowerCase().includes(val));
+  if(matches.length === 0){ box.classList.add("hidden"); box.innerHTML=""; return; }
+  box.innerHTML = matches.map(t => `<div onclick="selectTag('${t.replace(/'/g,"\\'")}')">${t}</div>`).join("");
+  box.classList.remove("hidden");
+}
+function selectTag(t){
+  document.getElementById("entryTag").value = t;
+  const box = document.getElementById("tagSuggestions");
+  box.classList.add("hidden");
+  box.innerHTML = "";
+}
+document.addEventListener("click", function(e){
+  const wrap = document.querySelector(".tag-input-wrap");
+  if(wrap && !wrap.contains(e.target)){
+    document.getElementById("tagSuggestions")?.classList.add("hidden");
+  }
+});
+
+function addEntry(){
+  const amount = num(document.getElementById("entryAmount").value);
+  let tagRaw = document.getElementById("entryTag").value.trim();
+  if(amount <= 0 || !tagRaw){ alert("Please enter a valid amount and tag."); return; }
+
+  const tags = getTags();
+  const existing = tags.find(t => t.toLowerCase() === tagRaw.toLowerCase());
+  const finalTag = existing ? existing : tagRaw;
+  if(!existing){
+    tags.push(finalTag);
+    setTags(tags);
+  }
+
+  const collections = getCollections();
+  collections.push({ id: Date.now() + "_" + Math.random().toString(36).slice(2,7), amount, tag: finalTag, time: new Date().toISOString() });
+  setCollections(collections);
+
+  document.getElementById("addForm").classList.add("hidden");
+  renderAll();
+}
+
+function toggleTag(tag){
+  tagExpanded[tag] = !tagExpanded[tag];
+  renderTagsList();
+}
+
+function fmtTime(iso){
+  const d = new Date(iso);
+  return d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+}
+
+function renderTagsList(){
+  const collections = getCollections();
+  const tags = getTags();
+  const container = document.getElementById("tagsList");
+
+  const order = [];
+  tags.forEach(t => { if(collections.some(c=>c.tag===t)) order.push(t); });
+  collections.forEach(c => { if(!order.includes(c.tag)) order.push(c.tag); });
+
+  if(order.length === 0){
+    container.innerHTML = `<div class="result sub" style="margin-top:8px">No entries yet.</div>`;
+    return;
+  }
+
+  container.innerHTML = order.map(tag => {
+    const entries = collections.filter(c => c.tag === tag);
+    const total = entries.reduce((s,e)=>s+e.amount,0);
+    const expanded = !!tagExpanded[tag];
+    let body = "";
+    entries.forEach(e => {
+      if(editingId === e.id){
+        body += `<div class="edit-row">
+          <input type="number" step="0.01" id="edit_amount_${e.id}" value="${e.amount}">
+          <input type="text" id="edit_tag_${e.id}" value="${e.tag}">
+          <span onclick="saveEdit('${e.id}')" style="cursor:pointer">✅</span>
+          <span onclick="cancelEdit()" style="cursor:pointer">❌</span>
+        </div>`;
+      } else {
+        body += `<div class="entry-row">
+          <div class="entry-left">₹ ${fmt(e.amount)}<span class="entry-time">${fmtTime(e.time)}</span></div>
+          <div class="entry-icons">
+            <span onclick="editEntry('${e.id}')">✏️</span>
+            <span onclick="deleteEntry('${e.id}')">🗑️</span>
+          </div>
+        </div>`;
+      }
+    });
+    return `<div class="tag-row">
+      <div class="tag-header" onclick="toggleTag('${tag.replace(/'/g,"\\'")}')">
+        <span>${tag} ₹ ${fmt(total)}</span>
+        <span class="arrow ${expanded ? 'open' : ''}">▸</span>
+      </div>
+      <div class="tag-body ${expanded ? '' : 'hidden'}">${body}</div>
+    </div>`;
+  }).join("");
+}
+
+function editEntry(id){
+  editingId = id;
+  renderTagsList();
+}
+function cancelEdit(){
+  editingId = null;
+  renderTagsList();
+}
+function saveEdit(id){
+  const amount = num(document.getElementById(`edit_amount_${id}`).value);
+  let tagRaw = document.getElementById(`edit_tag_${id}`).value.trim();
+  if(amount <= 0 || !tagRaw){ alert("Please enter a valid amount and tag."); return; }
+
+  const tags = getTags();
+  const existing = tags.find(t => t.toLowerCase() === tagRaw.toLowerCase());
+  const finalTag = existing ? existing : tagRaw;
+  if(!existing){ tags.push(finalTag); setTags(tags); }
+
+  const collections = getCollections();
+  const idx = collections.findIndex(c => c.id === id);
+  if(idx > -1){
+    collections[idx].amount = amount;
+    collections[idx].tag = finalTag;
+    setCollections(collections);
+  }
+  editingId = null;
+  renderAll();
+}
+function deleteEntry(id){
+  if(!confirm("Delete this entry?")) return;
+  let collections = getCollections();
+  collections = collections.filter(c => c.id !== id);
+  setCollections(collections);
+  renderAll();
+}
+
+/* ---------- totals & status ---------- */
+function renderTotals(){
+  const saleData = calcSale();
+  document.getElementById("sale").textContent = fmt(saleData.sale);
+  const bd = document.getElementById("saleBreakdown");
+  const parts = [];
+  if(saleData.ready){
+    parts.push(`Petrol: ₹ ${fmt(saleData.petrol)}`);
+    parts.push(`Diesel: ₹ ${fmt(saleData.diesel)}`);
+  }
+  if(saleData.oilAmount > 0){ parts.push(`Oil: ₹ ${fmt(saleData.oilAmount)}`); }
+  bd.textContent = parts.length
+    ? parts.join("   |   ")
+    : "Enter & save both Opening and Closing readings to calculate sale.";
+
+  const collections = getCollections();
+  let collected = collections.reduce((s,e)=>s+e.amount,0);
+  const testingOn = getTesting();
+  if(testingOn) collected += TESTING_AMOUNT;
+  document.getElementById("collected").textContent = fmt(collected);
+
+  const note = document.getElementById("testingNote");
+  note.textContent = testingOn ? `(includes Testing: ₹ ${fmt(TESTING_AMOUNT)})` : "";
+
+  const diff = collected - saleData.sale;
+  const s = document.getElementById("status");
+  if(diff > 0){
+    s.className = "result excess";
+    s.innerHTML = "🟢 Excess: ₹ " + fmt(diff);
+  } else if(diff < 0){
+    s.className = "result short";
+    s.innerHTML = "🔴 Short: ₹ " + fmt(Math.abs(diff));
+  } else {
+    s.className = "result";
+    s.innerHTML = "✅ Perfect Balance";
+  }
+}
+
+/* ---------- clear ---------- */
+function clearData(){
+  if(!confirm("Clear today's data? (Tags list will be kept)")) return;
+  localStorage.removeItem("pumpOpening");
+  localStorage.removeItem("pumpClosing");
+  localStorage.removeItem("pumpCollections");
+  localStorage.removeItem("pumpOilMl");
+  document.getElementById("oilMl").value = "";
+  openingExpanded = false;
+  closingExpanded = false;
+  tagExpanded = {};
+  editingId = null;
+  renderAll();
+}
+
+/* ---------- oil sale + testing toggle (static controls, init once) ---------- */
+function initMiscInputs(){
+  const oilInput = document.getElementById("oilMl");
+  const oilVal = getOilMl();
+  oilInput.value = oilVal ? oilVal : "";
+  oilInput.oninput = () => {
+    setOilMl(num(oilInput.value));
+    renderTotals();
+  };
+
+  const testInput = document.getElementById("testingToggle");
+  testInput.checked = getTesting();
+  testInput.onchange = () => {
+    setTesting(testInput.checked);
+    renderTotals();
+  };
+}
+
+/* ---------- master render ---------- */
+function renderAll(){
+  renderNozzleSection("opening");
+  renderNozzleSection("closing");
+  renderTagsList();
+  renderTotals();
+}
+renderAll();
+initMiscInputs();
+</script>
+</body>
+</html>
