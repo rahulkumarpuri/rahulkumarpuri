@@ -488,9 +488,10 @@ renderAll();
 initMiscInputs();
 
 
-  /* =========================================================
-   AUTO COMPACT: OPENING + CLOSING + TESTING
-   No existing HTML/function changes required.
+/* =========================================================
+   COMPACT OPENING / CLOSING / TESTING
+   Buttons stay in ONE LINE.
+   Clicking them opens the ORIGINAL nozzle layout.
 ========================================================= */
 
 (function(){
@@ -501,127 +502,132 @@ initMiscInputs();
 
   if(!opening || !closing || !testingToggle) return;
 
-  /* ---------- Add compact CSS automatically ---------- */
+
+  /* ---------- CSS ---------- */
 
   const style = document.createElement("style");
 
   style.textContent = `
 
-    /* Main compact row */
-    #autoCompactControls{
+    /* One-line control bar */
+    #compactPumpBar{
       display:grid;
       grid-template-columns:1fr 1fr auto;
-      align-items:start;
+      align-items:center;
       gap:6px;
       margin-top:14px;
     }
 
-    /* Opening / Closing containers */
-    #autoCompactControls > #openingSection,
-    #autoCompactControls > #closingSection{
-      min-width:0;
-    }
-
-    #autoCompactControls > #openingSection .section,
-    #autoCompactControls > #closingSection .section{
-      margin-top:0;
-      padding:8px;
-    }
-
-    /* Compact headings */
-    #autoCompactControls #openingSection h3,
-    #autoCompactControls #closingSection h3{
-      margin:0;
-      font-size:.88em;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-
-    /* Saved Opening / Closing headers */
-    #autoCompactControls #openingSection .toggle-header,
-    #autoCompactControls #closingSection .toggle-header{
+    /* Opening / Closing button */
+    .compact-pump-btn{
+      border:1px solid #e5e5e5;
+      background:#fafafa;
+      border-radius:7px;
+      min-height:42px;
+      padding:7px 9px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:4px;
+      cursor:pointer;
+      font-weight:bold;
       font-size:.85em;
-      white-space:nowrap;
-      padding:4px 2px;
+      user-select:none;
     }
 
-    /* Hide "(saved)" because icon + compact label is enough */
-    #autoCompactControls .locked-note{
-      display:none;
+    .compact-pump-btn:active{
+      background:#eef2ff;
     }
 
-    /* Nozzle area */
-    #autoCompactControls .grid4{
-      gap:6px;
+    .compact-pump-arrow{
+      color:#777;
+      font-size:.75em;
+      transition:.15s;
     }
 
-    #autoCompactControls .nozzle-box{
-      padding:6px;
-    }
-
-    #autoCompactControls .nozzle-box label{
-      font-size:.78em;
-      margin-top:0;
-    }
-
-    #autoCompactControls .nozzle-box input{
-      padding:7px;
-      font-size:.85em;
-    }
-
-    /* Save / Update button */
-    #autoCompactControls .btn{
-      padding:7px;
-      margin-top:7px;
-      font-size:.8em;
+    .compact-pump-arrow.open{
+      transform:rotate(90deg);
     }
 
     /* Testing */
-    #autoCompactControls .testing-compact{
+    .compact-testing{
+      min-height:42px;
+      padding:0 7px;
+      border:1px solid #e5e5e5;
+      background:#fafafa;
+      border-radius:7px;
       display:flex;
       align-items:center;
       justify-content:center;
       gap:5px;
-      padding:8px 5px;
-      white-space:nowrap;
       font-weight:bold;
       font-size:.78em;
-      min-height:20px;
+      white-space:nowrap;
     }
 
-    #autoCompactControls .testing-compact .switch{
+    /* IMPORTANT:
+       When nozzle layout is OPEN,
+       restore original layout completely.
+    */
+
+    #compactPumpBar .original-nozzle-layout{
+      grid-column:1 / -1;
+      width:100%;
+    }
+
+    #compactPumpBar .original-nozzle-layout .section{
+      margin-top:0;
+    }
+
+    /* Keep original grid exactly as before */
+    #compactPumpBar .original-nozzle-layout .grid4{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:8px;
+    }
+
+    #compactPumpBar .original-nozzle-layout .nozzle-box{
+      background:#fafafa;
+      border-radius:6px;
+      padding:8px;
+    }
+
+    #compactPumpBar .original-nozzle-layout .nozzle-box label{
+      margin-top:0;
+    }
+
+    /* Testing switch */
+    .compact-testing .switch{
       width:38px;
       height:21px;
+      margin:0;
     }
 
-    #autoCompactControls .testing-compact .slider:before{
+    .compact-testing .slider:before{
       width:15px;
       height:15px;
       left:3px;
       bottom:3px;
     }
 
-    #autoCompactControls
-    .testing-compact input:checked + .slider:before{
+    .compact-testing input:checked + .slider:before{
       transform:translateX(17px);
     }
 
-    /* Mobile */
     @media(max-width:380px){
 
-      #autoCompactControls{
+      #compactPumpBar{
         gap:3px;
       }
 
-      #autoCompactControls > #openingSection .section,
-      #autoCompactControls > #closingSection .section{
-        padding:6px;
+      .compact-pump-btn{
+        padding:6px 5px;
+        font-size:.78em;
       }
 
-      #autoCompactControls .testing-compact{
-        padding:7px 3px;
-        font-size:.72em;
+      .compact-testing{
+        padding:0 4px;
+        font-size:.7em;
       }
 
     }
@@ -631,116 +637,336 @@ initMiscInputs();
   document.head.appendChild(style);
 
 
-  /* ---------- Create common wrapper ---------- */
+  /* ---------- Save original renderer ---------- */
 
-  const wrapper =
-    document.createElement("div");
+  const originalRenderNozzleSection =
+    window.renderNozzleSection;
 
-  wrapper.id =
-    "autoCompactControls";
 
+  /* ---------- State ---------- */
+
+  let openPanel = null;
+
+
+  /* ---------- Create compact button ---------- */
+
+  function createButton(kind){
+
+    const isOpening =
+      kind === "opening";
+
+    const icon =
+      isOpening ? "🔓" : "🔒";
+
+    const text =
+      isOpening ? "Opening" : "Closing";
+
+    const button =
+      document.createElement("div");
+
+    button.className =
+      "compact-pump-btn";
+
+    button.innerHTML = `
+      <span>${icon}</span>
+      <span>${text}</span>
+      <span class="compact-pump-arrow ${
+        openPanel === kind ? "open" : ""
+      }">▸</span>
+    `;
+
+    button.onclick = function(){
+
+      if(openPanel === kind){
+
+        openPanel = null;
+
+      }else{
+
+        openPanel = kind;
+
+      }
+
+      renderCompact();
+
+    };
+
+    return button;
+
+  }
+
+
+  /* ---------- Render original nozzle layout ---------- */
+
+  function renderOriginal(kind, target){
+
+    /*
+      Temporarily use the original renderer.
+
+      This means the nozzle fields are generated
+      exactly like your old code.
+    */
+
+    originalRenderNozzleSection(kind);
+
+    const source =
+      document.getElementById(
+        kind === "opening"
+          ? "openingSection"
+          : "closingSection"
+      );
+
+    if(source){
+
+      source.classList.add(
+        "original-nozzle-layout"
+      );
+
+      target.replaceWith(source);
+
+    }
+
+  }
+
+
+  /* ---------- Main render ---------- */
+
+  function renderCompact(){
+
+    const oldOpening =
+      document.getElementById(
+        "openingSection"
+      );
+
+    const oldClosing =
+      document.getElementById(
+        "closingSection"
+      );
+
+
+    /* Create / reuse wrapper */
+
+    let bar =
+      document.getElementById(
+        "compactPumpBar"
+      );
+
+
+    if(!bar){
+
+      bar =
+        document.createElement("div");
+
+      bar.id =
+        "compactPumpBar";
+
+      /*
+        Put bar before Opening section.
+      */
+
+      oldOpening.parentNode.insertBefore(
+        bar,
+        oldOpening
+      );
+
+    }
+
+
+    /* Clear current content */
+
+    bar.innerHTML = "";
+
+
+    /* ---------- Opening ---------- */
+
+    if(openPanel === "opening"){
+
+      const holder =
+        document.createElement("div");
+
+      holder.id =
+        "openingSection";
+
+      bar.appendChild(holder);
+
+      renderOriginal(
+        "opening",
+        holder
+      );
+
+    }else{
+
+      const btn =
+        createButton("opening");
+
+      bar.appendChild(btn);
+
+    }
+
+
+    /* ---------- Closing ---------- */
+
+    if(openPanel === "closing"){
+
+      const holder =
+        document.createElement("div");
+
+      holder.id =
+        "closingSection";
+
+      bar.appendChild(holder);
+
+      renderOriginal(
+        "closing",
+        holder
+      );
+
+    }else{
+
+      const btn =
+        createButton("closing");
+
+      bar.appendChild(btn);
+
+    }
+
+
+    /* ---------- Testing ---------- */
+
+    const testing =
+      document.createElement("div");
+
+    testing.className =
+      "compact-testing";
+
+    testing.innerHTML = `
+      <span>🧪</span>
+      <label
+        class="switch"
+        style="margin:0"
+      >
+        <input
+          type="checkbox"
+          id="testingToggle"
+          ${getTesting() ? "checked" : ""}
+        >
+        <span class="slider"></span>
+      </label>
+    `;
+
+    bar.appendChild(testing);
+
+
+    /* Testing event */
+
+    const newToggle =
+      testing.querySelector(
+        "#testingToggle"
+      );
+
+    newToggle.onchange = function(){
+
+      setTesting(
+        newToggle.checked
+      );
+
+      renderTotals();
+
+    };
+
+  }
+
+
+  /* =======================================================
+     OVERRIDE renderNozzleSection
+
+     When our compact UI is active, don't let renderAll()
+     destroy the compact layout.
+  ======================================================= */
+
+  window.renderNozzleSection =
+    function(kind){
+
+      if(
+        document.getElementById(
+          "compactPumpBar"
+        )
+      ){
+
+        renderCompact();
+
+      }else{
+
+        originalRenderNozzleSection(
+          kind
+        );
+
+      }
+
+    };
+
+
+  /* ---------- Initial conversion ---------- */
 
   /*
-    Put wrapper before Opening,
-    then move Opening + Closing inside it.
+    Remove the old separate Testing section.
   */
-
-  opening.parentNode.insertBefore(
-    wrapper,
-    opening
-  );
-
-  wrapper.appendChild(opening);
-  wrapper.appendChild(closing);
-
-
-  /* ---------- Move Testing section ---------- */
 
   const testingSection =
     testingToggle.closest(".section");
 
   if(testingSection){
+    testingSection.remove();
+  }
 
-    /*
-      Give Testing its own compact class.
-    */
 
-    testingSection.classList.remove("section");
+  /*
+    Remove old Opening / Closing containers
+    after taking their place.
+  */
 
-    testingSection.classList.add(
-      "testing-compact"
+  opening.remove();
+  closing.remove();
+
+
+  /* ---------- Build compact UI ---------- */
+
+  const bar =
+    document.createElement("div");
+
+  bar.id =
+    "compactPumpBar";
+
+
+  /*
+    Put it where Opening originally was.
+  */
+
+  const sale =
+    document.getElementById("sale");
+
+  const saleResult =
+    sale?.closest(".result");
+
+  if(saleResult){
+
+    saleResult.parentNode.insertBefore(
+      bar,
+      saleResult
     );
 
-    /*
-      Remove old margin/background/border
-      visually without changing original HTML.
-    */
+  }else{
 
-    wrapper.appendChild(
-      testingSection
-    );
+    document
+      .querySelector(".container")
+      .appendChild(bar);
 
   }
 
 
-  /* ---------- Add icons ---------- */
+  /* ---------- First render ---------- */
 
-  function addIcon(container, icon){
-
-    const headings =
-      container.querySelectorAll(
-        "h3, .toggle-header"
-      );
-
-    headings.forEach(header => {
-
-      /*
-        Don't add the icon twice.
-      */
-
-      if(
-        !header.textContent.trim()
-          .startsWith(icon)
-      ){
-
-        const first =
-          header.firstChild;
-
-        header.insertBefore(
-          document.createTextNode(
-            icon + " "
-          ),
-          first
-        );
-
-      }
-
-    });
-
-  }
-
-
-  addIcon(opening, "🔓");
-  addIcon(closing, "🔒");
-
-
-  /* ---------- Testing label ---------- */
-
-  if(testingSection){
-
-    const label =
-      testingSection.querySelector(
-        "span:first-child"
-      );
-
-    if(label){
-
-      label.textContent =
-        "🧪 Testing";
-
-    }
-
-  }
+  renderCompact();
 
 })();
 </script>
