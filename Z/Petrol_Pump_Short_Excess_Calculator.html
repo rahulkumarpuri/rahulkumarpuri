@@ -486,6 +486,263 @@ function renderAll(){
 }
 renderAll();
 initMiscInputs();
+
+
+  /* =========================================================
+   AUTO COMPACT: OPENING + CLOSING + TESTING
+   No existing HTML/function changes required.
+========================================================= */
+
+(function(){
+
+  const opening = document.getElementById("openingSection");
+  const closing = document.getElementById("closingSection");
+  const testingToggle = document.getElementById("testingToggle");
+
+  if(!opening || !closing || !testingToggle) return;
+
+  /* ---------- Add compact CSS automatically ---------- */
+
+  const style = document.createElement("style");
+
+  style.textContent = `
+
+    /* Main compact row */
+    #autoCompactControls{
+      display:grid;
+      grid-template-columns:1fr 1fr auto;
+      align-items:start;
+      gap:6px;
+      margin-top:14px;
+    }
+
+    /* Opening / Closing containers */
+    #autoCompactControls > #openingSection,
+    #autoCompactControls > #closingSection{
+      min-width:0;
+    }
+
+    #autoCompactControls > #openingSection .section,
+    #autoCompactControls > #closingSection .section{
+      margin-top:0;
+      padding:8px;
+    }
+
+    /* Compact headings */
+    #autoCompactControls #openingSection h3,
+    #autoCompactControls #closingSection h3{
+      margin:0;
+      font-size:.88em;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    /* Saved Opening / Closing headers */
+    #autoCompactControls #openingSection .toggle-header,
+    #autoCompactControls #closingSection .toggle-header{
+      font-size:.85em;
+      white-space:nowrap;
+      padding:4px 2px;
+    }
+
+    /* Hide "(saved)" because icon + compact label is enough */
+    #autoCompactControls .locked-note{
+      display:none;
+    }
+
+    /* Nozzle area */
+    #autoCompactControls .grid4{
+      gap:6px;
+    }
+
+    #autoCompactControls .nozzle-box{
+      padding:6px;
+    }
+
+    #autoCompactControls .nozzle-box label{
+      font-size:.78em;
+      margin-top:0;
+    }
+
+    #autoCompactControls .nozzle-box input{
+      padding:7px;
+      font-size:.85em;
+    }
+
+    /* Save / Update button */
+    #autoCompactControls .btn{
+      padding:7px;
+      margin-top:7px;
+      font-size:.8em;
+    }
+
+    /* Testing */
+    #autoCompactControls .testing-compact{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:5px;
+      padding:8px 5px;
+      white-space:nowrap;
+      font-weight:bold;
+      font-size:.78em;
+      min-height:20px;
+    }
+
+    #autoCompactControls .testing-compact .switch{
+      width:38px;
+      height:21px;
+    }
+
+    #autoCompactControls .testing-compact .slider:before{
+      width:15px;
+      height:15px;
+      left:3px;
+      bottom:3px;
+    }
+
+    #autoCompactControls
+    .testing-compact input:checked + .slider:before{
+      transform:translateX(17px);
+    }
+
+    /* Mobile */
+    @media(max-width:380px){
+
+      #autoCompactControls{
+        gap:3px;
+      }
+
+      #autoCompactControls > #openingSection .section,
+      #autoCompactControls > #closingSection .section{
+        padding:6px;
+      }
+
+      #autoCompactControls .testing-compact{
+        padding:7px 3px;
+        font-size:.72em;
+      }
+
+    }
+
+  `;
+
+  document.head.appendChild(style);
+
+
+  /* ---------- Create common wrapper ---------- */
+
+  const wrapper =
+    document.createElement("div");
+
+  wrapper.id =
+    "autoCompactControls";
+
+
+  /*
+    Put wrapper before Opening,
+    then move Opening + Closing inside it.
+  */
+
+  opening.parentNode.insertBefore(
+    wrapper,
+    opening
+  );
+
+  wrapper.appendChild(opening);
+  wrapper.appendChild(closing);
+
+
+  /* ---------- Move Testing section ---------- */
+
+  const testingSection =
+    testingToggle.closest(".section");
+
+  if(testingSection){
+
+    /*
+      Give Testing its own compact class.
+    */
+
+    testingSection.classList.remove("section");
+
+    testingSection.classList.add(
+      "testing-compact"
+    );
+
+    /*
+      Remove old margin/background/border
+      visually without changing original HTML.
+    */
+
+    wrapper.appendChild(
+      testingSection
+    );
+
+  }
+
+
+  /* ---------- Add icons ---------- */
+
+  function addIcon(container, icon){
+
+    const headings =
+      container.querySelectorAll(
+        "h3, .toggle-header"
+      );
+
+    headings.forEach(header => {
+
+      /*
+        Don't add the icon twice.
+      */
+
+      if(
+        !header.textContent.trim()
+          .startsWith(icon)
+      ){
+
+        const first =
+          header.firstChild;
+
+        header.insertBefore(
+          document.createTextNode(
+            icon + " "
+          ),
+          first
+        );
+
+      }
+
+    });
+
+  }
+
+
+  addIcon(opening, "🔓");
+  addIcon(closing, "🔒");
+
+
+  /* ---------- Testing label ---------- */
+
+  if(testingSection){
+
+    const label =
+      testingSection.querySelector(
+        "span:first-child"
+      );
+
+    if(label){
+
+      label.textContent =
+        "🧪 Testing";
+
+    }
+
+  }
+
+})();
 </script>
 </body>
 </html>
