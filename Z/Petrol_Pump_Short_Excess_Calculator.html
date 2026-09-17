@@ -1041,7 +1041,451 @@ initMiscInputs();
 
 
 })();
-  
+
+
+  /* =========================================================
+   FLOATING TESTING + SHORT/EXCESS
+   Standalone JS — no HTML/CSS changes required
+========================================================= */
+
+(function(){
+
+  /* -------------------------------------------------------
+     1. FIND EXISTING TESTING TOGGLE
+  ------------------------------------------------------- */
+
+  const oldTesting =
+    document.getElementById("testingToggle");
+
+  if(!oldTesting) return;
+
+
+  /* -------------------------------------------------------
+     2. AUTOMATIC CSS
+  ------------------------------------------------------- */
+
+  const style =
+    document.createElement("style");
+
+  style.textContent = `
+
+    /* Floating controls container */
+
+    #floatingPumpControls{
+      position:fixed;
+      top:62px;
+      right:14px;
+      z-index:9997;
+
+      display:flex;
+      flex-direction:column;
+      align-items:flex-end;
+      gap:6px;
+    }
+
+
+    /* Small floating icon buttons */
+
+    .floating-pump-icon{
+      width:42px;
+      height:42px;
+
+      border:none;
+      border-radius:8px;
+
+      background:#2563eb;
+      color:#fff;
+
+      display:flex;
+      align-items:center;
+      justify-content:center;
+
+      font-size:21px;
+
+      cursor:pointer;
+
+      box-shadow:
+        0 2px 7px rgba(0,0,0,.20);
+
+      user-select:none;
+    }
+
+
+    /* Testing button */
+
+    #floatingTestingBtn{
+      transition:
+        transform .12s,
+        background .12s;
+    }
+
+    #floatingTestingBtn:active{
+      transform:scale(.94);
+    }
+
+
+    /* Short / Excess box */
+
+    #floatingDifferenceBox{
+
+      min-width:92px;
+
+      height:34px;
+
+      padding:0 9px;
+
+      border-radius:8px;
+
+      background:#fff;
+
+      border:1px solid #ddd;
+
+      box-shadow:
+        0 2px 7px rgba(0,0,0,.18);
+
+      display:flex;
+
+      align-items:center;
+
+      justify-content:center;
+
+      font-size:.82em;
+
+      font-weight:bold;
+
+      white-space:nowrap;
+
+      box-sizing:border-box;
+    }
+
+
+    /* Short */
+
+    #floatingDifferenceBox.short{
+      color:#c00;
+    }
+
+
+    /* Excess */
+
+    #floatingDifferenceBox.excess{
+      color:#090;
+    }
+
+
+    /* Perfect balance */
+
+    #floatingDifferenceBox.balance{
+      color:#333;
+    }
+
+
+    /* Hide original Testing section */
+
+    .floating-testing-hidden{
+      display:none !important;
+    }
+
+
+    /* Hide original bottom difference */
+
+    .floating-difference-hidden{
+      display:none !important;
+    }
+
+
+    /* Mobile */
+
+    @media(max-width:380px){
+
+      #floatingPumpControls{
+        right:10px;
+      }
+
+      .floating-pump-icon{
+        width:40px;
+        height:40px;
+        font-size:20px;
+      }
+
+      #floatingDifferenceBox{
+        min-width:88px;
+        height:33px;
+        font-size:.78em;
+      }
+
+    }
+
+  `;
+
+  document.head.appendChild(style);
+
+
+  /* -------------------------------------------------------
+     3. CREATE FLOATING CONTAINER
+  ------------------------------------------------------- */
+
+  const floating =
+    document.createElement("div");
+
+  floating.id =
+    "floatingPumpControls";
+
+
+  /* -------------------------------------------------------
+     4. TESTING BUTTON
+  ------------------------------------------------------- */
+
+  const testingBtn =
+    document.createElement("button");
+
+  testingBtn.id =
+    "floatingTestingBtn";
+
+  testingBtn.className =
+    "floating-pump-icon";
+
+
+  function updateTestingIcon(){
+
+    const enabled =
+      getTesting();
+
+    testingBtn.textContent =
+      enabled ? "🧪" : "📴";
+
+    testingBtn.title =
+      enabled
+        ? "Testing ON — click to turn OFF"
+        : "Testing OFF — click to turn ON";
+
+  }
+
+
+  testingBtn.onclick =
+    function(){
+
+      const current =
+        getTesting();
+
+      setTesting(!current);
+
+      updateTestingIcon();
+
+      /*
+        Update collected amount,
+        testing note and difference.
+      */
+
+      renderTotals();
+
+      updateDifference();
+
+    };
+
+
+  floating.appendChild(
+    testingBtn
+  );
+
+
+  /* -------------------------------------------------------
+     5. DIFFERENCE BOX
+  ------------------------------------------------------- */
+
+  const differenceBox =
+    document.createElement("div");
+
+  differenceBox.id =
+    "floatingDifferenceBox";
+
+
+  function updateDifference(){
+
+    const saleData =
+      calcSale();
+
+    const collections =
+      getCollections();
+
+    let collected =
+      collections.reduce(
+        (sum,e) =>
+          sum + e.amount,
+        0
+      );
+
+
+    /*
+      Testing amount is included
+      exactly like the original logic.
+    */
+
+    if(getTesting()){
+
+      collected +=
+        TESTING_AMOUNT;
+
+    }
+
+
+    const difference =
+      collected -
+      saleData.sale;
+
+
+    differenceBox.className = "";
+
+
+    if(difference > 0){
+
+      differenceBox.classList.add(
+        "excess"
+      );
+
+      differenceBox.textContent =
+        "+ ₹ " +
+        fmt(difference);
+
+      differenceBox.title =
+        "Excess";
+
+    }
+
+    else if(difference < 0){
+
+      differenceBox.classList.add(
+        "short"
+      );
+
+      differenceBox.textContent =
+        "− ₹ " +
+        fmt(
+          Math.abs(difference)
+        );
+
+      differenceBox.title =
+        "Short";
+
+    }
+
+    else{
+
+      differenceBox.classList.add(
+        "balance"
+      );
+
+      differenceBox.textContent =
+        "₹ 0.00";
+
+      differenceBox.title =
+        "Perfect Balance";
+
+    }
+
+  }
+
+
+  floating.appendChild(
+    differenceBox
+  );
+
+
+  /* -------------------------------------------------------
+     6. ADD TO BODY
+  ------------------------------------------------------- */
+
+  document.body.appendChild(
+    floating
+  );
+
+
+  /* -------------------------------------------------------
+     7. HIDE ORIGINAL TESTING SECTION
+  ------------------------------------------------------- */
+
+  const testingSection =
+    oldTesting.closest(".section");
+
+  if(testingSection){
+
+    testingSection.classList.add(
+      "floating-testing-hidden"
+    );
+
+  }
+
+
+  /* -------------------------------------------------------
+     8. HIDE ORIGINAL SHORT / EXCESS
+  ------------------------------------------------------- */
+
+  function hideOriginalDifference(){
+
+    const status =
+      document.getElementById(
+        "status"
+      );
+
+    if(!status) return;
+
+
+    /*
+      Hide only the original
+      Difference result.
+    */
+
+    status.classList.add(
+      "floating-difference-hidden"
+    );
+
+  }
+
+
+  hideOriginalDifference();
+
+
+  /* -------------------------------------------------------
+     9. KEEP FLOATING DIFFERENCE UPDATED
+  ------------------------------------------------------- */
+
+  const originalRenderTotals =
+    window.renderTotals;
+
+
+  if(
+    typeof originalRenderTotals ===
+    "function"
+  ){
+
+    window.renderTotals =
+      function(){
+
+        originalRenderTotals();
+
+        updateTestingIcon();
+
+        updateDifference();
+
+        hideOriginalDifference();
+
+      };
+
+  }
+
+
+  /* -------------------------------------------------------
+     10. INITIAL STATE
+  ------------------------------------------------------- */
+
+  updateTestingIcon();
+
+  updateDifference();
+
+  hideOriginalDifference();
+
+
+})();
 </script>
 </body>
 </html>
