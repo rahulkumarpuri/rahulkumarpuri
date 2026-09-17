@@ -489,145 +489,153 @@ initMiscInputs();
 
 
 /* =========================================================
-   COMPACT OPENING / CLOSING / TESTING
-   Buttons stay in ONE LINE.
-   Clicking them opens the ORIGINAL nozzle layout.
+   HAMBURGER MENU
+   Opening / Closing / Today's Sale moved into menu
 ========================================================= */
 
 (function(){
 
   const opening = document.getElementById("openingSection");
   const closing = document.getElementById("closingSection");
-  const testingToggle = document.getElementById("testingToggle");
+  const sale = document.getElementById("sale");
 
-  if(!opening || !closing || !testingToggle) return;
+  if(!opening || !closing || !sale) return;
 
 
-  /* ---------- CSS ---------- */
+  /* =======================================================
+     CSS
+  ======================================================= */
 
   const style = document.createElement("style");
 
   style.textContent = `
 
-    /* One-line control bar */
-    #compactPumpBar{
-      display:grid;
-      grid-template-columns:1fr 1fr auto;
-      align-items:center;
-      gap:6px;
-      margin-top:14px;
-    }
-
-    /* Opening / Closing button */
-    .compact-pump-btn{
-      border:1px solid #e5e5e5;
-      background:#fafafa;
-      border-radius:7px;
-      min-height:42px;
-      padding:7px 9px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:4px;
+    /* Hamburger button */
+    #pumpMenuBtn{
+      position:fixed;
+      top:14px;
+      right:14px;
+      width:42px;
+      height:42px;
+      border:none;
+      border-radius:8px;
+      background:#2563eb;
+      color:#fff;
+      font-size:22px;
       cursor:pointer;
-      font-weight:bold;
-      font-size:.85em;
-      user-select:none;
+      z-index:9998;
+      box-shadow:0 2px 7px rgba(0,0,0,.2);
     }
 
-    .compact-pump-btn:active{
-      background:#eef2ff;
+    /* Dark overlay */
+    #pumpMenuOverlay{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.35);
+      z-index:9999;
+      display:none;
     }
 
-    .compact-pump-arrow{
-      color:#777;
-      font-size:.75em;
-      transition:.15s;
+    #pumpMenuOverlay.open{
+      display:block;
     }
 
-    .compact-pump-arrow.open{
-      transform:rotate(90deg);
+    /* Side menu */
+    #pumpMenu{
+      position:fixed;
+      top:0;
+      right:0;
+      width:min(430px,92vw);
+      height:100vh;
+      background:#fff;
+      z-index:10000;
+      box-shadow:-4px 0 15px rgba(0,0,0,.2);
+      transform:translateX(100%);
+      transition:transform .2s ease;
+      overflow-y:auto;
     }
 
-    /* Testing */
-    .compact-testing{
-      min-height:42px;
-      padding:0 7px;
-      border:1px solid #e5e5e5;
-      background:#fafafa;
-      border-radius:7px;
+    #pumpMenu.open{
+      transform:translateX(0);
+    }
+
+    /* Menu header */
+    .pump-menu-header{
       display:flex;
+      justify-content:space-between;
       align-items:center;
-      justify-content:center;
-      gap:5px;
-      font-weight:bold;
-      font-size:.78em;
-      white-space:nowrap;
-    }
-
-    /* IMPORTANT:
-       When nozzle layout is OPEN,
-       restore original layout completely.
-    */
-
-    #compactPumpBar .original-nozzle-layout{
-      grid-column:1 / -1;
-      width:100%;
-    }
-
-    #compactPumpBar .original-nozzle-layout .section{
-      margin-top:0;
-    }
-
-    /* Keep original grid exactly as before */
-    #compactPumpBar .original-nozzle-layout .grid4{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:8px;
-    }
-
-    #compactPumpBar .original-nozzle-layout .nozzle-box{
+      padding:15px;
+      border-bottom:1px solid #eee;
       background:#fafafa;
-      border-radius:6px;
-      padding:8px;
     }
 
-    #compactPumpBar .original-nozzle-layout .nozzle-box label{
-      margin-top:0;
+    .pump-menu-title{
+      font-size:1.05em;
+      font-weight:bold;
     }
 
-    /* Testing switch */
-    .compact-testing .switch{
-      width:38px;
-      height:21px;
-      margin:0;
+    #pumpMenuClose{
+      border:none;
+      background:none;
+      font-size:22px;
+      cursor:pointer;
+      padding:2px 5px;
     }
 
-    .compact-testing .slider:before{
-      width:15px;
-      height:15px;
-      left:3px;
-      bottom:3px;
+    /* Menu content */
+    .pump-menu-content{
+      padding:12px;
     }
 
-    .compact-testing input:checked + .slider:before{
-      transform:translateX(17px);
+    .pump-menu-content .section{
+      margin-top:10px;
     }
 
-    @media(max-width:380px){
+    /* Today's Sale */
+    .menu-sale{
+      padding:12px;
+      background:#f7f7f7;
+      border-radius:8px;
+      margin-bottom:12px;
+    }
 
-      #compactPumpBar{
-        gap:3px;
-      }
+    .menu-sale-title{
+      font-weight:bold;
+      margin-bottom:5px;
+    }
 
-      .compact-pump-btn{
-        padding:6px 5px;
-        font-size:.78em;
-      }
+    .menu-sale-amount{
+      font-size:1.35em;
+      font-weight:bold;
+    }
 
-      .compact-testing{
-        padding:0 4px;
-        font-size:.7em;
+    .menu-sale-breakdown{
+      font-size:.82em;
+      color:#666;
+      margin-top:5px;
+      line-height:1.5;
+    }
+
+    /* Menu section headings */
+    .menu-section-title{
+      font-weight:bold;
+      font-size:.95em;
+      margin-bottom:7px;
+    }
+
+    /* Hide original main-page containers */
+    #openingSection.main-hidden,
+    #closingSection.main-hidden,
+    #mainSaleResult.main-hidden{
+      display:none !important;
+    }
+
+    /* Mobile */
+    @media(max-width:500px){
+
+      #pumpMenuBtn{
+        top:10px;
+        right:10px;
       }
 
     }
@@ -637,338 +645,403 @@ initMiscInputs();
   document.head.appendChild(style);
 
 
-  /* ---------- Save original renderer ---------- */
+  /* =======================================================
+     HAMBURGER BUTTON
+  ======================================================= */
 
-  const originalRenderNozzleSection =
-    window.renderNozzleSection;
+  const menuBtn =
+    document.createElement("button");
+
+  menuBtn.id = "pumpMenuBtn";
+
+  menuBtn.innerHTML = "☰";
+
+  menuBtn.title = "Menu";
+
+  document.body.appendChild(menuBtn);
 
 
-  /* ---------- State ---------- */
+  /* =======================================================
+     OVERLAY
+  ======================================================= */
 
-  let openPanel = null;
+  const overlay =
+    document.createElement("div");
+
+  overlay.id =
+    "pumpMenuOverlay";
+
+  document.body.appendChild(
+    overlay
+  );
 
 
-  /* ---------- Create compact button ---------- */
+  /* =======================================================
+     MENU
+  ======================================================= */
 
-  function createButton(kind){
+  const menu =
+    document.createElement("div");
 
-    const isOpening =
-      kind === "opening";
+  menu.id =
+    "pumpMenu";
 
-    const icon =
-      isOpening ? "🔓" : "🔒";
+  menu.innerHTML = `
 
-    const text =
-      isOpening ? "Opening" : "Closing";
+    <div class="pump-menu-header">
 
-    const button =
-      document.createElement("div");
+      <span class="pump-menu-title">
+        Petrol Pump Menu
+      </span>
 
-    button.className =
-      "compact-pump-btn";
+      <button id="pumpMenuClose">
+        ❌
+      </button>
 
-    button.innerHTML = `
-      <span>${icon}</span>
-      <span>${text}</span>
-      <span class="compact-pump-arrow ${
-        openPanel === kind ? "open" : ""
-      }">▸</span>
-    `;
+    </div>
 
-    button.onclick = function(){
+    <div class="pump-menu-content">
 
-      if(openPanel === kind){
+      <!-- Today's Sale -->
 
-        openPanel = null;
+      <div class="menu-sale">
 
-      }else{
+        <div class="menu-sale-title">
+          💰 Today's Sale
+        </div>
 
-        openPanel = kind;
+        <div class="menu-sale-amount">
+          ₹ <span id="menuSale">0.00</span>
+        </div>
 
-      }
+        <div
+          class="menu-sale-breakdown"
+          id="menuSaleBreakdown"
+        ></div>
 
-      renderCompact();
+      </div>
 
-    };
 
-    return button;
+      <!-- Opening -->
+
+      <div id="menuOpening"></div>
+
+
+      <!-- Closing -->
+
+      <div id="menuClosing"></div>
+
+    </div>
+
+  `;
+
+  document.body.appendChild(menu);
+
+
+  /* =======================================================
+     OPEN / CLOSE MENU
+  ======================================================= */
+
+  function openMenu(){
+
+    menu.classList.add("open");
+
+    overlay.classList.add("open");
+
+    menuBtn.style.display =
+      "none";
+
+    renderMenu();
 
   }
 
 
-  /* ---------- Render original nozzle layout ---------- */
+  function closeMenu(){
 
-  function renderOriginal(kind, target){
+    menu.classList.remove("open");
 
-    /*
-      Temporarily use the original renderer.
+    overlay.classList.remove("open");
 
-      This means the nozzle fields are generated
-      exactly like your old code.
-    */
-
-    originalRenderNozzleSection(kind);
-
-    const source =
-      document.getElementById(
-        kind === "opening"
-          ? "openingSection"
-          : "closingSection"
-      );
-
-    if(source){
-
-      source.classList.add(
-        "original-nozzle-layout"
-      );
-
-      target.replaceWith(source);
-
-    }
+    menuBtn.style.display =
+      "block";
 
   }
 
 
-  /* ---------- Main render ---------- */
+  menuBtn.onclick =
+    openMenu;
 
-  function renderCompact(){
+  overlay.onclick =
+    closeMenu;
 
-    const oldOpening =
-      document.getElementById(
-        "openingSection"
-      );
-
-    const oldClosing =
-      document.getElementById(
-        "closingSection"
-      );
+  document
+    .getElementById("pumpMenuClose")
+    .onclick =
+      closeMenu;
 
 
-    /* Create / reuse wrapper */
+  /* =======================================================
+     MOVE ORIGINAL OPENING/CLOSING INTO MENU
+  ======================================================= */
 
-    let bar =
-      document.getElementById(
-        "compactPumpBar"
-      );
+  const menuOpening =
+    document.getElementById(
+      "menuOpening"
+    );
 
-
-    if(!bar){
-
-      bar =
-        document.createElement("div");
-
-      bar.id =
-        "compactPumpBar";
-
-      /*
-        Put bar before Opening section.
-      */
-
-      oldOpening.parentNode.insertBefore(
-        bar,
-        oldOpening
-      );
-
-    }
+  const menuClosing =
+    document.getElementById(
+      "menuClosing"
+    );
 
 
-    /* Clear current content */
+  /*
+    Move the actual existing containers
+    into the hamburger menu.
 
-    bar.innerHTML = "";
+    Their original functions remain untouched.
+  */
 
+  menuOpening.appendChild(
+    opening
+  );
 
-    /* ---------- Opening ---------- */
-
-    if(openPanel === "opening"){
-
-      const holder =
-        document.createElement("div");
-
-      holder.id =
-        "openingSection";
-
-      bar.appendChild(holder);
-
-      renderOriginal(
-        "opening",
-        holder
-      );
-
-    }else{
-
-      const btn =
-        createButton("opening");
-
-      bar.appendChild(btn);
-
-    }
+  menuClosing.appendChild(
+    closing
+  );
 
 
-    /* ---------- Closing ---------- */
+  /* =======================================================
+     HIDE ORIGINAL TODAY'S SALE
+  ======================================================= */
 
-    if(openPanel === "closing"){
+  const saleResult =
+    sale.closest(".result");
 
-      const holder =
-        document.createElement("div");
+  const saleBreakdown =
+    document.getElementById(
+      "saleBreakdown"
+    );
 
-      holder.id =
-        "closingSection";
-
-      bar.appendChild(holder);
-
-      renderOriginal(
-        "closing",
-        holder
-      );
-
-    }else{
-
-      const btn =
-        createButton("closing");
-
-      bar.appendChild(btn);
-
-    }
+  const saleBreakdownResult =
+    saleBreakdown
+      ? saleBreakdown.closest(".result")
+      : null;
 
 
-    /* ---------- Testing ---------- */
+  /*
+    Create a wrapper around the original
+    sale elements so they can disappear
+    from main screen.
+  */
 
-    const testing =
+  if(saleResult){
+
+    const saleWrapper =
       document.createElement("div");
 
-    testing.className =
-      "compact-testing";
+    saleWrapper.id =
+      "mainSaleResult";
 
-    testing.innerHTML = `
-      <span>🧪</span>
-      <label
-        class="switch"
-        style="margin:0"
-      >
-        <input
-          type="checkbox"
-          id="testingToggle"
-          ${getTesting() ? "checked" : ""}
-        >
-        <span class="slider"></span>
-      </label>
-    `;
+    saleResult.parentNode.insertBefore(
+      saleWrapper,
+      saleResult
+    );
 
-    bar.appendChild(testing);
+    saleWrapper.appendChild(
+      saleResult
+    );
 
+    if(saleBreakdownResult){
 
-    /* Testing event */
-
-    const newToggle =
-      testing.querySelector(
-        "#testingToggle"
+      saleWrapper.appendChild(
+        saleBreakdownResult
       );
 
-    newToggle.onchange = function(){
+    }
 
-      setTesting(
-        newToggle.checked
-      );
-
-      renderTotals();
-
-    };
+    saleWrapper.classList.add(
+      "main-hidden"
+    );
 
   }
 
 
   /* =======================================================
-     OVERRIDE renderNozzleSection
-
-     When our compact UI is active, don't let renderAll()
-     destroy the compact layout.
+     RENDER MENU SALE
   ======================================================= */
 
-  window.renderNozzleSection =
-    function(kind){
+  function renderMenuSale(){
 
-      if(
-        document.getElementById(
-          "compactPumpBar"
-        )
-      ){
+    const saleValue =
+      document.getElementById(
+        "sale"
+      );
 
-        renderCompact();
+    const breakdown =
+      document.getElementById(
+        "saleBreakdown"
+      );
 
-      }else{
+    const menuSale =
+      document.getElementById(
+        "menuSale"
+      );
+
+    const menuBreakdown =
+      document.getElementById(
+        "menuSaleBreakdown"
+      );
+
+    if(!saleValue || !menuSale)
+      return;
+
+    menuSale.textContent =
+      saleValue.textContent;
+
+    if(breakdown){
+
+      menuBreakdown.textContent =
+        breakdown.textContent;
+
+    }
+
+  }
+
+
+  /* =======================================================
+     MENU RENDER
+  ======================================================= */
+
+  function renderMenu(){
+
+    renderMenuSale();
+
+    /*
+      Re-apply hidden state because
+      renderAll() may replace inner HTML.
+    */
+
+    const mainOpening =
+      document.getElementById(
+        "openingSection"
+      );
+
+    const mainClosing =
+      document.getElementById(
+        "closingSection"
+      );
+
+    if(mainOpening){
+
+      menuOpening.appendChild(
+        mainOpening
+      );
+
+    }
+
+    if(mainClosing){
+
+      menuClosing.appendChild(
+        mainClosing
+      );
+
+    }
+
+  }
+
+
+  /* =======================================================
+     KEEP SALE UPDATED
+  ======================================================= */
+
+  const originalRenderTotals =
+    window.renderTotals;
+
+
+  if(typeof originalRenderTotals === "function"){
+
+    window.renderTotals =
+      function(){
+
+        originalRenderTotals();
+
+        renderMenuSale();
+
+      };
+
+  }
+
+
+  /* =======================================================
+     KEEP OPENING/CLOSING INSIDE MENU
+  ======================================================= */
+
+  const originalRenderNozzleSection =
+    window.renderNozzleSection;
+
+
+  if(typeof originalRenderNozzleSection === "function"){
+
+    window.renderNozzleSection =
+      function(kind){
+
+        /*
+          Let original function render normally.
+        */
 
         originalRenderNozzleSection(
           kind
         );
 
-      }
 
-    };
+        /*
+          Then immediately move the
+          generated container back into menu.
+        */
 
+        const el =
+          document.getElementById(
+            kind === "opening"
+              ? "openingSection"
+              : "closingSection"
+          );
 
-  /* ---------- Initial conversion ---------- */
+        if(!el) return;
 
-  /*
-    Remove the old separate Testing section.
-  */
+        if(kind === "opening"){
 
-  const testingSection =
-    testingToggle.closest(".section");
+          menuOpening.appendChild(
+            el
+          );
 
-  if(testingSection){
-    testingSection.remove();
-  }
+        }else{
 
+          menuClosing.appendChild(
+            el
+          );
 
-  /*
-    Remove old Opening / Closing containers
-    after taking their place.
-  */
+        }
 
-  opening.remove();
-  closing.remove();
-
-
-  /* ---------- Build compact UI ---------- */
-
-  const bar =
-    document.createElement("div");
-
-  bar.id =
-    "compactPumpBar";
-
-
-  /*
-    Put it where Opening originally was.
-  */
-
-  const sale =
-    document.getElementById("sale");
-
-  const saleResult =
-    sale?.closest(".result");
-
-  if(saleResult){
-
-    saleResult.parentNode.insertBefore(
-      bar,
-      saleResult
-    );
-
-  }else{
-
-    document
-      .querySelector(".container")
-      .appendChild(bar);
+      };
 
   }
 
 
-  /* ---------- First render ---------- */
+  /* =======================================================
+     INITIAL STATE
+  ======================================================= */
 
-  renderCompact();
+  /*
+    Make sure Opening/Closing are
+    inside menu immediately.
+  */
+
+  renderMenu();
+
 
 })();
+  
 </script>
 </body>
 </html>
