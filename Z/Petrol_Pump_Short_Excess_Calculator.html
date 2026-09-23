@@ -1486,6 +1486,347 @@ initMiscInputs();
 
 
 })();
+
+  /* =========================================================
+   DISCOUNT OIL SALE
+   Automatically upgrades existing Oil Sale section
+   No HTML changes required
+========================================================= */
+
+(function(){
+
+  const oldOilInput = document.getElementById("oilMl");
+
+  if(!oldOilInput) return;
+
+  /* -------------------------------------------------------
+     CONSTANTS
+  ------------------------------------------------------- */
+
+  const DISCOUNT_OIL_RATE_PER_LITER = 300;
+
+  const DISCOUNT_OIL_STORAGE_KEY = "pumpDiscountOilMl";
+
+
+  /* -------------------------------------------------------
+     STORAGE
+  ------------------------------------------------------- */
+
+  function getDiscountOilMl(){
+    try{
+      const v = localStorage.getItem(
+        DISCOUNT_OIL_STORAGE_KEY
+      );
+
+      return v ? JSON.parse(v) : 0;
+
+    }catch(e){
+
+      return 0;
+
+    }
+  }
+
+
+  function setDiscountOilMl(v){
+
+    localStorage.setItem(
+      DISCOUNT_OIL_STORAGE_KEY,
+      JSON.stringify(v)
+    );
+
+  }
+
+
+  /* -------------------------------------------------------
+     ADD AUTOMATIC CSS
+     Only for the newly created controls
+  ------------------------------------------------------- */
+
+  const style = document.createElement("style");
+
+  style.textContent = `
+
+    .oil-sale-row{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:8px;
+    }
+
+    .oil-sale-box{
+      background:#fafafa;
+      border-radius:6px;
+      padding:8px;
+    }
+
+    .oil-sale-box label{
+      margin-top:0;
+    }
+
+    .oil-sale-rate{
+      font-size:.75em;
+      color:#777;
+      font-weight:normal;
+      margin-top:3px;
+    }
+
+    @media(max-width:380px){
+
+      .oil-sale-row{
+        gap:6px;
+      }
+
+      .oil-sale-box{
+        padding:6px;
+      }
+
+    }
+
+  `;
+
+  document.head.appendChild(style);
+
+
+  /* -------------------------------------------------------
+     FIND ORIGINAL OIL SECTION
+  ------------------------------------------------------- */
+
+  const oilSection =
+    oldOilInput.closest(".section");
+
+  if(!oilSection) return;
+
+
+  /* -------------------------------------------------------
+     CURRENT TOTAL OIL VALUE
+  ------------------------------------------------------- */
+
+  const currentOilMl =
+    getOilMl();
+
+
+  /* -------------------------------------------------------
+     REPLACE EXISTING OIL SECTION CONTENT
+  ------------------------------------------------------- */
+
+  oilSection.innerHTML = `
+
+    <div class="oil-sale-row">
+
+      <div class="oil-sale-box">
+
+        <label>
+          Total Oil Sale (ml)
+        </label>
+
+        <input
+          type="number"
+          step="1"
+          id="oilMl"
+          placeholder="0"
+        >
+
+        <div class="oil-sale-rate">
+          Rate: ₹400 / liter
+        </div>
+
+      </div>
+
+
+      <div class="oil-sale-box">
+
+        <label>
+          Discount Oil Sale (ml)
+        </label>
+
+        <input
+          type="number"
+          step="1"
+          id="discountOilMl"
+          placeholder="0"
+        >
+
+        <div class="oil-sale-rate">
+          Rate: ₹300 / liter
+        </div>
+
+      </div>
+
+    </div>
+
+  `;
+
+
+  /* -------------------------------------------------------
+     RESTORE VALUES
+  ------------------------------------------------------- */
+
+  const newOilInput =
+    document.getElementById("oilMl");
+
+  const discountOilInput =
+    document.getElementById("discountOilMl");
+
+
+  newOilInput.value =
+    currentOilMl || "";
+
+
+  const discountOilMl =
+    getDiscountOilMl();
+
+  discountOilInput.value =
+    discountOilMl || "";
+
+
+  /* -------------------------------------------------------
+     TOTAL OIL INPUT
+  ------------------------------------------------------- */
+
+  newOilInput.oninput = function(){
+
+    const value =
+      num(this.value);
+
+    setOilMl(value);
+
+    renderTotals();
+
+  };
+
+
+  /* -------------------------------------------------------
+     DISCOUNT OIL INPUT
+  ------------------------------------------------------- */
+
+  discountOilInput.oninput = function(){
+
+    const value =
+      num(this.value);
+
+    setDiscountOilMl(value);
+
+    renderTotals();
+
+  };
+
+
+  /* -------------------------------------------------------
+     UPGRADE calcSale()
+     
+     Existing fuel + existing oil
+     + discount oil
+  ------------------------------------------------------- */
+
+  const originalCalcSale =
+    window.calcSale;
+
+
+  if(
+    typeof originalCalcSale ===
+    "function"
+  ){
+
+    window.calcSale = function(){
+
+      const result =
+        originalCalcSale();
+
+
+      const discountMl =
+        num(getDiscountOilMl());
+
+
+      const discountOilAmount =
+        (discountMl / 1000) *
+        DISCOUNT_OIL_RATE_PER_LITER;
+
+
+      result.discountOilAmount =
+        discountOilAmount;
+
+
+      result.sale =
+        result.sale +
+        discountOilAmount;
+
+
+      return result;
+
+    };
+
+  }
+
+
+  /* -------------------------------------------------------
+     UPGRADE SALE BREAKDOWN
+  ------------------------------------------------------- */
+
+  const originalRenderTotals =
+    window.renderTotals;
+
+
+  if(
+    typeof originalRenderTotals ===
+    "function"
+  ){
+
+    window.renderTotals = function(){
+
+      originalRenderTotals();
+
+
+      const saleData =
+        calcSale();
+
+
+      const breakdown =
+        document.getElementById(
+          "saleBreakdown"
+        );
+
+
+      if(!breakdown) return;
+
+
+      const discountAmount =
+        saleData.discountOilAmount || 0;
+
+
+      if(discountAmount > 0){
+
+        const existing =
+          breakdown.textContent;
+
+
+        if(
+          existing &&
+          !existing.includes(
+            "Discount Oil:"
+          )
+        ){
+
+          breakdown.textContent =
+            existing +
+            "   |   Discount Oil: ₹ " +
+            fmt(discountAmount);
+
+        }
+
+      }
+
+    };
+
+  }
+
+
+  /* -------------------------------------------------------
+     INITIAL UPDATE
+  ------------------------------------------------------- */
+
+  renderTotals();
+
+})();
 </script>
 </body>
 </html>
