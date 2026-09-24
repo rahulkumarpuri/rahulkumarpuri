@@ -1827,6 +1827,1627 @@ initMiscInputs();
   renderTotals();
 
 })();
+
+
+  /* =========================================================
+   SMART COLLECTION QUICK ENTRIES
+   ---------------------------------------------------------
+   Adds:
+   💳 Cards
+   💵 Deposited Cash
+   🚗 Credit Vehicles
+   📱 UPI Payment
+   💰 Physical CASH
+   🪙 COIN
+
+   Existing "+ Add Entry" remains untouched.
+   Everything is injected automatically.
+========================================================= */
+
+(function(){
+
+  /* -------------------------------------------------------
+     CONFIG
+  ------------------------------------------------------- */
+
+  const QUICK_TAGS = {
+    cards: "Card",
+    deposited: "Deposited Cash",
+    credit: "Credit Vehicles",
+    upi: "UPI Payment",
+    cash: "Physical CASH",
+    coin: "COIN"
+  };
+
+  const QUICK_PREFIX = "quickCollection_";
+
+
+  /* -------------------------------------------------------
+     HELPERS
+  ------------------------------------------------------- */
+
+  function qGet(key, def){
+    try{
+      const v = localStorage.getItem(
+        QUICK_PREFIX + key
+      );
+
+      return v !== null
+        ? JSON.parse(v)
+        : def;
+
+    }catch(e){
+      return def;
+    }
+  }
+
+
+  function qSet(key, value){
+    localStorage.setItem(
+      QUICK_PREFIX + key,
+      JSON.stringify(value)
+    );
+  }
+
+
+  function makeId(){
+    return Date.now() + "_" +
+      Math.random().toString(36).slice(2,8);
+  }
+
+
+  function money(v){
+    return Number(v || 0).toLocaleString(
+      "en-IN",
+      {
+        minimumFractionDigits:2,
+        maximumFractionDigits:2
+      }
+    );
+  }
+
+
+  /* -------------------------------------------------------
+     CSS
+     Injected automatically
+  ------------------------------------------------------- */
+
+  const style =
+    document.createElement("style");
+
+  style.textContent = `
+
+    /* =====================================================
+       QUICK COLLECTION AREA
+    ===================================================== */
+
+    #quickCollectionArea{
+      margin-top:10px;
+      margin-bottom:14px;
+    }
+
+
+    .quick-title-row{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:9px;
+    }
+
+
+    .quick-title{
+      font-size:.95em;
+      font-weight:bold;
+      color:#222;
+    }
+
+
+    .quick-subtitle{
+      font-size:.72em;
+      color:#888;
+      font-weight:normal;
+    }
+
+
+    /* =====================================================
+       CARD GRID
+    ===================================================== */
+
+    .quick-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:8px;
+    }
+
+
+    .quick-card{
+      position:relative;
+      background:#fff;
+      border:1px solid #e4e7eb;
+      border-radius:11px;
+      overflow:hidden;
+      box-shadow:0 2px 7px rgba(0,0,0,.06);
+      transition:
+        transform .12s ease,
+        box-shadow .12s ease;
+    }
+
+
+    .quick-card:active{
+      transform:scale(.985);
+    }
+
+
+    .quick-card-head{
+      display:flex;
+      align-items:center;
+      gap:9px;
+      padding:10px 11px;
+      border-bottom:1px solid #f0f0f0;
+      background:#fafafa;
+    }
+
+
+    .quick-icon{
+      width:34px;
+      height:34px;
+      border-radius:9px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:18px;
+      flex-shrink:0;
+      background:#eef2ff;
+    }
+
+
+    .quick-name{
+      font-weight:bold;
+      font-size:.88em;
+      color:#222;
+      line-height:1.2;
+    }
+
+
+    .quick-type{
+      display:block;
+      margin-top:2px;
+      font-size:.68em;
+      color:#888;
+      font-weight:normal;
+    }
+
+
+    .quick-body{
+      padding:9px;
+    }
+
+
+    .quick-amount-row{
+      display:flex;
+      gap:6px;
+      align-items:center;
+    }
+
+
+    .quick-amount-input{
+      flex:1;
+      width:100%;
+      box-sizing:border-box;
+      padding:8px;
+      border:1px solid #d8dce2;
+      border-radius:7px;
+      outline:none;
+      font-size:.88em;
+      margin:0 !important;
+    }
+
+
+    .quick-amount-input:focus{
+      border-color:#2563eb;
+    }
+
+
+    .quick-add-btn{
+      border:none;
+      border-radius:7px;
+      padding:8px 10px;
+      background:#2563eb;
+      color:#fff;
+      font-weight:bold;
+      cursor:pointer;
+      white-space:nowrap;
+      font-size:.78em;
+    }
+
+
+    .quick-add-btn:active{
+      transform:scale(.96);
+    }
+
+
+    .quick-total{
+      margin-top:7px;
+      font-size:.78em;
+      color:#777;
+    }
+
+
+    .quick-total strong{
+      color:#222;
+    }
+
+
+    /* =====================================================
+       MULTIPLE ENTRY LIST
+    ===================================================== */
+
+    .quick-entry-list{
+      margin-top:7px;
+      border-top:1px solid #eee;
+    }
+
+
+    .quick-entry-item{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:7px 0;
+      border-bottom:1px solid #f0f0f0;
+      font-size:.78em;
+    }
+
+
+    .quick-entry-item:last-child{
+      border-bottom:none;
+    }
+
+
+    .quick-entry-time{
+      display:block;
+      color:#999;
+      font-size:.88em;
+      margin-top:2px;
+    }
+
+
+    .quick-entry-actions{
+      display:flex;
+      gap:7px;
+      align-items:center;
+    }
+
+
+    .quick-entry-actions span{
+      cursor:pointer;
+      font-size:1em;
+    }
+
+
+    /* =====================================================
+       FIXED ENTRY
+    ===================================================== */
+
+    .quick-fixed-badge{
+      display:inline-block;
+      padding:2px 6px;
+      border-radius:5px;
+      background:#f1f1f1;
+      color:#777;
+      font-size:.65em;
+      margin-left:4px;
+      vertical-align:middle;
+    }
+
+
+    .quick-fixed-value{
+      margin-top:7px;
+      font-size:1.05em;
+      font-weight:bold;
+      color:#222;
+    }
+
+
+    /* =====================================================
+       PHYSICAL CASH
+    ===================================================== */
+
+    .cash-card{
+      grid-column:1 / -1;
+    }
+
+
+    .cash-note-grid{
+      display:grid;
+      grid-template-columns:
+        repeat(5,1fr);
+      gap:6px;
+    }
+
+
+    .cash-note{
+      background:#fafafa;
+      border:1px solid #e5e5e5;
+      border-radius:7px;
+      padding:6px 4px;
+      text-align:center;
+    }
+
+
+    .cash-note-value{
+      font-weight:bold;
+      font-size:.78em;
+      margin-bottom:4px;
+    }
+
+
+    .cash-note input{
+      width:100%;
+      box-sizing:border-box;
+      padding:6px 3px;
+      text-align:center;
+      border:1px solid #d5d5d5;
+      border-radius:5px;
+      margin:0 !important;
+      font-size:.82em;
+    }
+
+
+    .cash-note-total{
+      margin-top:3px;
+      font-size:.62em;
+      color:#888;
+    }
+
+
+    .cash-grand-total{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-top:9px;
+      padding:9px 10px;
+      border-radius:8px;
+      background:#f7f7f7;
+      font-size:.82em;
+    }
+
+
+    .cash-grand-total strong{
+      font-size:1.1em;
+    }
+
+
+    .cash-save-btn{
+      width:100%;
+      margin-top:8px;
+      padding:9px;
+      border:none;
+      border-radius:7px;
+      background:#111827;
+      color:#fff;
+      font-weight:bold;
+      cursor:pointer;
+    }
+
+
+    /* =====================================================
+       MOBILE
+    ===================================================== */
+
+    @media(max-width:380px){
+
+      .quick-grid{
+        gap:6px;
+      }
+
+      .quick-card-head{
+        padding:8px;
+      }
+
+      .quick-body{
+        padding:8px;
+      }
+
+      .quick-icon{
+        width:30px;
+        height:30px;
+        font-size:16px;
+      }
+
+      .quick-name{
+        font-size:.8em;
+      }
+
+      .quick-add-btn{
+        padding:8px;
+      }
+
+      .cash-note-grid{
+        gap:4px;
+      }
+
+      .cash-note{
+        padding:5px 2px;
+      }
+
+    }
+
+  `;
+
+  document.head.appendChild(style);
+
+
+  /* -------------------------------------------------------
+     CREATE MAIN AREA
+  ------------------------------------------------------- */
+
+  const addButton =
+    document.getElementById(
+      "addEntryBtn"
+    );
+
+  if(!addButton) return;
+
+
+  const quickArea =
+    document.createElement("div");
+
+  quickArea.id =
+    "quickCollectionArea";
+
+
+  addButton.parentNode.insertBefore(
+    quickArea,
+    addButton
+  );
+
+
+  /* -------------------------------------------------------
+     ENSURE TAGS EXIST
+  ------------------------------------------------------- */
+
+  function ensureTag(tag){
+
+    const tags =
+      getTags();
+
+    const exists =
+      tags.some(
+        t =>
+          t.toLowerCase() ===
+          tag.toLowerCase()
+      );
+
+    if(!exists){
+
+      tags.push(tag);
+
+      setTags(tags);
+
+    }
+
+  }
+
+
+  Object.values(
+    QUICK_TAGS
+  ).forEach(ensureTag);
+
+
+  /* -------------------------------------------------------
+     ADD MULTIPLE ENTRY
+  ------------------------------------------------------- */
+
+  function addQuickEntry(
+    tag,
+    inputId
+  ){
+
+    const input =
+      document.getElementById(
+        inputId
+      );
+
+    if(!input) return;
+
+
+    const amount =
+      num(input.value);
+
+
+    if(amount <= 0){
+
+      alert(
+        "Please enter a valid amount."
+      );
+
+      return;
+
+    }
+
+
+    ensureTag(tag);
+
+
+    const collections =
+      getCollections();
+
+
+    collections.push({
+
+      id:makeId(),
+
+      amount:amount,
+
+      tag:tag,
+
+      time:new Date().toISOString()
+
+    });
+
+
+    setCollections(
+      collections
+    );
+
+
+    input.value = "";
+
+
+    renderQuickArea();
+
+    renderTagsList();
+
+    renderTotals();
+
+  }
+
+
+  /* -------------------------------------------------------
+     FIXED ENTRY
+  ------------------------------------------------------- */
+
+  function saveFixedEntry(
+    tag,
+    inputId
+  ){
+
+    const input =
+      document.getElementById(
+        inputId
+      );
+
+    if(!input) return;
+
+
+    const amount =
+      num(input.value);
+
+
+    const collections =
+      getCollections();
+
+
+    const existingIndex =
+      collections.findIndex(
+        e => e.tag === tag
+      );
+
+
+    if(amount <= 0){
+
+      if(existingIndex > -1){
+
+        collections.splice(
+          existingIndex,
+          1
+        );
+
+        setCollections(
+          collections
+        );
+
+      }
+
+      renderQuickArea();
+      renderTagsList();
+      renderTotals();
+
+      return;
+
+    }
+
+
+    ensureTag(tag);
+
+
+    if(existingIndex > -1){
+
+      collections[
+        existingIndex
+      ].amount = amount;
+
+      collections[
+        existingIndex
+      ].time =
+        new Date().toISOString();
+
+    }else{
+
+      collections.push({
+
+        id:makeId(),
+
+        amount:amount,
+
+        tag:tag,
+
+        time:new Date().toISOString()
+
+      });
+
+    }
+
+
+    setCollections(
+      collections
+    );
+
+
+    renderQuickArea();
+
+    renderTagsList();
+
+    renderTotals();
+
+  }
+
+
+  /* -------------------------------------------------------
+     DELETE QUICK ENTRY
+  ------------------------------------------------------- */
+
+  function deleteQuickEntry(id){
+
+    if(
+      !confirm(
+        "Delete this entry?"
+      )
+    ) return;
+
+
+    let collections =
+      getCollections();
+
+
+    collections =
+      collections.filter(
+        e => e.id !== id
+      );
+
+
+    setCollections(
+      collections
+    );
+
+
+    renderQuickArea();
+
+    renderTagsList();
+
+    renderTotals();
+
+  }
+
+
+  /* -------------------------------------------------------
+     PHYSICAL CASH DATA
+  ------------------------------------------------------- */
+
+  const CASH_DENOMINATIONS =
+    [500,100,50,20,10];
+
+
+  function getCashNotes(){
+
+    return qGet(
+      "physicalCashNotes",
+      {
+        500:0,
+        100:0,
+        50:0,
+        20:0,
+        10:0
+      }
+    );
+
+  }
+
+
+  function calculatePhysicalCash(){
+
+    const notes =
+      getCashNotes();
+
+
+    return (
+      (num(notes[500]) * 500) +
+      (num(notes[100]) * 100) +
+      (num(notes[50])  * 50) +
+      (num(notes[20])  * 20) +
+      (num(notes[10])  * 10)
+    );
+
+  }
+
+
+  function savePhysicalCash(){
+
+    const notes = {};
+
+
+    CASH_DENOMINATIONS.forEach(
+      denomination => {
+
+        const input =
+          document.getElementById(
+            "cashNote_" +
+            denomination
+          );
+
+
+        notes[denomination] =
+          input
+            ? Math.max(
+                0,
+                Math.floor(
+                  num(input.value)
+                )
+              )
+            : 0;
+
+      }
+    );
+
+
+    qSet(
+      "physicalCashNotes",
+      notes
+    );
+
+
+    const total =
+      calculatePhysicalCash();
+
+
+    ensureTag(
+      QUICK_TAGS.cash
+    );
+
+
+    const collections =
+      getCollections();
+
+
+    const existingIndex =
+      collections.findIndex(
+        e =>
+          e.tag ===
+          QUICK_TAGS.cash
+      );
+
+
+    if(total > 0){
+
+      if(existingIndex > -1){
+
+        collections[
+          existingIndex
+        ].amount = total;
+
+        collections[
+          existingIndex
+        ].time =
+          new Date().toISOString();
+
+      }else{
+
+        collections.push({
+
+          id:makeId(),
+
+          amount:total,
+
+          tag:QUICK_TAGS.cash,
+
+          time:new Date().toISOString()
+
+        });
+
+      }
+
+    }else{
+
+      if(existingIndex > -1){
+
+        collections.splice(
+          existingIndex,
+          1
+        );
+
+      }
+
+    }
+
+
+    setCollections(
+      collections
+    );
+
+
+    renderQuickArea();
+
+    renderTagsList();
+
+    renderTotals();
+
+  }
+
+
+  /* -------------------------------------------------------
+     PHYSICAL CASH LIVE CALCULATION
+  ------------------------------------------------------- */
+
+  function updateCashPreview(){
+
+    let total = 0;
+
+
+    CASH_DENOMINATIONS.forEach(
+      denomination => {
+
+        const input =
+          document.getElementById(
+            "cashNote_" +
+            denomination
+          );
+
+
+        const count =
+          input
+            ? Math.max(
+                0,
+                Math.floor(
+                  num(input.value)
+                )
+              )
+            : 0;
+
+
+        total +=
+          count *
+          denomination;
+
+
+        const line =
+          document.getElementById(
+            "cashLine_" +
+            denomination
+          );
+
+
+        if(line){
+
+          line.textContent =
+            "₹ " +
+            money(
+              count *
+              denomination
+            );
+
+        }
+
+      }
+    );
+
+
+    const grand =
+      document.getElementById(
+        "cashGrandTotal"
+      );
+
+
+    if(grand){
+
+      grand.textContent =
+        "₹ " +
+        money(total);
+
+    }
+
+  }
+
+
+  /* -------------------------------------------------------
+     EDIT MULTIPLE ENTRY
+  ------------------------------------------------------- */
+
+  function editQuickEntry(id){
+
+    const collections =
+      getCollections();
+
+
+    const entry =
+      collections.find(
+        e => e.id === id
+      );
+
+
+    if(!entry) return;
+
+
+    const newAmount =
+      prompt(
+        "Enter new amount:",
+        entry.amount
+      );
+
+
+    if(newAmount === null)
+      return;
+
+
+    const amount =
+      num(newAmount);
+
+
+    if(amount <= 0){
+
+      alert(
+        "Please enter a valid amount."
+      );
+
+      return;
+
+    }
+
+
+    entry.amount =
+      amount;
+
+
+    entry.time =
+      new Date().toISOString();
+
+
+    setCollections(
+      collections
+    );
+
+
+    renderQuickArea();
+
+    renderTagsList();
+
+    renderTotals();
+
+  }
+
+
+  /* -------------------------------------------------------
+     RENDER MULTIPLE ENTRY LIST
+  ------------------------------------------------------- */
+
+  function renderMultipleList(
+    tag
+  ){
+
+    const collections =
+      getCollections();
+
+
+    const entries =
+      collections.filter(
+        e => e.tag === tag
+      );
+
+
+    if(entries.length === 0){
+
+      return `
+        <div class="quick-total">
+          No entries yet
+        </div>
+      `;
+
+    }
+
+
+    let html =
+      `<div class="quick-entry-list">`;
+
+
+    entries
+      .slice()
+      .reverse()
+      .forEach(
+        e => {
+
+          html += `
+
+            <div class="quick-entry-item">
+
+              <div>
+                ₹ ${money(e.amount)}
+
+                <span
+                  class="quick-entry-time"
+                >
+                  ${fmtTime(e.time)}
+                </span>
+              </div>
+
+              <div
+                class="quick-entry-actions"
+              >
+
+                <span
+                  onclick="window.quickEditEntry('${e.id}')"
+                  title="Edit"
+                >
+                  ✏️
+                </span>
+
+                <span
+                  onclick="window.quickDeleteEntry('${e.id}')"
+                  title="Delete"
+                >
+                  🗑️
+                </span>
+
+              </div>
+
+            </div>
+
+          `;
+
+        }
+      );
+
+
+    html +=
+      `</div>`;
+
+
+    return html;
+
+  }
+
+
+  /* -------------------------------------------------------
+     CREATE MULTIPLE CARD
+  ------------------------------------------------------- */
+
+  function multipleCard(
+    icon,
+    title,
+    tag,
+    inputId,
+    typeText
+  ){
+
+    const total =
+      getCollections()
+        .filter(
+          e => e.tag === tag
+        )
+        .reduce(
+          (sum,e) =>
+            sum + e.amount,
+          0
+        );
+
+
+    return `
+
+      <div class="quick-card">
+
+        <div class="quick-card-head">
+
+          <div class="quick-icon">
+            ${icon}
+          </div>
+
+          <div>
+
+            <div class="quick-name">
+              ${title}
+            </div>
+
+            <span class="quick-type">
+              ${typeText}
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div class="quick-body">
+
+          <div class="quick-amount-row">
+
+            <input
+              class="quick-amount-input"
+              type="number"
+              step="0.01"
+              id="${inputId}"
+              placeholder="Amount"
+            >
+
+            <button
+              class="quick-add-btn"
+              onclick="window.quickAddEntry('${tag}','${inputId}')"
+            >
+              + Add
+            </button>
+
+          </div>
+
+
+          <div class="quick-total">
+            Total:
+            <strong>
+              ₹ ${money(total)}
+            </strong>
+          </div>
+
+
+          ${renderMultipleList(tag)}
+
+        </div>
+
+      </div>
+
+    `;
+
+  }
+
+
+  /* -------------------------------------------------------
+     FIXED CARD
+  ------------------------------------------------------- */
+
+  function fixedCard(
+    icon,
+    title,
+    tag,
+    inputId,
+    typeText
+  ){
+
+    const entries =
+      getCollections().filter(
+        e => e.tag === tag
+      );
+
+
+    const existing =
+      entries.length
+        ? entries[0].amount
+        : 0;
+
+
+    return `
+
+      <div class="quick-card">
+
+        <div class="quick-card-head">
+
+          <div class="quick-icon">
+            ${icon}
+          </div>
+
+          <div>
+
+            <div class="quick-name">
+
+              ${title}
+
+              <span
+                class="quick-fixed-badge"
+              >
+                FIXED
+              </span>
+
+            </div>
+
+            <span class="quick-type">
+              ${typeText}
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div class="quick-body">
+
+          <div class="quick-amount-row">
+
+            <input
+              class="quick-amount-input"
+              type="number"
+              step="0.01"
+              id="${inputId}"
+              placeholder="Amount"
+              value="${existing || ""}"
+            >
+
+            <button
+              class="quick-add-btn"
+              onclick="window.quickSaveFixed('${tag}','${inputId}')"
+            >
+              Save
+            </button>
+
+          </div>
+
+
+          <div class="quick-fixed-value">
+
+            ${
+              existing > 0
+                ? "₹ " + money(existing)
+                : "Not added"
+            }
+
+          </div>
+
+        </div>
+
+      </div>
+
+    `;
+
+  }
+
+
+  /* -------------------------------------------------------
+     PHYSICAL CASH CARD
+  ------------------------------------------------------- */
+
+  function physicalCashCard(){
+
+    const notes =
+      getCashNotes();
+
+
+    let noteHTML = "";
+
+
+    CASH_DENOMINATIONS
+      .forEach(
+        denomination => {
+
+          const count =
+            num(
+              notes[
+                denomination
+              ]
+            );
+
+
+          noteHTML += `
+
+            <div class="cash-note">
+
+              <div
+                class="cash-note-value"
+              >
+                ₹${denomination}
+              </div>
+
+              <input
+                type="number"
+                min="0"
+                step="1"
+                id="cashNote_${denomination}"
+                value="${count || ""}"
+                placeholder="0"
+                oninput="window.updatePhysicalCashPreview()"
+              >
+
+              <div
+                class="cash-note-total"
+                id="cashLine_${denomination}"
+              >
+                ₹ ${money(
+                  count *
+                  denomination
+                )}
+              </div>
+
+            </div>
+
+          `;
+
+        }
+      );
+
+
+    const total =
+      calculatePhysicalCash();
+
+
+    return `
+
+      <div
+        class="quick-card cash-card"
+      >
+
+        <div class="quick-card-head">
+
+          <div class="quick-icon">
+            💰
+          </div>
+
+          <div>
+
+            <div class="quick-name">
+              Physical CASH
+            </div>
+
+            <span class="quick-type">
+              Count notes by denomination
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div class="quick-body">
+
+          <div class="cash-note-grid">
+
+            ${noteHTML}
+
+          </div>
+
+
+          <div class="cash-grand-total">
+
+            <span>
+              Total Physical Cash
+            </span>
+
+            <strong
+              id="cashGrandTotal"
+            >
+              ₹ ${money(total)}
+            </strong>
+
+          </div>
+
+
+          <button
+            class="cash-save-btn"
+            onclick="window.savePhysicalCash()"
+          >
+            💰 Save Physical Cash
+          </button>
+
+        </div>
+
+      </div>
+
+    `;
+
+  }
+
+
+  /* -------------------------------------------------------
+     MASTER RENDER
+  ------------------------------------------------------- */
+
+  function renderQuickArea(){
+
+    quickArea.innerHTML = `
+
+      <div class="quick-title-row">
+
+        <div class="quick-title">
+          Quick Collections
+        </div>
+
+        <div class="quick-subtitle">
+          Fast entry
+        </div>
+
+      </div>
+
+
+      <div class="quick-grid">
+
+
+        ${multipleCard(
+          "💳",
+          "Cards",
+          QUICK_TAGS.cards,
+          "quickCardAmount",
+          "Multiple entries"
+        )}
+
+
+        ${multipleCard(
+          "💵",
+          "Deposited Cash",
+          QUICK_TAGS.deposited,
+          "quickDepositedAmount",
+          "Multiple entries"
+        )}
+
+
+        ${multipleCard(
+          "🚗",
+          "Credit Vehicles",
+          QUICK_TAGS.credit,
+          "quickCreditAmount",
+          "Multiple entries"
+        )}
+
+
+        ${fixedCard(
+          "📱",
+          "UPI Payment",
+          QUICK_TAGS.upi,
+          "quickUPIAmount",
+          "One fixed entry"
+        )}
+
+
+        ${physicalCashCard()}
+
+
+        ${fixedCard(
+          "🪙",
+          "COIN",
+          QUICK_TAGS.coin,
+          "quickCoinAmount",
+          "One fixed entry"
+        )}
+
+      </div>
+
+    `;
+
+
+    updateCashPreview();
+
+  }
+
+
+  /* -------------------------------------------------------
+     EXPOSE FUNCTIONS
+     So generated buttons can call them.
+  ------------------------------------------------------- */
+
+  window.quickAddEntry =
+    addQuickEntry;
+
+  window.quickSaveFixed =
+    saveFixedEntry;
+
+  window.quickDeleteEntry =
+    deleteQuickEntry;
+
+  window.quickEditEntry =
+    editQuickEntry;
+
+  window.updatePhysicalCashPreview =
+    updateCashPreview;
+
+  window.savePhysicalCash =
+    savePhysicalCash;
+
+
+  /* -------------------------------------------------------
+     KEEP QUICK UI SYNCHRONIZED
+  ------------------------------------------------------- */
+
+  const oldRenderAll =
+    window.renderAll;
+
+
+  if(
+    typeof oldRenderAll ===
+    "function"
+  ){
+
+    window.renderAll =
+      function(){
+
+        oldRenderAll();
+
+        renderQuickArea();
+
+      };
+
+  }
+
+
+  /* -------------------------------------------------------
+     INITIAL RENDER
+  ------------------------------------------------------- */
+
+  renderQuickArea();
+
+
+  /* -------------------------------------------------------
+     DAILY RESET SUPPORT
+     If existing clearData() is used,
+     quick entries should also disappear.
+  ------------------------------------------------------- */
+
+  const oldClearData =
+    window.clearData;
+
+
+  if(
+    typeof oldClearData ===
+    "function"
+  ){
+
+    window.clearData =
+      function(){
+
+        oldClearData();
+
+        localStorage.removeItem(
+          QUICK_PREFIX +
+          "physicalCashNotes"
+        );
+
+        /*
+          Remove only the special
+          fixed/physical collection
+          records created by this feature.
+        */
+
+        let collections =
+          getCollections();
+
+
+        collections =
+          collections.filter(
+            e =>
+              e.tag !==
+                QUICK_TAGS.upi &&
+              e.tag !==
+                QUICK_TAGS.coin &&
+              e.tag !==
+                QUICK_TAGS.cash
+          );
+
+
+        setCollections(
+          collections
+        );
+
+
+        renderQuickArea();
+
+        renderTagsList();
+
+        renderTotals();
+
+      };
+
+  }
+
+})();
 </script>
 </body>
 </html>
