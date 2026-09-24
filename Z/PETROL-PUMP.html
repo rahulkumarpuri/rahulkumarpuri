@@ -1,0 +1,3884 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1"
+>
+
+<title>Petrol Pump Manager</title>
+
+</head>
+
+
+<body>
+
+<main class="app">
+
+  <!-- =====================================================
+       HEADER
+  ====================================================== -->
+
+  <header class="app-header">
+
+    <div>
+      <h1>Petrol Pump Manager</h1>
+      <p id="todayLabel"></p>
+    </div>
+
+    <button
+      type="button"
+      id="menuButton"
+      aria-label="Open menu"
+    >
+      ☰
+    </button>
+
+  </header>
+
+
+  <!-- =====================================================
+       FLOATING STATUS
+  ====================================================== -->
+
+  <div class="floating-controls">
+
+    <button
+      type="button"
+      id="testingFloatingButton"
+      title="Testing"
+    >
+      📴
+    </button>
+
+    <div
+      id="floatingDifference"
+      class="difference-badge"
+    >
+      ₹ 0.00
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+       MAIN SALE
+  ====================================================== -->
+
+  <section class="main-summary">
+
+    <h2>Today's Sale</h2>
+
+    <div class="sale-amount">
+      ₹ <span id="saleAmount">0.00</span>
+    </div>
+
+    <div id="saleBreakdown">
+      Enter and save Opening and Closing readings.
+    </div>
+
+  </section>
+
+
+  <!-- =====================================================
+       OIL SALES
+  ====================================================== -->
+
+  <section class="section oil-section">
+
+    <h2>Oil Sale</h2>
+
+    <div class="oil-grid">
+
+      <div class="oil-card">
+
+        <label for="oilMl">
+          Total Oil Sale
+        </label>
+
+        <input
+          type="number"
+          id="oilMl"
+          min="0"
+          step="1"
+          placeholder="0"
+        >
+
+        <div>
+          Rate: ₹400 / liter
+        </div>
+
+        <div>
+          Amount:
+          ₹ <span id="oilAmount">0.00</span>
+        </div>
+
+      </div>
+
+
+      <div class="oil-card">
+
+        <label for="discountOilMl">
+          Discount Oil Sale
+        </label>
+
+        <input
+          type="number"
+          id="discountOilMl"
+          min="0"
+          step="1"
+          placeholder="0"
+        >
+
+        <div>
+          Rate: ₹300 / liter
+        </div>
+
+        <div>
+          Amount:
+          ₹ <span id="discountOilAmount">0.00</span>
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =====================================================
+       QUICK COLLECTIONS
+  ====================================================== -->
+
+  <section class="section">
+
+    <div class="section-heading">
+
+      <div>
+        <h2>Collections</h2>
+        <p>Quick Collections</p>
+      </div>
+
+      <span>
+        Fast entry
+      </span>
+
+    </div>
+
+
+    <div class="quick-grid">
+
+
+      <!-- =================================================
+           CARDS
+      ================================================== -->
+
+      <article class="quick-card">
+
+        <header>
+
+          <span class="quick-icon">
+            💳
+          </span>
+
+          <div>
+
+            <h3>Cards</h3>
+
+            <small>
+              Multiple entries
+            </small>
+
+          </div>
+
+          <button
+            type="button"
+            class="history-button"
+            data-history="cards"
+            title="Cards history"
+          >
+            📋
+          </button>
+
+        </header>
+
+
+        <div class="quick-body">
+
+          <div class="quick-input-row">
+
+            <input
+              type="number"
+              id="cardsAmount"
+              step="0.01"
+              min="0"
+              placeholder="Amount"
+            >
+
+            <button
+              type="button"
+              id="cardsAddButton"
+            >
+              + Add
+            </button>
+
+          </div>
+
+
+          <div class="quick-total">
+            Total:
+            ₹ <strong id="cardsTotal">0.00</strong>
+          </div>
+
+
+          <div
+            id="cardsHistory"
+            class="quick-history hidden"
+          ></div>
+
+        </div>
+
+      </article>
+
+
+      <!-- =================================================
+           DEPOSITED CASH
+      ================================================== -->
+
+      <article class="quick-card">
+
+        <header>
+
+          <span class="quick-icon">
+            💵
+          </span>
+
+          <div>
+
+            <h3>Deposited Cash</h3>
+
+            <small>
+              Multiple entries
+            </small>
+
+          </div>
+
+          <button
+            type="button"
+            class="history-button"
+            data-history="deposited"
+            title="Deposited Cash history"
+          >
+            📋
+          </button>
+
+        </header>
+
+
+        <div class="quick-body">
+
+          <div class="quick-input-row">
+
+            <input
+              type="number"
+              id="depositedAmount"
+              step="0.01"
+              min="0"
+              placeholder="Amount"
+            >
+
+            <button
+              type="button"
+              id="depositedAddButton"
+            >
+              + Add
+            </button>
+
+          </div>
+
+
+          <div class="quick-total">
+            Total:
+            ₹ <strong id="depositedTotal">0.00</strong>
+          </div>
+
+
+          <div
+            id="depositedHistory"
+            class="quick-history hidden"
+          ></div>
+
+        </div>
+
+      </article>
+
+
+      <!-- =================================================
+           CREDIT VEHICLES
+      ================================================== -->
+
+      <article class="quick-card">
+
+        <header>
+
+          <span class="quick-icon">
+            🚗
+          </span>
+
+          <div>
+
+            <h3>Credit Vehicles</h3>
+
+            <small>
+              Multiple entries
+            </small>
+
+          </div>
+
+          <button
+            type="button"
+            class="history-button"
+            data-history="credit"
+            title="Credit Vehicles history"
+          >
+            📋
+          </button>
+
+        </header>
+
+
+        <div class="quick-body">
+
+          <div class="quick-input-row">
+
+            <input
+              type="number"
+              id="creditAmount"
+              step="0.01"
+              min="0"
+              placeholder="Amount"
+            >
+
+            <button
+              type="button"
+              id="creditAddButton"
+            >
+              + Add
+            </button>
+
+          </div>
+
+
+          <div class="quick-total">
+            Total:
+            ₹ <strong id="creditTotal">0.00</strong>
+          </div>
+
+
+          <div
+            id="creditHistory"
+            class="quick-history hidden"
+          ></div>
+
+        </div>
+
+      </article>
+
+
+      <!-- =================================================
+           UPI
+      ================================================== -->
+
+      <article class="quick-card">
+
+        <header>
+
+          <span class="quick-icon">
+            📱
+          </span>
+
+          <div>
+
+            <h3>UPI Payment</h3>
+
+            <small>
+              One fixed entry
+            </small>
+
+          </div>
+
+        </header>
+
+
+        <div class="quick-body">
+
+          <div class="quick-input-row">
+
+            <input
+              type="number"
+              id="upiAmount"
+              step="0.01"
+              min="0"
+              placeholder="Amount"
+            >
+
+            <button
+              type="button"
+              id="upiSaveButton"
+            >
+              Save
+            </button>
+
+          </div>
+
+
+          <div class="quick-fixed-value">
+            ₹ <span id="upiValue">0.00</span>
+          </div>
+
+        </div>
+
+      </article>
+
+
+      <!-- =================================================
+           PHYSICAL CASH
+      ================================================== -->
+
+      <article class="quick-card physical-cash-card">
+
+        <header>
+
+          <span class="quick-icon">
+            💰
+          </span>
+
+          <div>
+
+            <h3>Physical CASH</h3>
+
+            <small>
+              Notes + Coin
+            </small>
+
+          </div>
+
+        </header>
+
+
+        <div class="quick-body">
+
+
+          <div class="cash-note-grid">
+
+
+            <div class="cash-note">
+
+              <label>
+                ₹500
+              </label>
+
+              <input
+                type="number"
+                id="cash500"
+                min="0"
+                step="1"
+                placeholder="0"
+              >
+
+              <small id="cash500Value">
+                ₹0.00
+              </small>
+
+            </div>
+
+
+            <div class="cash-note">
+
+              <label>
+                ₹200
+              </label>
+
+              <input
+                type="number"
+                id="cash200"
+                min="0"
+                step="1"
+                placeholder="0"
+              >
+
+              <small id="cash200Value">
+                ₹0.00
+              </small>
+
+            </div>
+
+
+            <div class="cash-note">
+
+              <label>
+                ₹100
+              </label>
+
+              <input
+                type="number"
+                id="cash100"
+                min="0"
+                step="1"
+                placeholder="0"
+              >
+
+              <small id="cash100Value">
+                ₹0.00
+              </small>
+
+            </div>
+
+
+            <div class="cash-note">
+
+              <label>
+                ₹50
+              </label>
+
+              <input
+                type="number"
+                id="cash50"
+                min="0"
+                step="1"
+                placeholder="0"
+              >
+
+              <small id="cash50Value">
+                ₹0.00
+              </small>
+
+            </div>
+
+
+            <div class="cash-note">
+
+              <label>
+                ₹20
+              </label>
+
+              <input
+                type="number"
+                id="cash20"
+                min="0"
+                step="1"
+                placeholder="0"
+              >
+
+              <small id="cash20Value">
+                ₹0.00
+              </small>
+
+            </div>
+
+
+            <div class="cash-note">
+
+              <label>
+                ₹10
+              </label>
+
+              <input
+                type="number"
+                id="cash10"
+                min="0"
+                step="1"
+                placeholder="0"
+              >
+
+              <small id="cash10Value">
+                ₹0.00
+              </small>
+
+            </div>
+
+
+          </div>
+
+
+          <div class="coin-row">
+
+            <span class="coin-icon">
+              🪙
+            </span>
+
+            <label for="coinAmount">
+              Coin
+            </label>
+
+            <input
+              type="number"
+              id="coinAmount"
+              min="0"
+              step="0.01"
+              placeholder="Coin amount"
+            >
+
+          </div>
+
+
+          <div class="physical-total">
+
+            <span>
+              Total Physical Cash
+            </span>
+
+            <strong>
+              ₹ <span id="physicalCashTotal">
+                0.00
+              </span>
+            </strong>
+
+          </div>
+
+
+        </div>
+
+      </article>
+
+    </div>
+
+
+    <!-- ===================================================
+         NORMAL MANUAL COLLECTION
+    ==================================================== -->
+
+    <div class="manual-collections">
+
+      <button
+        type="button"
+        id="addEntryButton"
+      >
+        + Add Entry
+      </button>
+
+
+      <div
+        id="manualAddForm"
+        class="hidden"
+      >
+
+        <label for="manualAmount">
+          Amount
+        </label>
+
+        <input
+          type="number"
+          id="manualAmount"
+          step="0.01"
+          min="0"
+          placeholder="0.00"
+        >
+
+
+        <label for="manualTag">
+          Tag
+        </label>
+
+        <input
+          type="text"
+          id="manualTag"
+          autocomplete="off"
+          placeholder="Type a tag..."
+        >
+
+
+        <div
+          id="manualTagSuggestions"
+          class="tag-suggestions hidden"
+        ></div>
+
+
+        <button
+          type="button"
+          id="manualSaveButton"
+        >
+          Add Entry
+        </button>
+
+      </div>
+
+
+      <div id="manualCollections"></div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =====================================================
+       TOTALS
+  ====================================================== -->
+
+  <section class="totals-section">
+
+    <div class="total-card">
+
+      <span>
+        Collected
+      </span>
+
+      <strong>
+        ₹ <span id="collectedAmount">
+          0.00
+        </span>
+      </strong>
+
+    </div>
+
+
+    <div id="testingNote"></div>
+
+
+    <div
+      id="mainDifference"
+      class="difference-result"
+    >
+      Difference: ₹0.00
+    </div>
+
+
+    <button
+      type="button"
+      id="clearDataButton"
+    >
+      Clear Today's Data
+    </button>
+
+  </section>
+
+
+</main>
+
+
+<!-- =======================================================
+     SIDE MENU
+======================================================== -->
+
+<aside
+  id="sideMenu"
+  class="side-menu hidden"
+>
+
+  <div class="side-menu-header">
+
+    <strong>
+      Petrol Pump Menu
+    </strong>
+
+    <button
+      type="button"
+      id="closeMenuButton"
+    >
+      ❌
+    </button>
+
+  </div>
+
+
+  <div class="side-menu-content">
+
+
+    <!-- OPENING -->
+
+    <section class="menu-section">
+
+      <button
+        type="button"
+        class="menu-section-header"
+        data-menu-section="opening"
+      >
+        <span>
+          ⛽ Opening CumVolume
+        </span>
+
+        <span>
+          ▸
+        </span>
+
+      </button>
+
+
+      <div
+        id="openingMenuContent"
+        class="menu-section-content hidden"
+      ></div>
+
+    </section>
+
+
+    <!-- CLOSING -->
+
+    <section class="menu-section">
+
+      <button
+        type="button"
+        class="menu-section-header"
+        data-menu-section="closing"
+      >
+        <span>
+          ⛽ Closing CumVolume
+        </span>
+
+        <span>
+          ▸
+        </span>
+
+      </button>
+
+
+      <div
+        id="closingMenuContent"
+        class="menu-section-content hidden"
+      ></div>
+
+    </section>
+
+
+    <!-- SALE -->
+
+    <section class="menu-sale">
+
+      <h3>
+        💰 Today's Sale
+      </h3>
+
+      <div>
+        ₹ <span id="menuSaleAmount">
+          0.00
+        </span>
+      </div>
+
+      <div id="menuSaleBreakdown"></div>
+
+    </section>
+
+
+    <!-- TESTING -->
+
+    <section class="menu-testing">
+
+      <label>
+        <span>
+          🧪 Testing
+        </span>
+
+        <input
+          type="checkbox"
+          id="testingToggle"
+        >
+
+      </label>
+
+    </section>
+
+
+  </div>
+
+</aside>
+
+
+<div
+  id="menuOverlay"
+  class="menu-overlay hidden"
+></div>
+
+
+<script>
+
+/* =========================================================
+   PETROL PUMP MANAGER
+   FINAL CLEAN JAVASCRIPT
+========================================================= */
+
+
+/* =========================================================
+   CONSTANTS
+========================================================= */
+
+const RATES = [
+  114.28,
+  103.19,
+  114.28,
+  103.19
+];
+
+const FUEL = [
+  "Petrol",
+  "Diesel",
+  "Petrol",
+  "Diesel"
+];
+
+const DEFAULT_TAGS = [
+  "Card",
+  "Credit Vehicles",
+  "Test",
+  "Deposited Cash",
+  "Phonepe",
+  "Cash",
+  "Coin",
+  "UPI Payment",
+  "Physical CASH"
+];
+
+const OIL_RATE =
+  400;
+
+const DISCOUNT_OIL_RATE =
+  300;
+
+const TESTING_AMOUNT =
+  2174.70;
+
+const PHYSICAL_CASH_KEY =
+  "pumpPhysicalCash";
+
+const QUICK_COLLECTIONS_KEY =
+  "pumpQuickCollectionsFinal";
+
+const todayStr =
+  new Date()
+    .toISOString()
+    .slice(0,10);
+
+
+/* =========================================================
+   STORAGE
+========================================================= */
+
+function getJSON(
+  key,
+  fallback
+){
+
+  try{
+
+    const value =
+      localStorage.getItem(key);
+
+    return value
+      ? JSON.parse(value)
+      : fallback;
+
+  }catch(error){
+
+    return fallback;
+
+  }
+
+}
+
+
+function setJSON(
+  key,
+  value
+){
+
+  localStorage.setItem(
+    key,
+    JSON.stringify(value)
+  );
+
+}
+
+
+/* =========================================================
+   DAILY INITIALIZATION
+========================================================= */
+
+function ensureDay(){
+
+  const storedDay =
+    localStorage.getItem(
+      "pumpDay"
+    );
+
+
+  if(
+    storedDay !== todayStr
+  ){
+
+    localStorage.removeItem(
+      "pumpOpening"
+    );
+
+    localStorage.removeItem(
+      "pumpClosing"
+    );
+
+    localStorage.removeItem(
+      "pumpCollections"
+    );
+
+    localStorage.removeItem(
+      "pumpOilMl"
+    );
+
+    localStorage.removeItem(
+      "pumpDiscountOilMl"
+    );
+
+    localStorage.removeItem(
+      PHYSICAL_CASH_KEY
+    );
+
+    localStorage.removeItem(
+      QUICK_COLLECTIONS_KEY
+    );
+
+    localStorage.setItem(
+      "pumpDay",
+      todayStr
+    );
+
+  }
+
+
+  if(
+    !localStorage.getItem(
+      "pumpTags"
+    )
+  ){
+
+    setJSON(
+      "pumpTags",
+      DEFAULT_TAGS
+    );
+
+  }
+
+}
+
+
+ensureDay();
+
+
+/* =========================================================
+   BASIC STORAGE GETTERS
+========================================================= */
+
+function getOpening(){
+
+  return getJSON(
+    "pumpOpening",
+    {
+      saved:false,
+      values:[
+        null,
+        null,
+        null,
+        null
+      ]
+    }
+  );
+
+}
+
+
+function setOpening(data){
+
+  setJSON(
+    "pumpOpening",
+    data
+  );
+
+}
+
+
+function getClosing(){
+
+  return getJSON(
+    "pumpClosing",
+    {
+      saved:false,
+      values:[
+        null,
+        null,
+        null,
+        null
+      ]
+    }
+  );
+
+}
+
+
+function setClosing(data){
+
+  setJSON(
+    "pumpClosing",
+    data
+  );
+
+}
+
+
+function getCollections(){
+
+  return getJSON(
+    "pumpCollections",
+    []
+  );
+
+}
+
+
+function setCollections(
+  collections
+){
+
+  setJSON(
+    "pumpCollections",
+    collections
+  );
+
+}
+
+
+function getTags(){
+
+  return getJSON(
+    "pumpTags",
+    DEFAULT_TAGS.slice()
+  );
+
+}
+
+
+function setTags(tags){
+
+  setJSON(
+    "pumpTags",
+    tags
+  );
+
+}
+
+
+function getOilMl(){
+
+  return getJSON(
+    "pumpOilMl",
+    0
+  );
+
+}
+
+
+function setOilMl(value){
+
+  setJSON(
+    "pumpOilMl",
+    value
+  );
+
+}
+
+
+function getDiscountOilMl(){
+
+  return getJSON(
+    "pumpDiscountOilMl",
+    0
+  );
+
+}
+
+
+function setDiscountOilMl(
+  value
+){
+
+  setJSON(
+    "pumpDiscountOilMl",
+    value
+  );
+
+}
+
+
+function getTesting(){
+
+  return getJSON(
+    "pumpTestingOn",
+    false
+  );
+
+}
+
+
+function setTesting(value){
+
+  setJSON(
+    "pumpTestingOn",
+    value
+  );
+
+}
+
+
+/* =========================================================
+   QUICK COLLECTION STORAGE
+========================================================= */
+
+function defaultQuickData(){
+
+  return {
+
+    cards:[],
+
+    deposited:[],
+
+    credit:[],
+
+    upi:0
+
+  };
+
+}
+
+
+function getQuickData(){
+
+  return getJSON(
+    QUICK_COLLECTIONS_KEY,
+    defaultQuickData()
+  );
+
+}
+
+
+function setQuickData(
+  data
+){
+
+  setJSON(
+    QUICK_COLLECTIONS_KEY,
+    data
+  );
+
+}
+
+
+/* =========================================================
+   PHYSICAL CASH STORAGE
+========================================================= */
+
+function defaultPhysicalCash(){
+
+  return {
+
+    500:0,
+
+    200:0,
+
+    100:0,
+
+    50:0,
+
+    20:0,
+
+    10:0,
+
+    coin:0
+
+  };
+
+}
+
+
+function getPhysicalCash(){
+
+  return getJSON(
+    PHYSICAL_CASH_KEY,
+    defaultPhysicalCash()
+  );
+
+}
+
+
+function setPhysicalCash(
+  data
+){
+
+  setJSON(
+    PHYSICAL_CASH_KEY,
+    data
+  );
+
+}
+
+
+/* =========================================================
+   FORMAT HELPERS
+========================================================= */
+
+function num(value){
+
+  const n =
+    parseFloat(value);
+
+  return Number.isFinite(n)
+    ? n
+    : 0;
+
+}
+
+
+function fmt(value){
+
+  return num(value)
+    .toLocaleString(
+      "en-IN",
+      {
+        minimumFractionDigits:2,
+        maximumFractionDigits:2
+      }
+    );
+
+}
+
+
+function timeText(
+  iso
+){
+
+  return new Date(iso)
+    .toLocaleString(
+      "en-IN",
+      {
+        day:"2-digit",
+        month:"short",
+        year:"numeric",
+        hour:"2-digit",
+        minute:"2-digit",
+        second:"2-digit"
+      }
+    );
+
+}
+
+
+function makeId(){
+
+  return (
+    Date.now() +
+    "_" +
+    Math.random()
+      .toString(36)
+      .slice(2,8)
+  );
+
+}
+
+
+/* =========================================================
+   UI STATE
+========================================================= */
+
+let openingExpanded =
+  false;
+
+let closingExpanded =
+  false;
+
+const historyOpen = {
+
+  cards:false,
+
+  deposited:false,
+
+  credit:false
+
+};
+
+
+/* =========================================================
+   OPENING / CLOSING RENDER
+========================================================= */
+
+function renderMeterSection(
+  type
+){
+
+  const data =
+    type === "opening"
+      ? getOpening()
+      : getClosing();
+
+
+  const container =
+    type === "opening"
+      ? document.getElementById(
+          "openingMenuContent"
+        )
+      : document.getElementById(
+          "closingMenuContent"
+        );
+
+
+  const expanded =
+    type === "opening"
+      ? openingExpanded
+      : closingExpanded;
+
+
+  const label =
+    type === "opening"
+      ? "Opening CumVolume"
+      : "Closing CumVolume";
+
+
+  if(!data.saved){
+
+    let html = "";
+
+
+    for(
+      let i = 0;
+      i < 4;
+      i++
+    ){
+
+      const value =
+        data.values[i] ??
+        "";
+
+
+      html += `
+
+        <div class="nozzle-input">
+
+          <label>
+            Nozzle ${i+1}
+            (${FUEL[i]})
+          </label>
+
+          <input
+            type="number"
+            step="0.001"
+            id="${type}_${i}"
+            value="${value}"
+          >
+
+        </div>
+
+      `;
+
+    }
+
+
+    container.innerHTML = `
+
+      <h3>
+        ${label}
+      </h3>
+
+      <div class="meter-grid">
+
+        ${html}
+
+      </div>
+
+      <button
+        type="button"
+        data-save-meter="${type}"
+      >
+        Save ${label}
+      </button>
+
+    `;
+
+
+  }else{
+
+    let html = "";
+
+
+    for(
+      let i = 0;
+      i < 4;
+      i++
+    ){
+
+      html += `
+
+        <div class="nozzle-input">
+
+          <label>
+            Nozzle ${i+1}
+            (${FUEL[i]})
+          </label>
+
+          <input
+            type="number"
+            step="0.001"
+            id="${type}_${i}"
+            value="${data.values[i]}"
+          >
+
+        </div>
+
+      `;
+
+    }
+
+
+    container.innerHTML = `
+
+      <div class="saved-meter-header">
+
+        <strong>
+          ${label}
+        </strong>
+
+        <button
+          type="button"
+          data-toggle-meter="${type}"
+        >
+          ${expanded
+            ? "▲"
+            : "▼"}
+        </button>
+
+      </div>
+
+
+      <div
+        class="${
+          expanded
+            ? ""
+            : "hidden"
+        }"
+      >
+
+        <div class="meter-grid">
+
+          ${html}
+
+        </div>
+
+        <button
+          type="button"
+          data-update-meter="${type}"
+        >
+          Update ${label}
+        </button>
+
+      </div>
+
+    `;
+
+  }
+
+}
+
+
+/* =========================================================
+   READ METER
+========================================================= */
+
+function readMeter(
+  type
+){
+
+  const values = [];
+
+
+  for(
+    let i = 0;
+    i < 4;
+    i++
+  ){
+
+    const input =
+      document.getElementById(
+        `${type}_${i}`
+      );
+
+
+    values.push(
+      num(
+        input
+          ? input.value
+          : 0
+      )
+    );
+
+  }
+
+
+  return values;
+
+}
+
+
+/* =========================================================
+   SAVE / UPDATE METER
+========================================================= */
+
+function saveMeter(
+  type
+){
+
+  const values =
+    readMeter(type);
+
+
+  const data = {
+
+    saved:true,
+
+    values:values
+
+  };
+
+
+  if(
+    type === "opening"
+  ){
+
+    setOpening(data);
+
+    openingExpanded =
+      false;
+
+  }else{
+
+    setClosing(data);
+
+    closingExpanded =
+      false;
+
+  }
+
+
+  renderAll();
+
+}
+
+
+/* =========================================================
+   SALE CALCULATION
+========================================================= */
+
+function calculateSale(){
+
+  const opening =
+    getOpening();
+
+  const closing =
+    getClosing();
+
+
+  const ready =
+    opening.saved &&
+    closing.saved;
+
+
+  let petrol =
+    0;
+
+  let diesel =
+    0;
+
+
+  if(ready){
+
+    for(
+      let i = 0;
+      i < 4;
+      i++
+    ){
+
+      let volume =
+        num(
+          closing.values[i]
+        ) -
+        num(
+          opening.values[i]
+        );
+
+
+      if(volume < 0){
+
+        volume = 0;
+
+      }
+
+
+      const amount =
+        volume *
+        RATES[i];
+
+
+      if(
+        FUEL[i] ===
+        "Petrol"
+      ){
+
+        petrol +=
+          amount;
+
+      }else{
+
+        diesel +=
+          amount;
+
+      }
+
+    }
+
+  }
+
+
+  const oilMl =
+    num(
+      getOilMl()
+    );
+
+
+  const discountMl =
+    num(
+      getDiscountOilMl()
+    );
+
+
+  const oilAmount =
+    (
+      oilMl / 1000
+    ) *
+    OIL_RATE;
+
+
+  const discountOilAmount =
+    (
+      discountMl / 1000
+    ) *
+    DISCOUNT_OIL_RATE;
+
+
+  const sale =
+    petrol +
+    diesel +
+    oilAmount +
+    discountOilAmount;
+
+
+  return {
+
+    ready,
+
+    petrol,
+
+    diesel,
+
+    oilAmount,
+
+    discountOilAmount,
+
+    sale
+
+  };
+
+}
+
+
+/* =========================================================
+   QUICK COLLECTION TOTALS
+========================================================= */
+
+function arrayTotal(
+  list
+){
+
+  return list.reduce(
+    (
+      total,
+      entry
+    ) =>
+      total +
+      num(entry.amount),
+    0
+  );
+
+}
+
+
+function physicalCashTotal(){
+
+  const cash =
+    getPhysicalCash();
+
+
+  return (
+
+    num(cash[500]) * 500 +
+
+    num(cash[200]) * 200 +
+
+    num(cash[100]) * 100 +
+
+    num(cash[50]) * 50 +
+
+    num(cash[20]) * 20 +
+
+    num(cash[10]) * 10 +
+
+    num(cash.coin)
+
+  );
+
+}
+
+
+function quickCollectionTotal(){
+
+  const quick =
+    getQuickData();
+
+
+  return (
+
+    arrayTotal(
+      quick.cards
+    ) +
+
+    arrayTotal(
+      quick.deposited
+    ) +
+
+    arrayTotal(
+      quick.credit
+    ) +
+
+    num(quick.upi) +
+
+    physicalCashTotal()
+
+  );
+
+}
+
+
+/* =========================================================
+   TOTAL COLLECTION CALCULATION
+========================================================= */
+
+function calculateCollected(){
+
+  const normal =
+    getCollections();
+
+
+  const normalTotal =
+    normal.reduce(
+      (
+        total,
+        entry
+      ) =>
+        total +
+        num(entry.amount),
+      0
+    );
+
+
+  const testing =
+    getTesting()
+      ? TESTING_AMOUNT
+      : 0;
+
+
+  const quick =
+    quickCollectionTotal();
+
+
+  return (
+    normalTotal +
+    testing +
+    quick
+  );
+
+}
+
+
+/* =========================================================
+   SALE UI
+========================================================= */
+
+function renderSale(){
+
+  const sale =
+    calculateSale();
+
+
+  document.getElementById(
+    "saleAmount"
+  ).textContent =
+    fmt(sale.sale);
+
+
+  document.getElementById(
+    "oilAmount"
+  ).textContent =
+    fmt(
+      sale.oilAmount
+    );
+
+
+  document.getElementById(
+    "discountOilAmount"
+  ).textContent =
+    fmt(
+      sale.discountOilAmount
+    );
+
+
+  const parts = [];
+
+
+  if(sale.ready){
+
+    parts.push(
+      `Petrol: ₹ ${fmt(sale.petrol)}`
+    );
+
+    parts.push(
+      `Diesel: ₹ ${fmt(sale.diesel)}`
+    );
+
+  }
+
+
+  if(
+    sale.oilAmount > 0
+  ){
+
+    parts.push(
+      `Oil: ₹ ${fmt(sale.oilAmount)}`
+    );
+
+  }
+
+
+  if(
+    sale.discountOilAmount > 0
+  ){
+
+    parts.push(
+      `Discount Oil: ₹ ${fmt(
+        sale.discountOilAmount
+      )}`
+    );
+
+  }
+
+
+  document.getElementById(
+    "saleBreakdown"
+  ).textContent =
+    parts.length
+      ? parts.join(" | ")
+      : "Enter and save Opening and Closing readings.";
+
+
+  document.getElementById(
+    "menuSaleAmount"
+  ).textContent =
+    fmt(sale.sale);
+
+
+  document.getElementById(
+    "menuSaleBreakdown"
+  ).textContent =
+    parts.length
+      ? parts.join(" | ")
+      : "Enter and save Opening and Closing readings.";
+
+}
+
+
+/* =========================================================
+   TOTAL / SHORT / EXCESS
+========================================================= */
+
+function renderTotals(){
+
+  const collected =
+    calculateCollected();
+
+
+  const sale =
+    calculateSale();
+
+
+  const difference =
+    collected -
+    sale.sale;
+
+
+  document.getElementById(
+    "collectedAmount"
+  ).textContent =
+    fmt(collected);
+
+
+  const testingNote =
+    document.getElementById(
+      "testingNote"
+    );
+
+
+  testingNote.textContent =
+    getTesting()
+      ? `(includes Testing: ₹ ${fmt(
+          TESTING_AMOUNT
+        )})`
+      : "";
+
+
+  const mainDifference =
+    document.getElementById(
+      "mainDifference"
+    );
+
+
+  const floatingDifference =
+    document.getElementById(
+      "floatingDifference"
+    );
+
+
+  if(
+    difference > 0
+  ){
+
+    mainDifference.textContent =
+      `🟢 Excess: ₹ ${fmt(
+        difference
+      )}`;
+
+
+    floatingDifference.textContent =
+      `+ ₹ ${fmt(
+        difference
+      )}`;
+
+  }
+
+  else if(
+    difference < 0
+  ){
+
+    mainDifference.textContent =
+      `🔴 Short: ₹ ${fmt(
+        Math.abs(difference)
+      )}`;
+
+
+    floatingDifference.textContent =
+      `− ₹ ${fmt(
+        Math.abs(difference)
+      )}`;
+
+  }
+
+  else{
+
+    mainDifference.textContent =
+      "✅ Perfect Balance";
+
+
+    floatingDifference.textContent =
+      "₹ 0.00";
+
+  }
+
+}
+
+
+/* =========================================================
+   OIL INPUTS
+========================================================= */
+
+function initOilInputs(){
+
+  const oil =
+    document.getElementById(
+      "oilMl"
+    );
+
+
+  const discountOil =
+    document.getElementById(
+      "discountOilMl"
+    );
+
+
+  oil.value =
+    getOilMl() || "";
+
+
+  discountOil.value =
+    getDiscountOilMl() || "";
+
+
+  oil.addEventListener(
+    "input",
+    function(){
+
+      setOilMl(
+        Math.max(
+          0,
+          num(this.value)
+        )
+      );
+
+
+      renderAll();
+
+    }
+  );
+
+
+  discountOil.addEventListener(
+    "input",
+    function(){
+
+      setDiscountOilMl(
+        Math.max(
+          0,
+          num(this.value)
+        )
+      );
+
+
+      renderAll();
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   TESTING
+========================================================= */
+
+function renderTesting(){
+
+  const enabled =
+    getTesting();
+
+
+  document.getElementById(
+    "testingToggle"
+  ).checked =
+    enabled;
+
+
+  document.getElementById(
+    "testingFloatingButton"
+  ).textContent =
+    enabled
+      ? "🧪"
+      : "📴";
+
+}
+
+
+function toggleTesting(){
+
+  setTesting(
+    !getTesting()
+  );
+
+
+  renderAll();
+
+}
+
+
+/* =========================================================
+   QUICK ENTRY ADD
+========================================================= */
+
+function addQuickEntry(
+  type,
+  inputId
+){
+
+  const input =
+    document.getElementById(
+      inputId
+    );
+
+
+  const amount =
+    num(
+      input.value
+    );
+
+
+  if(amount <= 0){
+
+    alert(
+      "Please enter a valid amount."
+    );
+
+    return;
+
+  }
+
+
+  const quick =
+    getQuickData();
+
+
+  quick[type].push({
+
+    id:makeId(),
+
+    amount:amount,
+
+    time:new Date()
+      .toISOString()
+
+  });
+
+
+  setQuickData(
+    quick
+  );
+
+
+  input.value =
+    "";
+
+
+  renderAll();
+
+}
+
+
+/* =========================================================
+   QUICK HISTORY
+========================================================= */
+
+function renderHistory(
+  type,
+  elementId
+){
+
+  const quick =
+    getQuickData();
+
+
+  const list =
+    quick[type];
+
+
+  const container =
+    document.getElementById(
+      elementId
+    );
+
+
+  if(
+    !historyOpen[type]
+  ){
+
+    container.classList.add(
+      "hidden"
+    );
+
+    container.innerHTML =
+      "";
+
+    return;
+
+  }
+
+
+  container.classList.remove(
+    "hidden"
+  );
+
+
+  if(!list.length){
+
+    container.innerHTML =
+      "<p>No entries yet.</p>";
+
+    return;
+
+  }
+
+
+  let html =
+    "<h4>📋 Full History</h4>";
+
+
+  list
+    .slice()
+    .reverse()
+    .forEach(
+      entry => {
+
+        html += `
+
+          <div class="history-entry">
+
+            <div>
+
+              <strong>
+                ₹ ${fmt(
+                  entry.amount
+                )}
+              </strong>
+
+              <small>
+                ${timeText(
+                  entry.time
+                )}
+              </small>
+
+            </div>
+
+            <button
+              type="button"
+              data-delete-quick="${type}"
+              data-id="${entry.id}"
+            >
+              🗑️
+            </button>
+
+          </div>
+
+        `;
+
+      }
+    );
+
+
+  container.innerHTML =
+    html;
+
+}
+
+
+function toggleHistory(
+  type
+){
+
+  historyOpen[type] =
+    !historyOpen[type];
+
+
+  renderAll();
+
+}
+
+
+function deleteQuickEntry(
+  type,
+  id
+){
+
+  if(
+    !confirm(
+      "Delete this entry?"
+    )
+  ){
+
+    return;
+
+  }
+
+
+  const quick =
+    getQuickData();
+
+
+  quick[type] =
+    quick[type].filter(
+      entry =>
+        entry.id !== id
+    );
+
+
+  setQuickData(
+    quick
+  );
+
+
+  renderAll();
+
+}
+
+
+/* =========================================================
+   UPI
+========================================================= */
+
+function saveUPI(){
+
+  const amount =
+    Math.max(
+      0,
+      num(
+        document.getElementById(
+          "upiAmount"
+        ).value
+      )
+    );
+
+
+  const quick =
+    getQuickData();
+
+
+  quick.upi =
+    amount;
+
+
+  setQuickData(
+    quick
+  );
+
+
+  renderAll();
+
+}
+
+
+/* =========================================================
+   PHYSICAL CASH
+   ---------------------------------------------------------
+   IMPORTANT:
+   There is NO SAVE BUTTON.
+
+   Every input change is immediately saved.
+========================================================= */
+
+function readPhysicalCashInputs(){
+
+  return {
+
+    500:
+      Math.max(
+        0,
+        Math.floor(
+          num(
+            document.getElementById(
+              "cash500"
+            ).value
+          )
+        )
+      ),
+
+    200:
+      Math.max(
+        0,
+        Math.floor(
+          num(
+            document.getElementById(
+              "cash200"
+            ).value
+          )
+        )
+      ),
+
+    100:
+      Math.max(
+        0,
+        Math.floor(
+          num(
+            document.getElementById(
+              "cash100"
+            ).value
+          )
+        )
+      ),
+
+    50:
+      Math.max(
+        0,
+        Math.floor(
+          num(
+            document.getElementById(
+              "cash50"
+            ).value
+          )
+        )
+      ),
+
+    20:
+      Math.max(
+        0,
+        Math.floor(
+          num(
+            document.getElementById(
+              "cash20"
+            ).value
+          )
+        )
+      ),
+
+    10:
+      Math.max(
+        0,
+        Math.floor(
+          num(
+            document.getElementById(
+              "cash10"
+            ).value
+          )
+        )
+      ),
+
+    coin:
+      Math.max(
+        0,
+        num(
+          document.getElementById(
+            "coinAmount"
+          ).value
+        )
+      )
+
+  };
+
+}
+
+
+function updatePhysicalCash(){
+
+  const cash =
+    readPhysicalCashInputs();
+
+
+  /*
+    AUTO SAVE IMMEDIATELY
+  */
+
+  setPhysicalCash(
+    cash
+  );
+
+
+  /*
+    LIVE NOTE VALUES
+  */
+
+  document.getElementById(
+    "cash500Value"
+  ).textContent =
+    "₹ " +
+    fmt(
+      cash[500] * 500
+    );
+
+
+  document.getElementById(
+    "cash200Value"
+  ).textContent =
+    "₹ " +
+    fmt(
+      cash[200] * 200
+    );
+
+
+  document.getElementById(
+    "cash100Value"
+  ).textContent =
+    "₹ " +
+    fmt(
+      cash[100] * 100
+    );
+
+
+  document.getElementById(
+    "cash50Value"
+  ).textContent =
+    "₹ " +
+    fmt(
+      cash[50] * 50
+    );
+
+
+  document.getElementById(
+    "cash20Value"
+  ).textContent =
+    "₹ " +
+    fmt(
+      cash[20] * 20
+    );
+
+
+  document.getElementById(
+    "cash10Value"
+  ).textContent =
+    "₹ " +
+    fmt(
+      cash[10] * 10
+    );
+
+
+  const total =
+    physicalCashTotal();
+
+
+  document.getElementById(
+    "physicalCashTotal"
+  ).textContent =
+    fmt(total);
+
+
+  /*
+    Immediately update:
+    Collected
+    Short / Excess
+  */
+
+  renderTotals();
+
+}
+
+
+/* =========================================================
+   LOAD PHYSICAL CASH
+========================================================= */
+
+function loadPhysicalCashInputs(){
+
+  const cash =
+    getPhysicalCash();
+
+
+  document.getElementById(
+    "cash500"
+  ).value =
+    cash[500] || "";
+
+
+  document.getElementById(
+    "cash200"
+  ).value =
+    cash[200] || "";
+
+
+  document.getElementById(
+    "cash100"
+  ).value =
+    cash[100] || "";
+
+
+  document.getElementById(
+    "cash50"
+  ).value =
+    cash[50] || "";
+
+
+  document.getElementById(
+    "cash20"
+  ).value =
+    cash[20] || "";
+
+
+  document.getElementById(
+    "cash10"
+  ).value =
+    cash[10] || "";
+
+
+  document.getElementById(
+    "coinAmount"
+  ).value =
+    cash.coin || "";
+
+
+  updatePhysicalCash();
+
+}
+
+
+/* =========================================================
+   MANUAL NORMAL COLLECTION
+========================================================= */
+
+function addManualEntry(){
+
+  const amount =
+    num(
+      document.getElementById(
+        "manualAmount"
+      ).value
+    );
+
+
+  const rawTag =
+    document.getElementById(
+      "manualTag"
+    ).value
+      .trim();
+
+
+  if(
+    amount <= 0 ||
+    !rawTag
+  ){
+
+    alert(
+      "Please enter a valid amount and tag."
+    );
+
+    return;
+
+  }
+
+
+  const tags =
+    getTags();
+
+
+  const existing =
+    tags.find(
+      tag =>
+        tag.toLowerCase() ===
+        rawTag.toLowerCase()
+    );
+
+
+  const finalTag =
+    existing ||
+    rawTag;
+
+
+  if(!existing){
+
+    tags.push(
+      finalTag
+    );
+
+    setTags(
+      tags
+    );
+
+  }
+
+
+  const collections =
+    getCollections();
+
+
+  collections.push({
+
+    id:makeId(),
+
+    amount:amount,
+
+    tag:finalTag,
+
+    time:new Date()
+      .toISOString()
+
+  });
+
+
+  setCollections(
+    collections
+  );
+
+
+  document.getElementById(
+    "manualAmount"
+  ).value =
+    "";
+
+
+  document.getElementById(
+    "manualTag"
+  ).value =
+    "";
+
+
+  document.getElementById(
+    "manualAddForm"
+  ).classList.add(
+    "hidden"
+  );
+
+
+  renderAll();
+
+}
+
+
+/* =========================================================
+   MANUAL COLLECTION RENDER
+========================================================= */
+
+function renderManualCollections(){
+
+  const collections =
+    getCollections();
+
+
+  const container =
+    document.getElementById(
+      "manualCollections"
+    );
+
+
+  if(!collections.length){
+
+    container.innerHTML =
+      "<p>No manual entries yet.</p>";
+
+    return;
+
+  }
+
+
+  const grouped = {};
+
+
+  collections.forEach(
+    entry => {
+
+      if(
+        !grouped[entry.tag]
+      ){
+
+        grouped[entry.tag] =
+          [];
+
+      }
+
+
+      grouped[entry.tag]
+        .push(entry);
+
+    }
+  );
+
+
+  let html = "";
+
+
+  Object.keys(grouped)
+    .forEach(
+      tag => {
+
+        const entries =
+          grouped[tag];
+
+
+        const total =
+          arrayTotal(
+            entries
+          );
+
+
+        html += `
+
+          <details class="manual-tag">
+
+            <summary>
+
+              ${tag}
+              ₹ ${fmt(total)}
+
+            </summary>
+
+
+            <div>
+
+              ${entries
+                .map(
+                  entry => `
+
+                    <div
+                      class="manual-entry"
+                    >
+
+                      <div>
+
+                        <strong>
+                          ₹ ${fmt(
+                            entry.amount
+                          )}
+                        </strong>
+
+                        <small>
+                          ${timeText(
+                            entry.time
+                          )}
+                        </small>
+
+                      </div>
+
+
+                      <div>
+
+                        <button
+                          type="button"
+                          data-edit-manual="${entry.id}"
+                        >
+                          ✏️
+                        </button>
+
+                        <button
+                          type="button"
+                          data-delete-manual="${entry.id}"
+                        >
+                          🗑️
+                        </button>
+
+                      </div>
+
+                    </div>
+
+                  `
+                )
+                .join("")}
+
+            </div>
+
+          </details>
+
+        `;
+
+      }
+    );
+
+
+  container.innerHTML =
+    html;
+
+}
+
+
+/* =========================================================
+   MANUAL EDIT
+========================================================= */
+
+function editManualEntry(
+  id
+){
+
+  const collections =
+    getCollections();
+
+
+  const entry =
+    collections.find(
+      item =>
+        item.id === id
+    );
+
+
+  if(!entry)
+    return;
+
+
+  const amount =
+    prompt(
+      "Enter amount:",
+      entry.amount
+    );
+
+
+  if(amount === null)
+    return;
+
+
+  const tag =
+    prompt(
+      "Enter tag:",
+      entry.tag
+    );
+
+
+  if(tag === null)
+    return;
+
+
+  const newAmount =
+    num(amount);
+
+
+  const newTag =
+    tag.trim();
+
+
+  if(
+    newAmount <= 0 ||
+    !newTag
+  ){
+
+    alert(
+      "Invalid amount or tag."
+    );
+
+    return;
+
+  }
+
+
+  entry.amount =
+    newAmount;
+
+  entry.tag =
+    newTag;
+
+  entry.time =
+    new Date()
+      .toISOString();
+
+
+  setCollections(
+    collections
+  );
+
+
+  renderAll();
+
+}
+
+
+/* =========================================================
+   MANUAL DELETE
+========================================================= */
+
+function deleteManualEntry(
+  id
+){
+
+  if(
+    !confirm(
+      "Delete this entry?"
+    )
+  ){
+
+    return;
+
+  }
+
+
+  const collections =
+    getCollections()
+      .filter(
+        entry =>
+          entry.id !== id
+      );
+
+
+  setCollections(
+    collections
+  );
+
+
+  renderAll();
+
+}
+
+
+/* =========================================================
+   TAG SUGGESTIONS
+========================================================= */
+
+function renderTagSuggestions(){
+
+  const input =
+    document.getElementById(
+      "manualTag"
+    );
+
+
+  const box =
+    document.getElementById(
+      "manualTagSuggestions"
+    );
+
+
+  const value =
+    input.value
+      .trim()
+      .toLowerCase();
+
+
+  if(!value){
+
+    box.classList.add(
+      "hidden"
+    );
+
+    box.innerHTML =
+      "";
+
+    return;
+
+  }
+
+
+  const matches =
+    getTags()
+      .filter(
+        tag =>
+          tag.toLowerCase()
+            .includes(value)
+      );
+
+
+  if(!matches.length){
+
+    box.classList.add(
+      "hidden"
+    );
+
+    box.innerHTML =
+      "";
+
+    return;
+
+  }
+
+
+  box.innerHTML =
+    matches
+      .map(
+        tag => `
+
+          <button
+            type="button"
+            data-select-tag="${tag}"
+          >
+            ${tag}
+          </button>
+
+        `
+      )
+      .join("");
+
+
+  box.classList.remove(
+    "hidden"
+  );
+
+}
+
+
+/* =========================================================
+   OPENING / CLOSING MENU
+========================================================= */
+
+function renderMenuMeters(){
+
+  renderMeterSection(
+    "opening"
+  );
+
+  renderMeterSection(
+    "closing"
+  );
+
+}
+
+
+/* =========================================================
+   MASTER RENDER
+========================================================= */
+
+function renderAll(){
+
+  renderMenuMeters();
+
+  renderSale();
+
+  renderTotals();
+
+  renderTesting();
+
+  renderQuickUI();
+
+  renderManualCollections();
+
+}
+
+
+/* =========================================================
+   QUICK UI
+========================================================= */
+
+function renderQuickUI(){
+
+  const quick =
+    getQuickData();
+
+
+  document.getElementById(
+    "cardsTotal"
+  ).textContent =
+    fmt(
+      arrayTotal(
+        quick.cards
+      )
+    );
+
+
+  document.getElementById(
+    "depositedTotal"
+  ).textContent =
+    fmt(
+      arrayTotal(
+        quick.deposited
+      )
+    );
+
+
+  document.getElementById(
+    "creditTotal"
+  ).textContent =
+    fmt(
+      arrayTotal(
+        quick.credit
+      )
+    );
+
+
+  document.getElementById(
+    "upiAmount"
+  ).value =
+    quick.upi || "";
+
+
+  document.getElementById(
+    "upiValue"
+  ).textContent =
+    fmt(
+      quick.upi
+    );
+
+
+  renderHistory(
+    "cards",
+    "cardsHistory"
+  );
+
+
+  renderHistory(
+    "deposited",
+    "depositedHistory"
+  );
+
+
+  renderHistory(
+    "credit",
+    "creditHistory"
+  );
+
+
+  loadPhysicalCashInputs();
+
+}
+
+
+/* =========================================================
+   MENU OPEN / CLOSE
+========================================================= */
+
+function openMenu(){
+
+  document.getElementById(
+    "sideMenu"
+  ).classList.remove(
+    "hidden"
+  );
+
+
+  document.getElementById(
+    "menuOverlay"
+  ).classList.remove(
+    "hidden"
+  );
+
+}
+
+
+function closeMenu(){
+
+  document.getElementById(
+    "sideMenu"
+  ).classList.add(
+    "hidden"
+  );
+
+
+  document.getElementById(
+    "menuOverlay"
+  ).classList.add(
+    "hidden"
+  );
+
+}
+
+
+/* =========================================================
+   EVENT LISTENERS
+========================================================= */
+
+document.addEventListener(
+  "click",
+  function(event){
+
+
+    /* -----------------------------------------------
+       MENU
+    ------------------------------------------------ */
+
+    if(
+      event.target.closest(
+        "#menuButton"
+      )
+    ){
+
+      openMenu();
+
+      return;
+
+    }
+
+
+    if(
+      event.target.closest(
+        "#closeMenuButton"
+      )
+    ){
+
+      closeMenu();
+
+      return;
+
+    }
+
+
+    if(
+      event.target.closest(
+        "#menuOverlay"
+      )
+    ){
+
+      closeMenu();
+
+      return;
+
+    }
+
+
+    /* -----------------------------------------------
+       METER SAVE
+    ------------------------------------------------ */
+
+    const saveMeterButton =
+      event.target.closest(
+        "[data-save-meter]"
+      );
+
+
+    if(saveMeterButton){
+
+      saveMeter(
+        saveMeterButton
+          .dataset
+          .saveMeter
+      );
+
+      return;
+
+    }
+
+
+    /* -----------------------------------------------
+       METER UPDATE
+    ------------------------------------------------ */
+
+    const updateMeterButton =
+      event.target.closest(
+        "[data-update-meter]"
+      );
+
+
+    if(updateMeterButton){
+
+      saveMeter(
+        updateMeterButton
+          .dataset
+          .updateMeter
+      );
+
+      return;
+
+    }
+
+
+    /* -----------------------------------------------
+       METER EXPAND
+    ------------------------------------------------ */
+
+    const toggleMeterButton =
+      event.target.closest(
+        "[data-toggle-meter]"
+      );
+
+
+    if(toggleMeterButton){
+
+      const type =
+        toggleMeterButton
+          .dataset
+          .toggleMeter;
+
+
+      if(
+        type === "opening"
+      ){
+
+        openingExpanded =
+          !openingExpanded;
+
+      }else{
+
+        closingExpanded =
+          !closingExpanded;
+
+      }
+
+
+      renderMenuMeters();
+
+      return;
+
+    }
+
+
+    /* -----------------------------------------------
+       HISTORY
+    ------------------------------------------------ */
+
+    const historyButton =
+      event.target.closest(
+        "[data-history]"
+      );
+
+
+    if(historyButton){
+
+      toggleHistory(
+        historyButton
+          .dataset
+          .history
+      );
+
+      return;
+
+    }
+
+
+    /* -----------------------------------------------
+       QUICK DELETE
+    ------------------------------------------------ */
+
+    const quickDelete =
+      event.target.closest(
+        "[data-delete-quick]"
+      );
+
+
+    if(quickDelete){
+
+      deleteQuickEntry(
+
+        quickDelete
+          .dataset
+          .deleteQuick,
+
+        quickDelete
+          .dataset
+          .id
+
+      );
+
+      return;
+
+    }
+
+
+    /* -----------------------------------------------
+       MANUAL DELETE
+    ------------------------------------------------ */
+
+    const manualDelete =
+      event.target.closest(
+        "[data-delete-manual]"
+      );
+
+
+    if(manualDelete){
+
+      deleteManualEntry(
+        manualDelete
+          .dataset
+          .deleteManual
+      );
+
+      return;
+
+    }
+
+
+    /* -----------------------------------------------
+       MANUAL EDIT
+    ------------------------------------------------ */
+
+    const manualEdit =
+      event.target.closest(
+        "[data-edit-manual]"
+      );
+
+
+    if(manualEdit){
+
+      editManualEntry(
+        manualEdit
+          .dataset
+          .editManual
+      );
+
+      return;
+
+    }
+
+
+    /* -----------------------------------------------
+       TAG SELECT
+    ------------------------------------------------ */
+
+    const tagButton =
+      event.target.closest(
+        "[data-select-tag]"
+      );
+
+
+    if(tagButton){
+
+      document.getElementById(
+        "manualTag"
+      ).value =
+        tagButton
+          .dataset
+          .selectTag;
+
+
+      document.getElementById(
+        "manualTagSuggestions"
+      ).classList.add(
+        "hidden"
+      );
+
+      return;
+
+    }
+
+
+    /* -----------------------------------------------
+       TESTING FLOATING
+    ------------------------------------------------ */
+
+    if(
+      event.target.closest(
+        "#testingFloatingButton"
+      )
+    ){
+
+      toggleTesting();
+
+      return;
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   NORMAL BUTTONS
+========================================================= */
+
+document.getElementById(
+  "cardsAddButton"
+).addEventListener(
+  "click",
+  function(){
+
+    addQuickEntry(
+      "cards",
+      "cardsAmount"
+    );
+
+  }
+);
+
+
+document.getElementById(
+  "depositedAddButton"
+).addEventListener(
+  "click",
+  function(){
+
+    addQuickEntry(
+      "deposited",
+      "depositedAmount"
+    );
+
+  }
+);
+
+
+document.getElementById(
+  "creditAddButton"
+).addEventListener(
+  "click",
+  function(){
+
+    addQuickEntry(
+      "credit",
+      "creditAmount"
+    );
+
+  }
+);
+
+
+document.getElementById(
+  "upiSaveButton"
+).addEventListener(
+  "click",
+  saveUPI
+);
+
+
+/* =========================================================
+   PHYSICAL CASH AUTO-SAVE
+========================================================= */
+
+[
+  "cash500",
+  "cash200",
+  "cash100",
+  "cash50",
+  "cash20",
+  "cash10",
+  "coinAmount"
+].forEach(
+  id => {
+
+    document.getElementById(
+      id
+    ).addEventListener(
+      "input",
+      updatePhysicalCash
+    );
+
+  }
+);
+
+
+/* =========================================================
+   MANUAL ADD FORM
+========================================================= */
+
+document.getElementById(
+  "addEntryButton"
+).addEventListener(
+  "click",
+  function(){
+
+    document.getElementById(
+      "manualAddForm"
+    ).classList.toggle(
+      "hidden"
+    );
+
+  }
+);
+
+
+document.getElementById(
+  "manualSaveButton"
+).addEventListener(
+  "click",
+  addManualEntry
+);
+
+
+document.getElementById(
+  "manualTag"
+).addEventListener(
+  "input",
+  renderTagSuggestions
+);
+
+
+/* =========================================================
+   TESTING CHECKBOX
+========================================================= */
+
+document.getElementById(
+  "testingToggle"
+).addEventListener(
+  "change",
+  function(){
+
+    setTesting(
+      this.checked
+    );
+
+
+    renderAll();
+
+  }
+);
+
+
+/* =========================================================
+   CLEAR TODAY
+========================================================= */
+
+document.getElementById(
+  "clearDataButton"
+).addEventListener(
+  "click",
+  function(){
+
+    if(
+      !confirm(
+        "Clear today's data?\n\nTags will be kept."
+      )
+    ){
+
+      return;
+
+    }
+
+
+    localStorage.removeItem(
+      "pumpOpening"
+    );
+
+    localStorage.removeItem(
+      "pumpClosing"
+    );
+
+    localStorage.removeItem(
+      "pumpCollections"
+    );
+
+    localStorage.removeItem(
+      "pumpOilMl"
+    );
+
+    localStorage.removeItem(
+      "pumpDiscountOilMl"
+    );
+
+    localStorage.removeItem(
+      "pumpTestingOn"
+    );
+
+    localStorage.removeItem(
+      PHYSICAL_CASH_KEY
+    );
+
+    localStorage.removeItem(
+      QUICK_COLLECTIONS_KEY
+    );
+
+
+    openingExpanded =
+      false;
+
+    closingExpanded =
+      false;
+
+
+    historyOpen.cards =
+      false;
+
+    historyOpen.deposited =
+      false;
+
+    historyOpen.credit =
+      false;
+
+
+    document.getElementById(
+      "oilMl"
+    ).value =
+      "";
+
+    document.getElementById(
+      "discountOilMl"
+    ).value =
+      "";
+
+
+    renderAll();
+
+  }
+);
+
+
+/* =========================================================
+   TODAY LABEL
+========================================================= */
+
+document.getElementById(
+  "todayLabel"
+).textContent =
+  new Date()
+    .toLocaleDateString(
+      "en-IN",
+      {
+        weekday:"long",
+        day:"numeric",
+        month:"long",
+        year:"numeric"
+      }
+    );
+
+
+/* =========================================================
+   INITIALIZATION
+========================================================= */
+
+initOilInputs();
+
+renderAll();
+
+</script>
+
+</body>
+
+</html>
