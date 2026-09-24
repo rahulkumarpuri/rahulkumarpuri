@@ -7500,6 +7500,849 @@ renderAll();
 
 </script>
 
+
+
+<script>
+
+/* =========================================================
+   FINAL INDEPENDENT LIVE SHORT / EXCESS BAR
+   ---------------------------------------------------------
+   This bar is completely independent from Testing control.
+
+   It will:
+   ✓ Stay fixed to viewport
+   ✓ Stay visible while scrolling
+   ✓ Stay visible when keyboard opens
+   ✓ Stay visible while entering Physical Cash
+   ✓ Update live on every input
+   ✓ Survive DOM re-renders
+   ✓ Survive menu opening/closing
+========================================================= */
+
+(function(){
+
+  "use strict";
+
+
+  /* =======================================================
+     1. FIND EXISTING DIFFERENCE BAR
+  ======================================================= */
+
+  let differenceBar =
+    document.querySelector(
+      "#floatingDifferenceBox"
+    ) ||
+    document.querySelector(
+      ".difference-badge"
+    );
+
+
+  /* =======================================================
+     2. IF IT DOESN'T EXIST, CREATE IT
+  ======================================================= */
+
+  if(!differenceBar){
+
+    differenceBar =
+      document.createElement("div");
+
+    differenceBar.id =
+      "floatingDifferenceBox";
+
+  }
+
+
+  /* =======================================================
+     3. MOVE IT DIRECTLY INTO BODY
+     
+     VERY IMPORTANT:
+     It must NOT remain inside:
+       .floating-controls
+       .app
+       .section
+       .side-menu
+     
+     This prevents scrolling / transform / keyboard
+     positioning problems.
+  ======================================================= */
+
+  document.body.appendChild(
+    differenceBar
+  );
+
+
+  /* =======================================================
+     4. FORCE COMPLETELY INDEPENDENT POSITION
+  ======================================================= */
+
+  function lockPosition(){
+
+    differenceBar.style.setProperty(
+      "position",
+      "fixed",
+      "important"
+    );
+
+    differenceBar.style.setProperty(
+      "left",
+      "auto",
+      "important"
+    );
+
+    differenceBar.style.setProperty(
+      "top",
+      "auto",
+      "important"
+    );
+
+    differenceBar.style.setProperty(
+      "right",
+      "14px",
+      "important"
+    );
+
+    differenceBar.style.setProperty(
+      "z-index",
+      "2147483647",
+      "important"
+    );
+
+    differenceBar.style.setProperty(
+      "display",
+      "flex",
+      "important"
+    );
+
+    differenceBar.style.setProperty(
+      "visibility",
+      "visible",
+      "important"
+    );
+
+    differenceBar.style.setProperty(
+      "opacity",
+      "1",
+      "important"
+    );
+
+    differenceBar.style.setProperty(
+      "pointer-events",
+      "none",
+      "important"
+    );
+
+  }
+
+
+  /* =======================================================
+     5. KEYBOARD-SAFE BOTTOM POSITION
+     
+     Android Chrome changes visualViewport when
+     keyboard opens.
+
+     We calculate the visible bottom area so the
+     Short/Excess badge stays above the keyboard.
+  ======================================================= */
+
+  function updateViewportPosition(){
+
+    lockPosition();
+
+
+    let bottomSpace =
+      14;
+
+
+    if(
+      window.visualViewport
+    ){
+
+      const viewport =
+        window.visualViewport;
+
+
+      /*
+        Amount of viewport hidden by keyboard.
+      */
+
+      const keyboardHeight =
+        Math.max(
+          0,
+          window.innerHeight -
+          viewport.height -
+          viewport.offsetTop
+        );
+
+
+      /*
+        Keep badge above keyboard.
+      */
+
+      if(
+        keyboardHeight > 80
+      ){
+
+        bottomSpace =
+          keyboardHeight + 10;
+
+      }
+
+    }
+
+
+    differenceBar.style.setProperty(
+      "bottom",
+      bottomSpace + "px",
+      "important"
+    );
+
+  }
+
+
+  /* =======================================================
+     6. STYLE THE INDEPENDENT BAR
+  ======================================================= */
+
+  const style =
+    document.createElement("style");
+
+
+  style.textContent = `
+
+    #floatingDifferenceBox{
+
+      position:fixed !important;
+
+      top:auto !important;
+
+      left:auto !important;
+
+      right:14px !important;
+
+      bottom:14px !important;
+
+      z-index:2147483647 !important;
+
+      min-width:120px;
+
+      min-height:40px;
+
+      padding:0 13px;
+
+      border-radius:12px;
+
+      background:
+        rgba(255,255,255,.97);
+
+      border:
+        1px solid
+        rgba(203,213,225,.95);
+
+      box-shadow:
+        0 8px 24px
+        rgba(15,23,42,.20);
+
+      display:flex !important;
+
+      align-items:center;
+
+      justify-content:center;
+
+      box-sizing:border-box;
+
+      font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+
+      font-size:.84rem;
+
+      font-weight:850;
+
+      white-space:nowrap;
+
+      pointer-events:none !important;
+
+      visibility:visible !important;
+
+      opacity:1 !important;
+
+      transform:none !important;
+
+      transition:
+        color .15s ease,
+        background .15s ease,
+        border-color .15s ease,
+        box-shadow .15s ease;
+
+    }
+
+
+    #floatingDifferenceBox.excess{
+
+      color:#047857;
+
+      background:#ecfdf5;
+
+      border-color:#a7f3d0;
+
+    }
+
+
+    #floatingDifferenceBox.short{
+
+      color:#b91c1c;
+
+      background:#fef2f2;
+
+      border-color:#fecaca;
+
+    }
+
+
+    #floatingDifferenceBox.balance{
+
+      color:#374151;
+
+      background:#f8fafc;
+
+      border-color:#e5e7eb;
+
+    }
+
+
+    @media(max-width:600px){
+
+      #floatingDifferenceBox{
+
+        right:10px !important;
+
+        min-width:112px;
+
+        min-height:38px;
+
+        padding:0 11px;
+
+        border-radius:11px;
+
+        font-size:.76rem;
+
+      }
+
+    }
+
+
+    @media(max-width:380px){
+
+      #floatingDifferenceBox{
+
+        right:8px !important;
+
+        min-width:104px;
+
+        min-height:36px;
+
+        font-size:.71rem;
+
+      }
+
+    }
+
+  `;
+
+
+  document.head.appendChild(
+    style
+  );
+
+
+  /* =======================================================
+     7. LIVE CALCULATION
+  ======================================================= */
+
+  function updateLiveDifference(){
+
+    try{
+
+      /*
+        Use the website's existing calculation.
+      */
+
+      if(
+        typeof calcSale !==
+        "function"
+      ){
+
+        return;
+
+      }
+
+
+      const saleData =
+        calcSale();
+
+
+      const collections =
+        typeof getCollections ===
+        "function"
+          ? getCollections()
+          : [];
+
+
+      let collected =
+        collections.reduce(
+          function(sum,e){
+
+            return sum +
+              Number(e.amount || 0);
+
+          },
+          0
+        );
+
+
+      /*
+        Testing amount.
+      */
+
+      if(
+        typeof getTesting ===
+        "function" &&
+        getTesting()
+      ){
+
+        collected +=
+          Number(
+            typeof TESTING_AMOUNT !==
+            "undefined"
+              ? TESTING_AMOUNT
+              : 0
+          );
+
+      }
+
+
+      /*
+        Final difference.
+      */
+
+      const difference =
+        collected -
+        Number(
+          saleData.sale || 0
+        );
+
+
+      /*
+        Remove previous state.
+      */
+
+      differenceBar.classList.remove(
+        "short",
+        "excess",
+        "balance"
+      );
+
+
+      /* ---------------------------------------------------
+         EXCESS
+      --------------------------------------------------- */
+
+      if(
+        difference > 0.000001
+      ){
+
+        differenceBar.classList.add(
+          "excess"
+        );
+
+        differenceBar.textContent =
+          "+ ₹ " +
+          formatMoney(
+            difference
+          );
+
+        differenceBar.title =
+          "Excess";
+
+      }
+
+
+      /* ---------------------------------------------------
+         SHORT
+      --------------------------------------------------- */
+
+      else if(
+        difference < -0.000001
+      ){
+
+        differenceBar.classList.add(
+          "short"
+        );
+
+        differenceBar.textContent =
+          "− ₹ " +
+          formatMoney(
+            Math.abs(difference)
+          );
+
+        differenceBar.title =
+          "Short";
+
+      }
+
+
+      /* ---------------------------------------------------
+         PERFECT BALANCE
+      --------------------------------------------------- */
+
+      else{
+
+        differenceBar.classList.add(
+          "balance"
+        );
+
+        differenceBar.textContent =
+          "₹ 0.00";
+
+        differenceBar.title =
+          "Perfect Balance";
+
+      }
+
+
+      lockPosition();
+
+    }
+    catch(error){
+
+      /*
+        Never allow calculation errors
+        to break the floating bar.
+      */
+
+      console.warn(
+        "Live Short/Excess update:",
+        error
+      );
+
+    }
+
+  }
+
+
+  /* =======================================================
+     8. MONEY FORMATTER
+  ======================================================= */
+
+  function formatMoney(value){
+
+    const n =
+      Number(value || 0);
+
+
+    if(
+      typeof fmt ===
+      "function"
+    ){
+
+      return fmt(n);
+
+    }
+
+
+    return n.toLocaleString(
+      "en-IN",
+      {
+        minimumFractionDigits:2,
+        maximumFractionDigits:2
+      }
+    );
+
+  }
+
+
+  /* =======================================================
+     9. UPDATE ON EVERY INPUT
+     
+     This is particularly important for:
+
+       ₹500
+       ₹200
+       ₹100
+       ₹50
+       ₹20
+       ₹10
+       Coin
+
+     As soon as the number changes,
+     Short/Excess updates.
+  ======================================================= */
+
+  document.addEventListener(
+    "input",
+    function(){
+
+      /*
+        Small delay lets existing
+        input handlers save their value first.
+      */
+
+      requestAnimationFrame(
+        function(){
+
+          updateLiveDifference();
+          updateViewportPosition();
+
+        }
+      );
+
+    },
+    true
+  );
+
+
+  /* =======================================================
+     10. CHANGE EVENT
+  ======================================================= */
+
+  document.addEventListener(
+    "change",
+    function(){
+
+      requestAnimationFrame(
+        function(){
+
+          updateLiveDifference();
+
+        }
+      );
+
+    },
+    true
+  );
+
+
+  /* =======================================================
+     11. SCROLL PROTECTION
+     
+     Scrolling MUST NOT move the badge.
+  ======================================================= */
+
+  window.addEventListener(
+    "scroll",
+    function(){
+
+      updateViewportPosition();
+
+    },
+    {
+      passive:true
+    }
+  );
+
+
+  document.addEventListener(
+    "scroll",
+    function(){
+
+      updateViewportPosition();
+
+    },
+    {
+      passive:true,
+      capture:true
+    }
+  );
+
+
+  /* =======================================================
+     12. WINDOW RESIZE
+  ======================================================= */
+
+  window.addEventListener(
+    "resize",
+    function(){
+
+      updateViewportPosition();
+
+    },
+    {
+      passive:true
+    }
+  );
+
+
+  /* =======================================================
+     13. ANDROID KEYBOARD / VISUAL VIEWPORT
+  ======================================================= */
+
+  if(
+    window.visualViewport
+  ){
+
+    window.visualViewport.addEventListener(
+      "resize",
+      function(){
+
+        updateViewportPosition();
+
+      },
+      {
+        passive:true
+      }
+    );
+
+
+    window.visualViewport.addEventListener(
+      "scroll",
+      function(){
+
+        updateViewportPosition();
+
+      },
+      {
+        passive:true
+      }
+    );
+
+  }
+
+
+  /* =======================================================
+     14. ORIENTATION CHANGE
+  ======================================================= */
+
+  window.addEventListener(
+    "orientationchange",
+    function(){
+
+      setTimeout(
+        function(){
+
+          updateViewportPosition();
+
+        },
+        100
+      );
+
+    }
+  );
+
+
+  /* =======================================================
+     15. PROTECT AGAINST OTHER JS MOVING THE BAR
+     
+     If another part of the website accidentally
+     appends/reparents the difference element,
+     immediately move it back to body.
+  ======================================================= */
+
+  const observer =
+    new MutationObserver(
+      function(){
+
+        if(
+          differenceBar.parentElement !==
+          document.body
+        ){
+
+          document.body.appendChild(
+            differenceBar
+          );
+
+        }
+
+
+        lockPosition();
+
+      }
+    );
+
+
+  observer.observe(
+    document.body,
+    {
+      childList:true,
+      subtree:true
+    }
+  );
+
+
+  /* =======================================================
+     16. PERIODIC SAFETY CHECK
+     
+     Very cheap watchdog.
+     
+     If some future code messes with position,
+     this restores it.
+  ======================================================= */
+
+  setInterval(
+    function(){
+
+      if(
+        differenceBar.parentElement !==
+        document.body
+      ){
+
+        document.body.appendChild(
+          differenceBar
+        );
+
+      }
+
+      updateViewportPosition();
+
+    },
+    1000
+  );
+
+
+  /* =======================================================
+     17. INITIALIZE
+  ======================================================= */
+
+  updateLiveDifference();
+
+  updateViewportPosition();
+
+
+  /* =======================================================
+     18. EXTRA INITIAL REFRESH
+     
+     Allows existing page scripts to finish rendering.
+  ======================================================= */
+
+  setTimeout(
+    function(){
+
+      updateLiveDifference();
+      updateViewportPosition();
+
+    },
+    100
+  );
+
+
+  setTimeout(
+    function(){
+
+      updateLiveDifference();
+      updateViewportPosition();
+
+    },
+    500
+  );
+
+
+})();
+
+</script>
 </body>
 
 </html>
