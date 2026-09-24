@@ -7000,6 +7000,506 @@ renderAll();
 
 </script>
 
+
+
+  <script>
+
+/* =========================================================
+   FINAL UI INTERACTION REPAIR
+   Fixes Opening / Closing CumVolume + future menu accordions
+========================================================= */
+
+(function(){
+
+  "use strict";
+
+
+  /* -------------------------------------------------------
+     1. Find the actual content belonging to a menu header
+  ------------------------------------------------------- */
+
+  function findContent(header){
+
+    if(!header) return null;
+
+    /* Normal final-layout structure */
+
+    const section =
+      header.closest(".menu-section");
+
+    if(section){
+
+      const content =
+        section.querySelector(".menu-section-content");
+
+      if(content) return content;
+
+    }
+
+
+    /* Fallback: next sibling */
+
+    let next =
+      header.nextElementSibling;
+
+    if(next){
+
+      if(
+        next.classList.contains(
+          "menu-section-content"
+        )
+      ){
+
+        return next;
+
+      }
+
+      if(
+        next.classList.contains("section-content") ||
+        next.classList.contains("accordion-content")
+      ){
+
+        return next;
+
+      }
+
+    }
+
+
+    /* Generic fallback */
+
+    const parent =
+      header.parentElement;
+
+    if(parent){
+
+      const candidates =
+        parent.children;
+
+      for(let i=0;i<candidates.length;i++){
+
+        const el =
+          candidates[i];
+
+        if(
+          el !== header &&
+          (
+            el.classList.contains(
+              "menu-section-content"
+            ) ||
+            el.classList.contains(
+              "accordion-content"
+            ) ||
+            el.classList.contains(
+              "section-content"
+            )
+          )
+        ){
+
+          return el;
+
+        }
+
+      }
+
+    }
+
+    return null;
+
+  }
+
+
+  /* -------------------------------------------------------
+     2. Toggle any menu section
+  ------------------------------------------------------- */
+
+  function toggleSection(header){
+
+    const content =
+      findContent(header);
+
+    if(!content) return;
+
+
+    const currentlyHidden =
+      content.classList.contains("hidden") ||
+      getComputedStyle(content).display === "none";
+
+
+    if(currentlyHidden){
+
+      content.classList.remove("hidden");
+
+      content.style.display = "";
+
+
+      /*
+        If normal CSS still hides it,
+        force it visible.
+      */
+
+      if(
+        getComputedStyle(content).display === "none"
+      ){
+
+        content.style.display =
+          "block";
+
+      }
+
+    }else{
+
+      content.classList.add("hidden");
+
+      content.style.display =
+        "none";
+
+    }
+
+
+    /* ---------------------------------------------------
+       Rotate arrow when available
+    --------------------------------------------------- */
+
+    const arrow =
+      header.querySelector(
+        ".arrow, .menu-arrow, [data-arrow]"
+      );
+
+    if(arrow){
+
+      const isOpen =
+        !content.classList.contains("hidden") &&
+        getComputedStyle(content).display !== "none";
+
+      arrow.style.transform =
+        isOpen
+          ? "rotate(90deg)"
+          : "rotate(0deg)";
+
+    }
+
+
+    header.setAttribute(
+      "aria-expanded",
+      currentlyHidden
+        ? "true"
+        : "false"
+    );
+
+  }
+
+
+  /* -------------------------------------------------------
+     3. Universal menu click protection
+  ------------------------------------------------------- */
+
+  document.addEventListener(
+    "click",
+    function(e){
+
+      /*
+        Only handle menu section headers.
+
+        This deliberately does NOT touch:
+        - Save buttons
+        - Update buttons
+        - Inputs
+        - Testing
+        - Add Entry
+        - History
+        - Delete
+        - Hamburger
+      */
+
+      const header =
+        e.target.closest(
+          ".menu-section-header"
+        );
+
+      if(!header) return;
+
+
+      /*
+        If the header contains a real button/input
+        that was clicked, don't interfere.
+      */
+
+      if(
+        e.target.closest(
+          "button,input,select,textarea"
+        ) &&
+        e.target !== header
+      ){
+
+        return;
+
+      }
+
+
+      /*
+        Take control of accordion behavior.
+
+        This prevents another old handler from
+        toggling it twice and making it appear frozen.
+      */
+
+      e.preventDefault();
+      e.stopImmediatePropagation();
+
+      toggleSection(header);
+
+    },
+    true
+  );
+
+
+  /* -------------------------------------------------------
+     4. Keyboard support
+        Enter / Space also opens sections
+  ------------------------------------------------------- */
+
+  document.addEventListener(
+    "keydown",
+    function(e){
+
+      const header =
+        e.target.closest(
+          ".menu-section-header"
+        );
+
+      if(!header) return;
+
+      if(
+        e.key !== "Enter" &&
+        e.key !== " "
+      ){
+
+        return;
+
+      }
+
+      e.preventDefault();
+
+      toggleSection(header);
+
+    },
+    true
+  );
+
+
+  /* -------------------------------------------------------
+     5. Make headers properly interactive
+  ------------------------------------------------------- */
+
+  function prepareHeaders(){
+
+    document
+      .querySelectorAll(
+        ".menu-section-header"
+      )
+      .forEach(function(header){
+
+        header.style.cursor =
+          "pointer";
+
+        header.setAttribute(
+          "role",
+          "button"
+        );
+
+        if(
+          !header.hasAttribute(
+            "tabindex"
+          )
+        ){
+
+          header.setAttribute(
+            "tabindex",
+            "0"
+          );
+
+        }
+
+        if(
+          !header.hasAttribute(
+            "aria-expanded"
+          )
+        ){
+
+          header.setAttribute(
+            "aria-expanded",
+            "false"
+          );
+
+        }
+
+      });
+
+  }
+
+
+  /* -------------------------------------------------------
+     6. Automatically repair dynamically
+        generated menu sections
+  ------------------------------------------------------- */
+
+  const observer =
+    new MutationObserver(
+      function(){
+
+        prepareHeaders();
+
+      }
+    );
+
+
+  observer.observe(
+    document.body,
+    {
+      childList:true,
+      subtree:true
+    }
+  );
+
+
+  /* -------------------------------------------------------
+     7. Initial repair
+  ------------------------------------------------------- */
+
+  prepareHeaders();
+
+
+  /* -------------------------------------------------------
+     8. Specific safety check for
+        Opening / Closing CumVolume
+  ------------------------------------------------------- */
+
+  function repairCumVolume(){
+
+    const headers =
+      document.querySelectorAll(
+        ".menu-section-header"
+      );
+
+
+    headers.forEach(function(header){
+
+      const text =
+        (header.textContent || "")
+          .trim()
+          .toLowerCase();
+
+
+      if(
+        text.includes(
+          "opening cumvolume"
+        ) ||
+        text.includes(
+          "closing cumvolume"
+        )
+      ){
+
+        header.style.pointerEvents =
+          "auto";
+
+        header.style.userSelect =
+          "none";
+
+        header.style.cursor =
+          "pointer";
+
+      }
+
+    });
+
+  }
+
+
+  repairCumVolume();
+
+
+  /* -------------------------------------------------------
+     9. Safety: don't allow invisible overlay
+        to block menu interaction
+  ------------------------------------------------------- */
+
+  function repairMenuLayer(){
+
+    const menu =
+      document.querySelector(
+        ".side-menu"
+      );
+
+    const overlay =
+      document.querySelector(
+        ".menu-overlay"
+      );
+
+
+    if(menu){
+
+      menu.style.pointerEvents =
+        "auto";
+
+      menu.style.zIndex =
+        "1001";
+
+    }
+
+
+    /*
+      Overlay stays behind the menu.
+    */
+
+    if(overlay){
+
+      overlay.style.zIndex =
+        "1000";
+
+    }
+
+  }
+
+
+  repairMenuLayer();
+
+
+  /* -------------------------------------------------------
+     10. Re-check after menu opens
+  ------------------------------------------------------- */
+
+  const menuButton =
+    document.querySelector(
+      "#menuButton"
+    );
+
+
+  if(menuButton){
+
+    menuButton.addEventListener(
+      "click",
+      function(){
+
+        setTimeout(function(){
+
+          repairMenuLayer();
+          prepareHeaders();
+          repairCumVolume();
+
+        },30);
+
+      },
+      true
+    );
+
+  }
+
+
+})();
+
+</script>
+
 </body>
 
 </html>
