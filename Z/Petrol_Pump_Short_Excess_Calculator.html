@@ -3448,6 +3448,1257 @@ initMiscInputs();
   }
 
 })();
+
+
+
+
+  /* =========================================================
+   QUICK COLLECTIONS v2
+   ---------------------------------------------------------
+   IMPORTANT:
+   - Quick entries are now stored separately.
+   - They NEVER appear in normal "+ Add Entry" history.
+   - Cards / Deposited Cash / Credit Vehicles have history.
+   - Physical CASH includes ₹500/₹200/₹100/₹50/₹20/₹10 + COIN.
+   - No existing HTML/CSS/JS needs to be edited.
+========================================================= */
+
+(function(){
+
+  /* -------------------------------------------------------
+     CONFIG
+  ------------------------------------------------------- */
+
+  const QKEY = "pumpQuickCollectionsV2";
+
+  const TAGS = {
+    card: "Card",
+    deposited: "Deposited Cash",
+    credit: "Credit Vehicles",
+    upi: "UPI Payment",
+    physical: "Physical CASH"
+  };
+
+  const DENOMINATIONS = [
+    500,
+    200,
+    100,
+    50,
+    20,
+    10
+  ];
+
+
+  /* -------------------------------------------------------
+     STORAGE
+  ------------------------------------------------------- */
+
+  function loadQuickData(){
+
+    try{
+
+      const raw =
+        localStorage.getItem(QKEY);
+
+      if(raw){
+
+        const data =
+          JSON.parse(raw);
+
+        return {
+
+          card:
+            Array.isArray(data.card)
+              ? data.card
+              : [],
+
+          deposited:
+            Array.isArray(data.deposited)
+              ? data.deposited
+              : [],
+
+          credit:
+            Array.isArray(data.credit)
+              ? data.credit
+              : [],
+
+          upi:
+            num(data.upi),
+
+          physical:
+            data.physical || {
+              500:0,
+              200:0,
+              100:0,
+              50:0,
+              20:0,
+              10:0,
+              coin:0
+            }
+
+        };
+
+      }
+
+    }catch(e){}
+
+
+    return {
+
+      card:[],
+      deposited:[],
+      credit:[],
+      upi:0,
+
+      physical:{
+        500:0,
+        200:0,
+        100:0,
+        50:0,
+        20:0,
+        10:0,
+        coin:0
+      }
+
+    };
+
+  }
+
+
+  function saveQuickData(data){
+
+    localStorage.setItem(
+      QKEY,
+      JSON.stringify(data)
+    );
+
+  }
+
+
+  let quickData =
+    loadQuickData();
+
+
+  /* -------------------------------------------------------
+     FORMAT
+  ------------------------------------------------------- */
+
+  function money(v){
+
+    return Number(v || 0).toLocaleString(
+      "en-IN",
+      {
+        minimumFractionDigits:2,
+        maximumFractionDigits:2
+      }
+    );
+
+  }
+
+
+  function qId(){
+
+    return (
+      Date.now() +
+      "_" +
+      Math.random()
+        .toString(36)
+        .slice(2,8)
+    );
+
+  }
+
+
+  function qTime(){
+
+    return new Date().toISOString();
+
+  }
+
+
+  function qTimeText(iso){
+
+    return new Date(iso)
+      .toLocaleString(
+        "en-IN",
+        {
+          day:"2-digit",
+          month:"short",
+          year:"numeric",
+          hour:"2-digit",
+          minute:"2-digit",
+          second:"2-digit"
+        }
+      );
+
+  }
+
+
+  /* -------------------------------------------------------
+     ONE-TIME MIGRATION
+     
+     Previous version stored quick entries inside
+     pumpCollections.
+
+     Move those old quick entries into the new
+     private quick storage so they disappear from
+     normal Collections.
+  ------------------------------------------------------- */
+
+  const migrationKey =
+    "pumpQuickCollectionsV2Migrated";
+
+
+  if(
+    !localStorage.getItem(
+      migrationKey
+    )
+  ){
+
+    try{
+
+      const oldCollections =
+        getCollections();
+
+
+      const oldQuickTags = [
+        "Card",
+        "Deposited Cash",
+        "Credit Vehicles",
+        "UPI Payment",
+        "Physical CASH",
+        "COIN"
+      ];
+
+
+      oldCollections
+        .filter(
+          e =>
+            oldQuickTags.includes(
+              e.tag
+            )
+        )
+        .forEach(
+          e => {
+
+            if(
+              e.tag === "Card"
+            ){
+
+              quickData.card.push({
+
+                id:qId(),
+
+                amount:num(e.amount),
+
+                time:e.time ||
+                  qTime()
+
+              });
+
+            }
+
+
+            else if(
+              e.tag ===
+              "Deposited Cash"
+            ){
+
+              quickData.deposited.push({
+
+                id:qId(),
+
+                amount:num(e.amount),
+
+                time:e.time ||
+                  qTime()
+
+              });
+
+            }
+
+
+            else if(
+              e.tag ===
+              "Credit Vehicles"
+            ){
+
+              quickData.credit.push({
+
+                id:qId(),
+
+                amount:num(e.amount),
+
+                time:e.time ||
+                  qTime()
+
+              });
+
+            }
+
+
+            else if(
+              e.tag ===
+              "UPI Payment"
+            ){
+
+              quickData.upi =
+                num(e.amount);
+
+            }
+
+
+            else if(
+              e.tag ===
+              "Physical CASH"
+            ){
+
+              /*
+                Old Physical Cash was already
+                calculated as one amount.
+
+                Keep it as COIN only temporarily
+                if denomination information is
+                unavailable.
+
+                This prevents losing money during
+                migration.
+              */
+
+              if(
+                num(e.amount) > 0 &&
+                !Object.values(
+                  quickData.physical
+                ).some(
+                  v => num(v) > 0
+                )
+              ){
+
+                quickData.physical.coin =
+                  num(e.amount);
+
+              }
+
+            }
+
+
+            else if(
+              e.tag === "COIN"
+            ){
+
+              quickData.physical.coin =
+                num(e.amount);
+
+            }
+
+          }
+        );
+
+
+      /*
+        Remove old quick entries from
+        normal Collections.
+      */
+
+      const cleaned =
+        oldCollections.filter(
+          e =>
+            !oldQuickTags.includes(
+              e.tag
+            )
+        );
+
+
+      setCollections(
+        cleaned
+      );
+
+
+      saveQuickData(
+        quickData
+      );
+
+
+      localStorage.setItem(
+        migrationKey,
+        "1"
+      );
+
+    }catch(e){}
+
+  }
+
+
+  /* -------------------------------------------------------
+     CSS
+     Everything injected automatically.
+  ------------------------------------------------------- */
+
+  const style =
+    document.createElement("style");
+
+
+  style.textContent = `
+
+    #quickCollectionArea{
+      margin-top:10px;
+      margin-bottom:14px;
+    }
+
+
+    .qv2-title-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:9px;
+    }
+
+
+    .qv2-title{
+      font-size:.95em;
+      font-weight:bold;
+    }
+
+
+    .qv2-subtitle{
+      font-size:.72em;
+      color:#888;
+    }
+
+
+    .qv2-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:8px;
+    }
+
+
+    .qv2-card{
+      background:#fff;
+      border:1px solid #e2e5ea;
+      border-radius:12px;
+      overflow:hidden;
+      box-shadow:0 2px 7px rgba(0,0,0,.06);
+    }
+
+
+    .qv2-head{
+      display:flex;
+      align-items:center;
+      gap:9px;
+      padding:10px;
+      background:#fafafa;
+      border-bottom:1px solid #eee;
+    }
+
+
+    .qv2-icon{
+      width:34px;
+      height:34px;
+      border-radius:9px;
+      background:#eef2ff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:18px;
+      flex-shrink:0;
+    }
+
+
+    .qv2-name{
+      font-weight:bold;
+      font-size:.88em;
+    }
+
+
+    .qv2-type{
+      display:block;
+      color:#888;
+      font-size:.68em;
+      margin-top:2px;
+    }
+
+
+    .qv2-body{
+      padding:9px;
+    }
+
+
+    .qv2-input-row{
+      display:flex;
+      gap:6px;
+      align-items:center;
+    }
+
+
+    .qv2-input{
+      flex:1;
+      min-width:0;
+      padding:8px;
+      box-sizing:border-box;
+      border:1px solid #d5d9df;
+      border-radius:7px;
+      font-size:.88em;
+      margin:0 !important;
+    }
+
+
+    .qv2-add{
+      border:0;
+      border-radius:7px;
+      padding:8px 10px;
+      background:#2563eb;
+      color:#fff;
+      font-weight:bold;
+      cursor:pointer;
+      white-space:nowrap;
+    }
+
+
+    .qv2-total{
+      margin-top:7px;
+      font-size:.78em;
+      color:#777;
+    }
+
+
+    .qv2-total strong{
+      color:#222;
+    }
+
+
+    .qv2-history-btn{
+      border:0;
+      background:#eef2ff;
+      border-radius:7px;
+      padding:6px 8px;
+      font-size:17px;
+      cursor:pointer;
+      margin-left:auto;
+    }
+
+
+    .qv2-history{
+      display:none;
+      margin-top:8px;
+      border-top:1px solid #eee;
+    }
+
+
+    .qv2-history.open{
+      display:block;
+    }
+
+
+    .qv2-history-title{
+      padding:8px 0 5px;
+      font-size:.75em;
+      font-weight:bold;
+      color:#555;
+    }
+
+
+    .qv2-history-item{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:7px 0;
+      border-top:1px solid #f0f0f0;
+      font-size:.78em;
+    }
+
+
+    .qv2-history-time{
+      display:block;
+      color:#999;
+      font-size:.84em;
+      margin-top:2px;
+    }
+
+
+    .qv2-history-delete{
+      cursor:pointer;
+      font-size:15px;
+      padding-left:7px;
+    }
+
+
+    .qv2-no-history{
+      color:#999;
+      font-size:.76em;
+      padding:7px 0;
+    }
+
+
+    /* =====================================================
+       PHYSICAL CASH
+    ===================================================== */
+
+    .qv2-cash{
+      grid-column:1 / -1;
+    }
+
+
+    .qv2-note-grid{
+      display:grid;
+      grid-template-columns:
+        repeat(6,1fr);
+      gap:5px;
+    }
+
+
+    .qv2-note{
+      background:#fafafa;
+      border:1px solid #e1e1e1;
+      border-radius:7px;
+      padding:6px 3px;
+      text-align:center;
+    }
+
+
+    .qv2-note-value{
+      font-size:.76em;
+      font-weight:bold;
+      margin-bottom:4px;
+    }
+
+
+    .qv2-note input{
+      width:100%;
+      box-sizing:border-box;
+      text-align:center;
+      padding:6px 2px;
+      margin:0 !important;
+      border:1px solid #d5d5d5;
+      border-radius:5px;
+      font-size:.78em;
+    }
+
+
+    .qv2-note-total{
+      color:#888;
+      font-size:.58em;
+      margin-top:3px;
+    }
+
+
+    .qv2-coin-row{
+      margin-top:8px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:8px;
+      border:1px solid #e5e5e5;
+      border-radius:8px;
+      background:#fafafa;
+    }
+
+
+    .qv2-coin-icon{
+      font-size:20px;
+    }
+
+
+    .qv2-coin-label{
+      font-size:.8em;
+      font-weight:bold;
+      white-space:nowrap;
+    }
+
+
+    .qv2-coin-input{
+      flex:1;
+      min-width:0;
+      padding:7px;
+      border:1px solid #d5d5d5;
+      border-radius:6px;
+      margin:0 !important;
+      box-sizing:border-box;
+    }
+
+
+    .qv2-grand{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-top:8px;
+      padding:9px 10px;
+      background:#f6f6f6;
+      border-radius:8px;
+      font-size:.82em;
+    }
+
+
+    .qv2-grand strong{
+      font-size:1.08em;
+    }
+
+
+    .qv2-save-cash{
+      width:100%;
+      border:0;
+      border-radius:7px;
+      padding:9px;
+      margin-top:8px;
+      background:#111827;
+      color:#fff;
+      font-weight:bold;
+      cursor:pointer;
+    }
+
+
+    .qv2-fixed-value{
+      margin-top:7px;
+      font-size:1.05em;
+      font-weight:bold;
+    }
+
+
+    @media(max-width:430px){
+
+      .qv2-note-grid{
+        grid-template-columns:
+          repeat(3,1fr);
+      }
+
+    }
+
+
+    @media(max-width:380px){
+
+      .qv2-grid{
+        gap:6px;
+      }
+
+      .qv2-head{
+        padding:8px;
+      }
+
+      .qv2-body{
+        padding:8px;
+      }
+
+      .qv2-icon{
+        width:30px;
+        height:30px;
+        font-size:16px;
+      }
+
+      .qv2-name{
+        font-size:.8em;
+      }
+
+      .qv2-add{
+        padding:8px;
+      }
+
+    }
+
+  `;
+
+
+  document.head.appendChild(style);
+
+
+  /* -------------------------------------------------------
+     FIND OLD QUICK AREA
+  ------------------------------------------------------- */
+
+  const oldQuickArea =
+    document.getElementById(
+      "quickCollectionArea"
+    );
+
+
+  if(!oldQuickArea) return;
+
+
+  /* -------------------------------------------------------
+     HISTORY STATE
+  ------------------------------------------------------- */
+
+  const historyOpen = {
+    card:false,
+    deposited:false,
+    credit:false
+  };
+
+
+  /* -------------------------------------------------------
+     TOTALS
+  ------------------------------------------------------- */
+
+  function listTotal(list){
+
+    return list.reduce(
+      (sum,e) =>
+        sum + num(e.amount),
+      0
+    );
+
+  }
+
+
+  function physicalTotal(){
+
+    const p =
+      quickData.physical;
+
+
+    return (
+
+      num(p[500]) * 500 +
+
+      num(p[200]) * 200 +
+
+      num(p[100]) * 100 +
+
+      num(p[50]) * 50 +
+
+      num(p[20]) * 20 +
+
+      num(p[10]) * 10 +
+
+      num(p.coin)
+
+    );
+
+  }
+
+
+  /* -------------------------------------------------------
+     HISTORY HTML
+  ------------------------------------------------------- */
+
+  function historyHTML(type){
+
+    const list =
+      quickData[type] || [];
+
+
+    if(!list.length){
+
+      return `
+        <div class="qv2-no-history">
+          No entries yet.
+        </div>
+      `;
+
+    }
+
+
+    let html = `
+
+      <div class="qv2-history-title">
+        📋 Entry History
+      </div>
+
+    `;
+
+
+    list
+      .slice()
+      .reverse()
+      .forEach(
+        e => {
+
+          html += `
+
+            <div
+              class="qv2-history-item"
+            >
+
+              <div>
+
+                <strong>
+                  ₹ ${money(e.amount)}
+                </strong>
+
+                <span
+                  class="qv2-history-time"
+                >
+                  ${qTimeText(e.time)}
+                </span>
+
+              </div>
+
+
+              <span
+                class="qv2-history-delete"
+                onclick="
+                  window.qv2DeleteHistory(
+                    '${type}',
+                    '${e.id}'
+                  )
+                "
+                title="Delete entry"
+              >
+                🗑️
+              </span>
+
+            </div>
+
+          `;
+
+        }
+      );
+
+
+    return html;
+
+  }
+
+
+  /* -------------------------------------------------------
+     MULTIPLE ENTRY CARD
+  ------------------------------------------------------- */
+
+  function multipleCard(
+    type,
+    icon,
+    title,
+    inputId
+  ){
+
+    const list =
+      quickData[type];
+
+
+    const total =
+      listTotal(list);
+
+
+    return `
+
+      <div class="qv2-card">
+
+        <div class="qv2-head">
+
+          <div class="qv2-icon">
+            ${icon}
+          </div>
+
+
+          <div>
+
+            <div class="qv2-name">
+              ${title}
+            </div>
+
+            <span class="qv2-type">
+              Multiple entries
+            </span>
+
+          </div>
+
+
+          <button
+            class="qv2-history-btn"
+            onclick="
+              window.qv2ToggleHistory(
+                '${type}'
+              )
+            "
+            title="View history"
+          >
+            📋
+          </button>
+
+        </div>
+
+
+        <div class="qv2-body">
+
+          <div class="qv2-input-row">
+
+            <input
+              class="qv2-input"
+              type="number"
+              step="0.01"
+              id="${inputId}"
+              placeholder="Amount"
+            >
+
+
+            <button
+              class="qv2-add"
+              onclick="
+                window.qv2Add(
+                  '${type}',
+                  '${inputId}'
+                )
+              "
+            >
+              + Add
+            </button>
+
+          </div>
+
+
+          <div class="qv2-total">
+
+            Total:
+            <strong>
+              ₹ ${money(total)}
+            </strong>
+
+          </div>
+
+
+          <div
+            class="
+              qv2-history
+              ${
+                historyOpen[type]
+                  ? "open"
+                  : ""
+              }
+            "
+          >
+
+            ${
+              historyOpen[type]
+                ? historyHTML(type)
+                : ""
+            }
+
+          </div>
+
+        </div>
+
+      </div>
+
+    `;
+
+  }
+
+
+  /* -------------------------------------------------------
+     PHYSICAL CASH CARD
+  ------------------------------------------------------- */
+
+  function physicalCashCard(){
+
+    const p =
+      quickData.physical;
+
+
+    let notes = "";
+
+
+    DENOMINATIONS.forEach(
+      d => {
+
+        const count =
+          num(p[d]);
+
+
+        notes += `
+
+          <div class="qv2-note">
+
+            <div
+              class="qv2-note-value"
+            >
+              ₹${d}
+            </div>
+
+
+            <input
+              type="number"
+              min="0"
+              step="1"
+              value="${
+                count || ""
+              }"
+              id="qv2note_${d}"
+              placeholder="0"
+              oninput="
+                window.qv2CashPreview()
+              "
+            >
+
+
+            <div
+              class="qv2-note-total"
+              id="qv2noteTotal_${d}"
+            >
+              ₹ ${money(
+                count * d
+              )}
+            </div>
+
+          </div>
+
+        `;
+
+      }
+    );
+
+
+    const coin =
+      num(p.coin);
+
+
+    return `
+
+      <div class="qv2-card qv2-cash">
+
+        <div class="qv2-head">
+
+          <div class="qv2-icon">
+            💰
+          </div>
+
+
+          <div>
+
+            <div class="qv2-name">
+              Physical CASH
+            </div>
+
+            <span class="qv2-type">
+              Notes + Coin
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div class="qv2-body">
+
+
+          <div class="qv2-note-grid">
+
+            ${notes}
+
+          </div>
+
+
+          <div class="qv2-coin-row">
+
+            <span class="qv2-coin-icon">
+              🪙
+            </span>
+
+            <span class="qv2-coin-label">
+              Coin
+            </span>
+
+            <input
+              class="qv2-coin-input"
+              type="number"
+              step="0.01"
+              min="0"
+              id="qv2Coin"
+              value="${
+                coin || ""
+              }"
+              placeholder="Amount"
+              oninput="
+                window.qv2CashPreview()
+              "
+            >
+
+          </div>
+
+
+          <div class="qv2-grand">
+
+            <span>
+              Total Physical Cash
+            </span>
+
+            <strong
+              id="qv2GrandTotal"
+            >
+              ₹ ${money(
+                physicalTotal()
+              )}
+            </strong>
+
+          </div>
+
+
+          <button
+            class="qv2-save-cash"
+            onclick="
+              window.qv2SaveCash()
+            "
+          >
+            💰 Save Physical Cash
+          </button>
+
+
+        </div>
+
+      </div>
+
+    `;
+
+  }
+
+
+  /* -------------------------------------------------------
+     UPI CARD
+  ------------------------------------------------------- */
+
+  function upiCard(){
+
+    return `
+
+      <div class="qv2-card">
+
+        <div class="qv2-head">
+
+          <div class="qv2-icon">
+            📱
+          </div>
+
+
+          <div>
+
+            <div class="qv2-name">
+              UPI Payment
+            </div>
+
+            <span class="qv2-type">
+              One fixed entry
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div class="qv2-body">
+
+          <div class="qv2-input-row">
+
+            <input
+              class="qv2-input"
+              type="number"
+              step="0.01"
+              id="qv2UPI"
+              value="${
+                quickData.upi || ""
+              }"
+              placeholder="Amount"
+            >
+
+
+            <button
+              class="qv2-add"
+              onclick="
+                window.qv2SaveUPI()
+              "
+            >
+              Save
+            </button>
+
+          </div>
+  
 </script>
 </body>
 </html>
