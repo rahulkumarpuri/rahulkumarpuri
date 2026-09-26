@@ -8352,6 +8352,2601 @@ renderAll();
 })();
 
 </script>
+
+
+
+  <script>
+
+/* =========================================================
+   🛡️ SHIFTGUARD
+   Duty & Incident Time Log
+   ---------------------------------------------------------
+   Standalone module.
+   No HTML modification required.
+   No existing application logic is modified.
+========================================================= */
+
+(function(){
+
+  "use strict";
+
+
+  /* =======================================================
+     CONFIG
+  ======================================================= */
+
+  const SG = {
+
+    storageKey:
+      "shiftGuardEvents",
+
+    dayKey:
+      "shiftGuardDay",
+
+    uiId:
+      "shiftGuardUI",
+
+    menuItemId:
+      "shiftGuardMenuItem"
+
+  };
+
+
+  /* =======================================================
+     DATE / TIME HELPERS
+  ======================================================= */
+
+  function getTodayKey(){
+
+    const d =
+      new Date();
+
+    const y =
+      d.getFullYear();
+
+    const m =
+      String(
+        d.getMonth() + 1
+      ).padStart(2,"0");
+
+    const day =
+      String(
+        d.getDate()
+      ).padStart(2,"0");
+
+    return `${y}-${m}-${day}`;
+
+  }
+
+
+  function getDateTime(){
+
+    const d =
+      new Date();
+
+
+    const day =
+      String(
+        d.getDate()
+      ).padStart(2,"0");
+
+
+    const month =
+      String(
+        d.getMonth() + 1
+      ).padStart(2,"0");
+
+
+    const year =
+      d.getFullYear();
+
+
+    let hours =
+      d.getHours();
+
+
+    const minutes =
+      String(
+        d.getMinutes()
+      ).padStart(2,"0");
+
+
+    const seconds =
+      String(
+        d.getSeconds()
+      ).padStart(2,"0");
+
+
+    const ampm =
+      hours >= 12
+        ? "PM"
+        : "AM";
+
+
+    hours =
+      hours % 12 ||
+      12;
+
+
+    const hourText =
+      String(hours)
+        .padStart(2,"0");
+
+
+    return {
+
+      date:
+        `${day}/${month}/${year}`,
+
+      time:
+        `${hourText}:${minutes}:${seconds} ${ampm}`,
+
+      timestamp:
+        d.getTime(),
+
+      iso:
+        d.toISOString()
+
+    };
+
+  }
+
+
+  /* =======================================================
+     STORAGE
+  ======================================================= */
+
+  function getEvents(){
+
+    try{
+
+      const data =
+        localStorage.getItem(
+          SG.storageKey
+        );
+
+      if(!data)
+        return [];
+
+      const parsed =
+        JSON.parse(data);
+
+      return Array.isArray(parsed)
+        ? parsed
+        : [];
+
+    }
+    catch(e){
+
+      return [];
+
+    }
+
+  }
+
+
+  function saveEvents(events){
+
+    localStorage.setItem(
+      SG.storageKey,
+      JSON.stringify(events)
+    );
+
+  }
+
+
+  /* =======================================================
+     DAILY STORAGE PROTECTION
+  ======================================================= */
+
+  function ensureToday(){
+
+    const today =
+      getTodayKey();
+
+
+    const stored =
+      localStorage.getItem(
+        SG.dayKey
+      );
+
+
+    if(stored !== today){
+
+      /*
+        ShiftGuard intentionally starts
+        a fresh timeline every day.
+      */
+
+      localStorage.removeItem(
+        SG.storageKey
+      );
+
+      localStorage.setItem(
+        SG.dayKey,
+        today
+      );
+
+    }
+
+  }
+
+
+  ensureToday();
+
+
+  /* =======================================================
+     ESCAPE HTML
+  ======================================================= */
+
+  function escapeHTML(value){
+
+    return String(value || "")
+      .replace(/&/g,"&amp;")
+      .replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;")
+      .replace(/'/g,"&#039;");
+
+  }
+
+
+  /* =======================================================
+     CREATE EVENT
+  ======================================================= */
+
+  function createEvent(type, heading){
+
+    const dt =
+      getDateTime();
+
+
+    const event = {
+
+      id:
+        "sg_" +
+        Date.now() +
+        "_" +
+        Math.random()
+          .toString(36)
+          .slice(2,8),
+
+      type:
+        type,
+
+      heading:
+        heading,
+
+      date:
+        dt.date,
+
+      time:
+        dt.time,
+
+      timestamp:
+        dt.timestamp,
+
+      iso:
+        dt.iso
+
+    };
+
+
+    const events =
+      getEvents();
+
+
+    events.unshift(
+      event
+    );
+
+
+    saveEvents(
+      events
+    );
+
+
+    renderTimeline();
+
+
+    showToast(
+      type === "bathroom"
+        ? "🚻 Bathroom time saved"
+        : "📌 Incident saved"
+    );
+
+
+    return event;
+
+  }
+
+
+  /* =======================================================
+     BATHROOM MODE
+  ======================================================= */
+
+  function addBathroom(){
+
+    /*
+      NO heading input.
+      One tap = automatic save.
+    */
+
+    createEvent(
+      "bathroom",
+      "Bathroom"
+    );
+
+  }
+
+
+  /* =======================================================
+     ADD INCIDENT
+  ======================================================= */
+
+  function addIncident(){
+
+    const input =
+      document.getElementById(
+        "sgIncidentInput"
+      );
+
+
+    if(!input)
+      return;
+
+
+    const heading =
+      input.value.trim();
+
+
+    if(!heading){
+
+      input.focus();
+
+      showToast(
+        "Please enter an incident heading"
+      );
+
+      return;
+
+    }
+
+
+    createEvent(
+      "incident",
+      heading
+    );
+
+
+    input.value =
+      "";
+
+
+    input.focus();
+
+  }
+
+
+  /* =======================================================
+     EDIT EVENT HEADING
+  ======================================================= */
+
+  function editEvent(id){
+
+    const events =
+      getEvents();
+
+
+    const event =
+      events.find(
+        e => e.id === id
+      );
+
+
+    if(!event)
+      return;
+
+
+    const newHeading =
+      prompt(
+        "Edit Heading",
+        event.heading
+      );
+
+
+    if(
+      newHeading === null
+    )
+      return;
+
+
+    const clean =
+      newHeading.trim();
+
+
+    if(!clean){
+
+      showToast(
+        "Heading cannot be empty"
+      );
+
+      return;
+
+    }
+
+
+    event.heading =
+      clean;
+
+
+    /*
+      Keep Bathroom event type as Bathroom,
+      but allow heading editing as requested.
+    */
+
+    saveEvents(
+      events
+    );
+
+
+    renderTimeline();
+
+
+    showToast(
+      "✏️ Heading updated"
+    );
+
+  }
+
+
+  /* =======================================================
+     DELETE EVENT
+  ======================================================= */
+
+  function deleteEvent(id){
+
+    const events =
+      getEvents();
+
+
+    const event =
+      events.find(
+        e => e.id === id
+      );
+
+
+    if(!event)
+      return;
+
+
+    const ok =
+      confirm(
+        `Delete this event?\n\n${event.heading}\n${event.date} ${event.time}`
+      );
+
+
+    if(!ok)
+      return;
+
+
+    const remaining =
+      events.filter(
+        e => e.id !== id
+      );
+
+
+    saveEvents(
+      remaining
+    );
+
+
+    renderTimeline();
+
+
+    showToast(
+      "🗑️ Event deleted"
+    );
+
+  }
+
+
+  /* =======================================================
+     EVENT ICON
+  ======================================================= */
+
+  function getEventIcon(event){
+
+    if(
+      event.type === "bathroom"
+    ){
+
+      return "🚻";
+
+    }
+
+
+    return "⚠️";
+
+  }
+
+
+  /* =======================================================
+     EVENT LABEL
+  ======================================================= */
+
+  function getEventLabel(event){
+
+    if(
+      event.type === "bathroom"
+    ){
+
+      return "Bathroom Mode";
+
+    }
+
+
+    return "Incident";
+
+  }
+
+
+  /* =======================================================
+     RENDER TIMELINE
+  ======================================================= */
+
+  function renderTimeline(){
+
+    const container =
+      document.getElementById(
+        "sgTimeline"
+      );
+
+
+    if(!container)
+      return;
+
+
+    const events =
+      getEvents();
+
+
+    const count =
+      events.length;
+
+
+    const countElement =
+      document.getElementById(
+        "sgEventCount"
+      );
+
+
+    if(countElement){
+
+      countElement.textContent =
+        count === 1
+          ? "1 Event"
+          : `${count} Events`;
+
+    }
+
+
+    if(!events.length){
+
+      container.innerHTML = `
+
+        <div class="sg-empty">
+
+          <div class="sg-empty-icon">
+            📋
+          </div>
+
+          <div class="sg-empty-title">
+            No events yet
+          </div>
+
+          <div class="sg-empty-text">
+            Your ShiftGuard timeline
+            will appear here.
+          </div>
+
+        </div>
+
+      `;
+
+      return;
+
+    }
+
+
+    container.innerHTML =
+      events.map(
+        function(event){
+
+          return `
+
+            <div
+              class="sg-event"
+              data-event-id="${escapeHTML(event.id)}"
+            >
+
+              <div class="sg-event-icon">
+                ${getEventIcon(event)}
+              </div>
+
+
+              <div class="sg-event-main">
+
+                <div class="sg-event-heading">
+                  ${escapeHTML(event.heading)}
+                </div>
+
+                <div class="sg-event-meta">
+
+                  <span>
+                    🕒 ${escapeHTML(event.time)}
+                  </span>
+
+                  <span>
+                    📅 ${escapeHTML(event.date)}
+                  </span>
+
+                </div>
+
+
+                <div class="sg-event-type">
+                  ${escapeHTML(getEventLabel(event))}
+                </div>
+
+              </div>
+
+
+              <div class="sg-event-actions">
+
+                <button
+                  class="sg-action-edit"
+                  data-sg-edit="${escapeHTML(event.id)}"
+                  title="Edit Heading"
+                >
+                  ✏️
+                </button>
+
+
+                <button
+                  class="sg-action-delete"
+                  data-sg-delete="${escapeHTML(event.id)}"
+                  title="Delete"
+                >
+                  🗑️
+                </button>
+
+              </div>
+
+            </div>
+
+          `;
+
+        }
+      ).join("");
+
+  }
+
+
+  /* =======================================================
+     TOAST
+  ======================================================= */
+
+  let toastTimer =
+    null;
+
+
+  function showToast(message){
+
+    let toast =
+      document.getElementById(
+        "sgToast"
+      );
+
+
+    if(!toast){
+
+      toast =
+        document.createElement(
+          "div"
+        );
+
+      toast.id =
+        "sgToast";
+
+
+      document.body.appendChild(
+        toast
+      );
+
+    }
+
+
+    toast.textContent =
+      message;
+
+
+    toast.classList.add(
+      "sg-toast-show"
+    );
+
+
+    clearTimeout(
+      toastTimer
+    );
+
+
+    toastTimer =
+      setTimeout(
+        function(){
+
+          toast.classList.remove(
+            "sg-toast-show"
+          );
+
+        },
+        2200
+      );
+
+  }
+
+
+  /* =======================================================
+     UI CSS
+  ======================================================= */
+
+  function injectCSS(){
+
+    if(
+      document.getElementById(
+        "shiftGuardCSS"
+      )
+    )
+      return;
+
+
+    const style =
+      document.createElement(
+        "style"
+      );
+
+
+    style.id =
+      "shiftGuardCSS";
+
+
+    style.textContent = `
+
+      /* =================================================
+         SHIFTGUARD OVERLAY
+      ================================================= */
+
+      #shiftGuardUI{
+
+        position:fixed;
+
+        inset:0;
+
+        z-index:2147483000;
+
+        display:none;
+
+        background:
+          rgba(15,23,42,.48);
+
+        backdrop-filter:
+          blur(5px);
+
+        -webkit-backdrop-filter:
+          blur(5px);
+
+      }
+
+
+      #shiftGuardUI.sg-open{
+
+        display:flex;
+
+        align-items:flex-start;
+
+        justify-content:center;
+
+        padding:
+          max(14px, env(safe-area-inset-top))
+          14px
+          max(14px, env(safe-area-inset-bottom));
+
+        box-sizing:border-box;
+
+        overflow-y:auto;
+
+      }
+
+
+      /* =================================================
+         MAIN PANEL
+      ================================================= */
+
+      .sg-panel{
+
+        width:
+          min(680px, 100%);
+
+        margin-top:12px;
+
+        margin-bottom:12px;
+
+        border-radius:24px;
+
+        overflow:hidden;
+
+        background:
+          #ffffff;
+
+        box-shadow:
+          0 24px 70px
+          rgba(15,23,42,.28);
+
+        animation:
+          sgPanelIn .2s ease;
+
+      }
+
+
+      @keyframes sgPanelIn{
+
+        from{
+
+          opacity:0;
+
+          transform:
+            translateY(15px)
+            scale(.98);
+
+        }
+
+        to{
+
+          opacity:1;
+
+          transform:
+            translateY(0)
+            scale(1);
+
+        }
+
+      }
+
+
+      /* =================================================
+         HEADER
+      ================================================= */
+
+      .sg-header{
+
+        padding:
+          20px 20px 18px;
+
+        background:
+          linear-gradient(
+            135deg,
+            #111827,
+            #1e3a8a
+          );
+
+        color:#fff;
+
+        position:relative;
+
+      }
+
+
+      .sg-header-top{
+
+        display:flex;
+
+        justify-content:
+          space-between;
+
+        align-items:
+          flex-start;
+
+        gap:12px;
+
+      }
+
+
+      .sg-title-wrap{
+
+        display:flex;
+
+        gap:12px;
+
+        align-items:center;
+
+      }
+
+
+      .sg-title-icon{
+
+        width:48px;
+
+        height:48px;
+
+        border-radius:15px;
+
+        display:flex;
+
+        align-items:center;
+
+        justify-content:center;
+
+        background:
+          rgba(255,255,255,.13);
+
+        font-size:26px;
+
+      }
+
+
+      .sg-title{
+
+        font-size:1.28rem;
+
+        font-weight:850;
+
+        letter-spacing:-.3px;
+
+      }
+
+
+      .sg-subtitle{
+
+        margin-top:3px;
+
+        font-size:.78rem;
+
+        color:
+          rgba(255,255,255,.68);
+
+      }
+
+
+      .sg-close{
+
+        width:38px;
+
+        height:38px;
+
+        border:0;
+
+        border-radius:12px;
+
+        background:
+          rgba(255,255,255,.12);
+
+        color:#fff;
+
+        font-size:18px;
+
+        cursor:pointer;
+
+      }
+
+
+      .sg-close:active{
+
+        transform:scale(.94);
+
+      }
+
+
+      /* =================================================
+         HEADER STATS
+      ================================================= */
+
+      .sg-header-stats{
+
+        display:flex;
+
+        gap:8px;
+
+        margin-top:17px;
+
+      }
+
+
+      .sg-stat{
+
+        flex:1;
+
+        padding:10px 12px;
+
+        border-radius:13px;
+
+        background:
+          rgba(255,255,255,.10);
+
+        border:
+          1px solid
+          rgba(255,255,255,.08);
+
+      }
+
+
+      .sg-stat-label{
+
+        display:block;
+
+        font-size:.7rem;
+
+        color:
+          rgba(255,255,255,.60);
+
+      }
+
+
+      .sg-stat-value{
+
+        display:block;
+
+        margin-top:2px;
+
+        font-size:.92rem;
+
+        font-weight:800;
+
+      }
+
+
+      /* =================================================
+         BODY
+      ================================================= */
+
+      .sg-body{
+
+        padding:18px;
+
+        background:
+          #f8fafc;
+
+      }
+
+
+      /* =================================================
+         QUICK ACTIONS
+      ================================================= */
+
+      .sg-section-title{
+
+        font-size:.84rem;
+
+        font-weight:850;
+
+        color:#334155;
+
+        margin-bottom:9px;
+
+        text-transform:
+          uppercase;
+
+        letter-spacing:.55px;
+
+      }
+
+
+      .sg-actions-grid{
+
+        display:grid;
+
+        grid-template-columns:
+          1fr 1fr;
+
+        gap:10px;
+
+      }
+
+
+      .sg-main-action{
+
+        border:0;
+
+        min-height:74px;
+
+        padding:12px;
+
+        border-radius:17px;
+
+        cursor:pointer;
+
+        text-align:left;
+
+        display:flex;
+
+        align-items:center;
+
+        gap:11px;
+
+        transition:
+          transform .12s,
+          box-shadow .12s;
+
+      }
+
+
+      .sg-main-action:active{
+
+        transform:
+          scale(.97);
+
+      }
+
+
+      .sg-bathroom{
+
+        background:
+          linear-gradient(
+            135deg,
+            #dbeafe,
+            #eff6ff
+          );
+
+        color:#1e3a8a;
+
+        box-shadow:
+          0 5px 16px
+          rgba(37,99,235,.10);
+
+      }
+
+
+      .sg-add-incident{
+
+        background:
+          linear-gradient(
+            135deg,
+            #fef3c7,
+            #fffbeb
+          );
+
+        color:#92400e;
+
+        box-shadow:
+          0 5px 16px
+          rgba(245,158,11,.10);
+
+      }
+
+
+      .sg-action-icon{
+
+        width:43px;
+
+        height:43px;
+
+        flex-shrink:0;
+
+        border-radius:13px;
+
+        display:flex;
+
+        align-items:center;
+
+        justify-content:center;
+
+        background:
+          rgba(255,255,255,.78);
+
+        font-size:22px;
+
+      }
+
+
+      .sg-action-title{
+
+        display:block;
+
+        font-size:.92rem;
+
+        font-weight:850;
+
+      }
+
+
+      .sg-action-sub{
+
+        display:block;
+
+        margin-top:2px;
+
+        font-size:.7rem;
+
+        opacity:.68;
+
+      }
+
+
+      /* =================================================
+         ADD INCIDENT FORM
+      ================================================= */
+
+      .sg-add-form{
+
+        display:none;
+
+        margin-top:10px;
+
+        padding:12px;
+
+        border-radius:16px;
+
+        background:#fff;
+
+        border:
+          1px solid #e2e8f0;
+
+      }
+
+
+      .sg-add-form.sg-show{
+
+        display:block;
+
+      }
+
+
+      .sg-input-row{
+
+        display:flex;
+
+        gap:8px;
+
+      }
+
+
+      #sgIncidentInput{
+
+        flex:1;
+
+        min-width:0;
+
+        height:45px;
+
+        padding:
+          0 13px;
+
+        box-sizing:border-box;
+
+        border:
+          1px solid #cbd5e1;
+
+        border-radius:12px;
+
+        outline:none;
+
+        font-size:.9rem;
+
+        background:#fff;
+
+      }
+
+
+      #sgIncidentInput:focus{
+
+        border-color:#2563eb;
+
+        box-shadow:
+          0 0 0 3px
+          rgba(37,99,235,.10);
+
+      }
+
+
+      .sg-save-incident{
+
+        border:0;
+
+        border-radius:12px;
+
+        padding:
+          0 15px;
+
+        background:
+          #2563eb;
+
+        color:#fff;
+
+        font-weight:800;
+
+        cursor:pointer;
+
+      }
+
+
+      /* =================================================
+         TIMELINE
+      ================================================= */
+
+      .sg-timeline-head{
+
+        display:flex;
+
+        justify-content:
+          space-between;
+
+        align-items:center;
+
+        margin-top:22px;
+
+        margin-bottom:9px;
+
+      }
+
+
+      .sg-event-count{
+
+        font-size:.72rem;
+
+        color:#64748b;
+
+        font-weight:700;
+
+      }
+
+
+      .sg-timeline{
+
+        display:flex;
+
+        flex-direction:column;
+
+        gap:8px;
+
+      }
+
+
+      .sg-event{
+
+        display:flex;
+
+        align-items:center;
+
+        gap:11px;
+
+        padding:12px;
+
+        border-radius:16px;
+
+        background:#fff;
+
+        border:
+          1px solid #e2e8f0;
+
+        box-shadow:
+          0 3px 10px
+          rgba(15,23,42,.04);
+
+      }
+
+
+      .sg-event-icon{
+
+        width:42px;
+
+        height:42px;
+
+        flex-shrink:0;
+
+        display:flex;
+
+        align-items:center;
+
+        justify-content:center;
+
+        border-radius:13px;
+
+        background:#eff6ff;
+
+        font-size:21px;
+
+      }
+
+
+      .sg-event-main{
+
+        min-width:0;
+
+        flex:1;
+
+      }
+
+
+      .sg-event-heading{
+
+        font-weight:850;
+
+        color:#172033;
+
+        font-size:.9rem;
+
+        word-break:break-word;
+
+      }
+
+
+      .sg-event-meta{
+
+        display:flex;
+
+        flex-wrap:wrap;
+
+        gap:8px;
+
+        margin-top:4px;
+
+        color:#64748b;
+
+        font-size:.7rem;
+
+      }
+
+
+      .sg-event-type{
+
+        display:inline-block;
+
+        margin-top:5px;
+
+        padding:
+          3px 7px;
+
+        border-radius:7px;
+
+        background:#f1f5f9;
+
+        color:#64748b;
+
+        font-size:.62rem;
+
+        font-weight:750;
+
+      }
+
+
+      .sg-event-actions{
+
+        display:flex;
+
+        gap:4px;
+
+        flex-shrink:0;
+
+      }
+
+
+      .sg-event-actions button{
+
+        width:34px;
+
+        height:34px;
+
+        border:0;
+
+        border-radius:10px;
+
+        cursor:pointer;
+
+        font-size:15px;
+
+        background:#f8fafc;
+
+      }
+
+
+      .sg-action-edit:active,
+      .sg-action-delete:active{
+
+        transform:
+          scale(.91);
+
+      }
+
+
+      .sg-action-delete{
+
+        background:#fff1f2 !important;
+
+      }
+
+
+      /* =================================================
+         EMPTY
+      ================================================= */
+
+      .sg-empty{
+
+        padding:28px 15px;
+
+        text-align:center;
+
+        background:#fff;
+
+        border:
+          1px dashed #cbd5e1;
+
+        border-radius:17px;
+
+      }
+
+
+      .sg-empty-icon{
+
+        font-size:30px;
+
+      }
+
+
+      .sg-empty-title{
+
+        margin-top:7px;
+
+        font-weight:850;
+
+        color:#334155;
+
+      }
+
+
+      .sg-empty-text{
+
+        margin-top:4px;
+
+        color:#94a3b8;
+
+        font-size:.76rem;
+
+      }
+
+
+      /* =================================================
+         FOOTER
+      ================================================= */
+
+      .sg-footer{
+
+        padding:
+          11px 18px 15px;
+
+        color:#94a3b8;
+
+        font-size:.66rem;
+
+        text-align:center;
+
+        background:#f8fafc;
+
+      }
+
+
+      /* =================================================
+         TOAST
+      ================================================= */
+
+      #sgToast{
+
+        position:fixed;
+
+        left:50%;
+
+        bottom:
+          calc(
+            20px +
+            env(safe-area-inset-bottom)
+          );
+
+        transform:
+          translate(-50%,20px);
+
+        z-index:2147483647;
+
+        max-width:
+          calc(100vw - 30px);
+
+        padding:
+          11px 16px;
+
+        border-radius:13px;
+
+        background:
+          rgba(15,23,42,.94);
+
+        color:#fff;
+
+        font-size:.8rem;
+
+        font-weight:750;
+
+        box-shadow:
+          0 10px 30px
+          rgba(0,0,0,.22);
+
+        opacity:0;
+
+        pointer-events:none;
+
+        transition:
+          opacity .2s,
+          transform .2s;
+
+        text-align:center;
+
+      }
+
+
+      #sgToast.sg-toast-show{
+
+        opacity:1;
+
+        transform:
+          translate(-50%,0);
+
+      }
+
+
+      /* =================================================
+         MOBILE
+      ================================================= */
+
+      @media(max-width:520px){
+
+        #shiftGuardUI.sg-open{
+
+          padding:
+            max(7px, env(safe-area-inset-top))
+            7px
+            max(7px, env(safe-area-inset-bottom));
+
+        }
+
+
+        .sg-panel{
+
+          margin-top:4px;
+
+          margin-bottom:4px;
+
+          border-radius:21px;
+
+        }
+
+
+        .sg-header{
+
+          padding:17px;
+
+        }
+
+
+        .sg-body{
+
+          padding:14px;
+
+        }
+
+      }
+
+
+      @media(max-width:380px){
+
+        .sg-actions-grid{
+
+          grid-template-columns:1fr;
+
+        }
+
+
+        .sg-event{
+
+          padding:10px;
+
+        }
+
+      }
+
+    `;
+
+
+    document.head.appendChild(
+      style
+    );
+
+  }
+
+
+  /* =======================================================
+     CREATE MAIN UI
+  ======================================================= */
+
+  function createUI(){
+
+    if(
+      document.getElementById(
+        SG.uiId
+      )
+    )
+      return;
+
+
+    const ui =
+      document.createElement(
+        "div"
+      );
+
+
+    ui.id =
+      SG.uiId;
+
+
+    ui.innerHTML = `
+
+      <div class="sg-panel">
+
+
+        <!-- HEADER -->
+
+        <div class="sg-header">
+
+          <div class="sg-header-top">
+
+            <div class="sg-title-wrap">
+
+              <div class="sg-title-icon">
+                🛡️
+              </div>
+
+              <div>
+
+                <div class="sg-title">
+                  ShiftGuard
+                </div>
+
+                <div class="sg-subtitle">
+                  Duty & Incident Timeline
+                </div>
+
+              </div>
+
+            </div>
+
+
+            <button
+              class="sg-close"
+              id="sgClose"
+              title="Close"
+            >
+              ✕
+            </button>
+
+          </div>
+
+
+          <div class="sg-header-stats">
+
+            <div class="sg-stat">
+
+              <span class="sg-stat-label">
+                TODAY
+              </span>
+
+              <span
+                class="sg-stat-value"
+                id="sgToday"
+              >
+                —
+              </span>
+
+            </div>
+
+
+            <div class="sg-stat">
+
+              <span class="sg-stat-label">
+                EVENTS
+              </span>
+
+              <span
+                class="sg-stat-value"
+                id="sgEventCount"
+              >
+                0 Events
+              </span>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- BODY -->
+
+        <div class="sg-body">
+
+
+          <!-- QUICK ACTIONS -->
+
+          <div class="sg-section-title">
+            Quick Log
+          </div>
+
+
+          <div class="sg-actions-grid">
+
+
+            <!-- BATHROOM -->
+
+            <button
+              class="sg-main-action sg-bathroom"
+              id="sgBathroomBtn"
+            >
+
+              <span class="sg-action-icon">
+                🚻
+              </span>
+
+              <span>
+
+                <span class="sg-action-title">
+                  Bathroom
+                </span>
+
+                <span class="sg-action-sub">
+                  Tap to save time
+                </span>
+
+              </span>
+
+            </button>
+
+
+            <!-- ADD INCIDENT -->
+
+            <button
+              class="sg-main-action sg-add-incident"
+              id="sgAddIncidentBtn"
+            >
+
+              <span class="sg-action-icon">
+                ➕
+              </span>
+
+              <span>
+
+                <span class="sg-action-title">
+                  Add Incident
+                </span>
+
+                <span class="sg-action-sub">
+                  Create custom log
+                </span>
+
+              </span>
+
+            </button>
+
+          </div>
+
+
+          <!-- INCIDENT INPUT -->
+
+          <div
+            class="sg-add-form"
+            id="sgAddForm"
+          >
+
+            <div class="sg-input-row">
+
+              <input
+                type="text"
+                id="sgIncidentInput"
+                maxlength="150"
+                autocomplete="off"
+                placeholder="Enter incident heading..."
+              >
+
+              <button
+                class="sg-save-incident"
+                id="sgSaveIncident"
+              >
+                Save
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <!-- TIMELINE -->
+
+          <div class="sg-timeline-head">
+
+            <div class="sg-section-title"
+                 style="margin:0">
+              Today's Timeline
+            </div>
+
+          </div>
+
+
+          <div
+            class="sg-timeline"
+            id="sgTimeline"
+          ></div>
+
+
+        </div>
+
+
+        <div class="sg-footer">
+          Timestamps are captured automatically from this device.
+        </div>
+
+
+      </div>
+
+    `;
+
+
+    document.body.appendChild(
+      ui
+    );
+
+
+    /* ---------------------------------------------------
+       TODAY
+    --------------------------------------------------- */
+
+    const today =
+      getDateTime();
+
+
+    const todayElement =
+      document.getElementById(
+        "sgToday"
+      );
+
+
+    if(todayElement){
+
+      todayElement.textContent =
+        today.date;
+
+    }
+
+
+    /* ---------------------------------------------------
+       CLOSE
+    --------------------------------------------------- */
+
+    document
+      .getElementById(
+        "sgClose"
+      )
+      .onclick =
+      closeShiftGuard;
+
+
+    /* ---------------------------------------------------
+       BATHROOM
+    --------------------------------------------------- */
+
+    document
+      .getElementById(
+        "sgBathroomBtn"
+      )
+      .onclick =
+      addBathroom;
+
+
+    /* ---------------------------------------------------
+       ADD INCIDENT FORM
+    --------------------------------------------------- */
+
+    document
+      .getElementById(
+        "sgAddIncidentBtn"
+      )
+      .onclick =
+      function(){
+
+        const form =
+          document.getElementById(
+            "sgAddForm"
+          );
+
+
+        form.classList.toggle(
+          "sg-show"
+        );
+
+
+        if(
+          form.classList.contains(
+            "sg-show"
+          )
+        ){
+
+          setTimeout(
+            function(){
+
+              document
+                .getElementById(
+                  "sgIncidentInput"
+                )
+                .focus();
+
+            },
+            50
+          );
+
+        }
+
+      };
+
+
+    /* ---------------------------------------------------
+       SAVE INCIDENT
+    --------------------------------------------------- */
+
+    document
+      .getElementById(
+        "sgSaveIncident"
+      )
+      .onclick =
+      addIncident;
+
+
+    /* ---------------------------------------------------
+       ENTER KEY
+    --------------------------------------------------- */
+
+    document
+      .getElementById(
+        "sgIncidentInput"
+      )
+      .addEventListener(
+        "keydown",
+        function(e){
+
+          if(
+            e.key === "Enter"
+          ){
+
+            e.preventDefault();
+
+            addIncident();
+
+          }
+
+        }
+      );
+
+
+    /* ---------------------------------------------------
+       EVENT ACTIONS
+    --------------------------------------------------- */
+
+    document
+      .getElementById(
+        "sgTimeline"
+      )
+      .addEventListener(
+        "click",
+        function(e){
+
+          const editButton =
+            e.target.closest(
+              "[data-sg-edit]"
+            );
+
+
+          if(editButton){
+
+            editEvent(
+              editButton
+                .getAttribute(
+                  "data-sg-edit"
+                )
+            );
+
+            return;
+
+          }
+
+
+          const deleteButton =
+            e.target.closest(
+              "[data-sg-delete]"
+            );
+
+
+          if(deleteButton){
+
+            deleteEvent(
+              deleteButton
+                .getAttribute(
+                  "data-sg-delete"
+                )
+            );
+
+          }
+
+        }
+      );
+
+
+    renderTimeline();
+
+  }
+
+
+  /* =======================================================
+     OPEN SHIFTGUARD
+  ======================================================= */
+
+  function openShiftGuard(){
+
+    createUI();
+
+
+    const ui =
+      document.getElementById(
+        SG.uiId
+      );
+
+
+    if(!ui)
+      return;
+
+
+    ui.classList.add(
+      "sg-open"
+    );
+
+
+    document.body.style.overflow =
+      "hidden";
+
+
+    renderTimeline();
+
+
+    /*
+      Update today's date every time it opens.
+    */
+
+    const today =
+      document.getElementById(
+        "sgToday"
+      );
+
+
+    if(today){
+
+      today.textContent =
+        getDateTime().date;
+
+    }
+
+  }
+
+
+  /* =======================================================
+     CLOSE SHIFTGUARD
+  ======================================================= */
+
+  function closeShiftGuard(){
+
+    const ui =
+      document.getElementById(
+        SG.uiId
+      );
+
+
+    if(ui){
+
+      ui.classList.remove(
+        "sg-open"
+      );
+
+    }
+
+
+    document.body.style.overflow =
+      "";
+
+  }
+
+
+  /* =======================================================
+     ADD SHIFTGUARD TO EXISTING MENU
+  ======================================================= */
+
+  function addToExistingMenu(){
+
+    if(
+      document.getElementById(
+        SG.menuItemId
+      )
+    )
+      return;
+
+
+    /*
+      Find likely hamburger/menu containers.
+      This intentionally supports several
+      possible layouts.
+    */
+
+    const menu =
+      document.querySelector(
+        "#pumpMenu, " +
+        ".side-menu, " +
+        ".menu-panel, " +
+        ".mobile-menu, " +
+        ".hamburger-menu, " +
+        "[data-menu]"
+      );
+
+
+    if(!menu)
+      return;
+
+
+    /*
+      Don't put it inside ShiftGuard itself.
+    */
+
+    if(
+      menu.contains(
+        document.getElementById(
+          SG.uiId
+        )
+      )
+    )
+      return;
+
+
+    const item =
+      document.createElement(
+        "button"
+      );
+
+
+    item.id =
+      SG.menuItemId;
+
+
+    item.type =
+      "button";
+
+
+    item.innerHTML = `
+
+      <span style="
+        font-size:1.15em;
+        margin-right:8px;
+      ">
+        🛡️
+      </span>
+
+      <span>
+        ShiftGuard
+      </span>
+
+    `;
+
+
+    /*
+      Make it visually compatible with
+      almost any existing menu.
+    */
+
+    item.style.cssText = `
+
+      width:100%;
+
+      box-sizing:border-box;
+
+      border:0;
+
+      padding:12px 14px;
+
+      margin:8px 0;
+
+      border-radius:12px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #eff6ff,
+          #dbeafe
+        );
+
+      color:#1e3a8a;
+
+      font-size:.95rem;
+
+      font-weight:800;
+
+      text-align:left;
+
+      cursor:pointer;
+
+      display:flex;
+
+      align-items:center;
+
+      box-shadow:
+        0 3px 10px
+        rgba(37,99,235,.08);
+
+    `;
+
+
+    item.onclick =
+      function(e){
+
+        e.preventDefault();
+
+        e.stopPropagation();
+
+        openShiftGuard();
+
+      };
+
+
+    /*
+      Put near beginning of menu.
+    */
+
+    const firstChild =
+      menu.firstElementChild;
+
+
+    if(firstChild){
+
+      menu.insertBefore(
+        item,
+        firstChild
+      );
+
+    }else{
+
+      menu.appendChild(
+        item
+      );
+
+    }
+
+  }
+
+
+  /* =======================================================
+     FALLBACK FLOATING BUTTON
+     
+     If the existing hamburger menu cannot be detected,
+     provide a small independent ShiftGuard button.
+     
+     It will automatically disappear once the menu
+     is detected.
+  ======================================================= */
+
+  function createFallbackButton(){
+
+    if(
+      document.getElementById(
+        "sgFallbackButton"
+      )
+    )
+      return;
+
+
+    const button =
+      document.createElement(
+        "button"
+      );
+
+
+    button.id =
+      "sgFallbackButton";
+
+
+    button.textContent =
+      "🛡️";
+
+
+    button.title =
+      "ShiftGuard";
+
+
+    button.onclick =
+      openShiftGuard;
+
+
+    button.style.cssText = `
+
+      position:fixed;
+
+      right:14px;
+
+      bottom:82px;
+
+      width:48px;
+
+      height:48px;
+
+      border:0;
+
+      border-radius:15px;
+
+      background:#2563eb;
+
+      color:#fff;
+
+      font-size:23px;
+
+      cursor:pointer;
+
+      z-index:9990;
+
+      box-shadow:
+        0 5px 18px
+        rgba(37,99,235,.25);
+
+    `;
+
+
+    document.body.appendChild(
+      button
+    );
+
+  }
+
+
+  function removeFallbackButton(){
+
+    const button =
+      document.getElementById(
+        "sgFallbackButton"
+      );
+
+
+    if(button){
+
+      button.remove();
+
+    }
+
+  }
+
+
+  /* =======================================================
+     FIND MENU REPEATEDLY
+     
+     Your existing hamburger code can dynamically
+     recreate the menu. Therefore we keep checking.
+  ======================================================= */
+
+  function connectMenu(){
+
+    addToExistingMenu();
+
+
+    const menuItem =
+      document.getElementById(
+        SG.menuItemId
+      );
+
+
+    if(menuItem){
+
+      removeFallbackButton();
+
+    }else{
+
+      createFallbackButton();
+
+    }
+
+  }
+
+
+  /* =======================================================
+     MUTATION OBSERVER
+     
+     If existing website JS rebuilds its menu,
+     ShiftGuard reconnects automatically.
+  ======================================================= */
+
+  const observer =
+    new MutationObserver(
+      function(){
+
+        connectMenu();
+
+      }
+    );
+
+
+  observer.observe(
+    document.body,
+    {
+      childList:true,
+      subtree:true
+    }
+  );
+
+
+  /* =======================================================
+     INITIAL CSS
+  ======================================================= */
+
+  injectCSS();
+
+
+  /* =======================================================
+     INITIAL UI CONNECTION
+  ======================================================= */
+
+  createUI();
+
+  connectMenu();
+
+
+  /* =======================================================
+     PERIODIC SAFETY CHECK
+  ======================================================= */
+
+  setInterval(
+    function(){
+
+      ensureToday();
+
+      connectMenu();
+
+    },
+    1500
+  );
+
+
+  /* =======================================================
+     ESCAPE KEY
+  ======================================================= */
+
+  document.addEventListener(
+    "keydown",
+    function(e){
+
+      if(
+        e.key === "Escape"
+      ){
+
+        closeShiftGuard();
+
+      }
+
+    }
+  );
+
+
+})();
+
+</script>
 </body>
 
 </html>
