@@ -5828,6 +5828,11 @@ function loadPhysicalCashInputs(){
   ).value =
     cash.coin || "";
 
+  document.getElementById(
+    "changeAmount"
+  ).value =
+    cash.change || "";
+
 
   updatePhysicalCash();
 
@@ -6812,6 +6817,7 @@ document.getElementById(
   "cash20",
   "cash10",
   "coinAmount"
+  "changeAmount"
 ].forEach(
   id => {
 
