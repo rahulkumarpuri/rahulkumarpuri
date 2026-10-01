@@ -2,468 +2,925 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>My Salary Tracker</title>
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+>
+
+<meta name="color-scheme" content="light only">
+
+<title>Salary Tracker</title>
 
 <style>
-    * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-    }
 
-    body {
-        font-family: Arial, Helvetica, sans-serif;
-        background: #0f1117;
-        color: #f5f5f5;
-        min-height: 100vh;
-    }
+/* =========================================================
+   FORCE LIGHT MODE
+========================================================= */
+
+:root {
+    color-scheme: light only;
+}
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
+/* =========================================================
+   BODY
+========================================================= */
+
+html {
+    background: #f5f7fb !important;
+    color-scheme: light only;
+}
+
+body {
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f8fafc 0%,
+            #eef4ff 100%
+        ) !important;
+
+    color: #172033 !important;
+
+    min-height: 100vh;
+
+    forced-color-adjust: none;
+}
+
+
+/* =========================================================
+   CONTAINER
+========================================================= */
+
+.container {
+    width: min(900px, 94%);
+    margin: auto;
+
+    padding:
+        18px
+        0
+        35px;
+}
+
+
+/* =========================================================
+   MAIN CARD
+========================================================= */
+
+.main-card {
+    background: rgba(255,255,255,0.96) !important;
+
+    border:
+        1px solid #e5eaf2;
+
+    border-radius: 18px;
+
+    padding: 20px;
+
+    margin-bottom: 16px;
+
+    box-shadow:
+        0 8px 30px
+        rgba(31, 41, 55, 0.07);
+
+    color: #172033 !important;
+}
+
+
+/* =========================================================
+   LIVE EARNING
+========================================================= */
+
+.live-card {
+    text-align: center;
+
+    padding:
+        26px
+        20px;
+
+    position: relative;
+
+    overflow: hidden;
+}
+
+
+.live-card::before {
+    content: "";
+
+    position: absolute;
+
+    width: 180px;
+    height: 180px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(34,197,94,0.08);
+
+    top: -90px;
+    right: -70px;
+}
+
+
+.live-card::after {
+    content: "";
+
+    position: absolute;
+
+    width: 140px;
+    height: 140px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(59,130,246,0.07);
+
+    bottom: -80px;
+    left: -50px;
+}
+
+
+.live-label {
+    position: relative;
+    z-index: 2;
+
+    color: #667085;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    margin-bottom: 8px;
+}
+
+
+.live-amount {
+    position: relative;
+    z-index: 2;
+
+    font-size:
+        clamp(38px, 8vw, 56px);
+
+    font-weight: 800;
+
+    letter-spacing: -1px;
+
+    color: #16a34a;
+
+    line-height: 1.1;
+
+    font-variant-numeric:
+        tabular-nums;
+}
+
+
+.live-sub {
+    position: relative;
+    z-index: 2;
+
+    margin-top: 8px;
+
+    font-size: 12px;
+
+    color: #98a2b3;
+}
+
+
+/* =========================================================
+   DUTY STATUS
+========================================================= */
+
+.status {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    margin-top: 15px;
+
+    padding:
+        7px
+        13px;
+
+    border-radius: 999px;
+
+    font-size: 12px;
+
+    font-weight: 700;
+}
+
+
+.status.active {
+    background: #ecfdf3;
+
+    color: #15803d;
+
+    border:
+        1px solid #bbf7d0;
+}
+
+
+.status.closed {
+    background: #fff1f2;
+
+    color: #be123c;
+
+    border:
+        1px solid #fecdd3;
+}
+
+
+/* =========================================================
+   SECTION TITLES
+========================================================= */
+
+.section-title {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 15px;
+}
+
+
+.section-title h2 {
+    font-size: 18px;
+
+    color: #172033;
+
+    font-weight: 750;
+}
+
+
+/* =========================================================
+   SALARY SUMMARY
+========================================================= */
+
+.summary-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 10px;
+}
+
+
+.summary-box {
+    background:
+        #f8fafc;
+
+    border:
+        1px solid #e8edf4;
+
+    border-radius: 13px;
+
+    padding:
+        14px;
+
+    min-height: 72px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease;
+}
+
+
+.summary-box:hover {
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 7px 20px
+        rgba(15,23,42,.07);
+}
+
+
+.summary-box small {
+    display: block;
+
+    color: #7b8494;
+
+    font-size: 11px;
+
+    margin-bottom: 5px;
+
+    font-weight: 600;
+}
+
+
+.summary-box strong {
+    display: block;
+
+    font-size: 19px;
+
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   COLORS
+========================================================= */
+
+.green {
+    color: #16a34a !important;
+}
+
+.red {
+    color: #dc2626 !important;
+}
+
+.yellow {
+    color: #d97706 !important;
+}
+
+.blue {
+    color: #2563eb !important;
+}
+
+
+/* =========================================================
+   FORMS
+========================================================= */
+
+.forms {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 16px;
+
+    margin-bottom: 16px;
+}
+
+
+.form-card {
+    margin-bottom: 0;
+}
+
+
+.form-card h2 {
+    font-size: 17px;
+
+    margin-bottom: 15px;
+}
+
+
+label {
+    display: block;
+
+    color: #667085;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    margin-bottom: 7px;
+}
+
+
+input {
+    width: 100%;
+
+    padding:
+        12px
+        13px;
+
+    border:
+        1px solid #dce2ea;
+
+    border-radius: 10px;
+
+    background: #ffffff !important;
+
+    color: #172033 !important;
+
+    outline: none;
+
+    font-size: 14px;
+
+    transition:
+        border .2s ease,
+        box-shadow .2s ease;
+}
+
+
+input:focus {
+    border-color:
+        #60a5fa;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(59,130,246,.10);
+}
+
+
+input::placeholder {
+    color: #a0a8b5;
+}
+
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+button {
+    width: 100%;
+
+    border: none;
+
+    cursor: pointer;
+
+    padding:
+        11px
+        15px;
+
+    border-radius: 10px;
+
+    font-weight: 750;
+
+    font-size: 13px;
+
+    margin-top: 10px;
+
+    transition:
+        transform .18s ease,
+        box-shadow .18s ease,
+        opacity .18s ease;
+}
+
+
+button:hover {
+    transform:
+        translateY(-1px);
+}
+
+
+button:active {
+    transform:
+        translateY(0);
+}
+
+
+.btn-green {
+    background:
+        linear-gradient(
+            135deg,
+            #22c55e,
+            #16a34a
+        );
+
+    color: white;
+
+    box-shadow:
+        0 5px 15px
+        rgba(34,197,94,.20);
+}
+
+
+.btn-blue {
+    background:
+        linear-gradient(
+            135deg,
+            #3b82f6,
+            #2563eb
+        );
+
+    color: white;
+
+    box-shadow:
+        0 5px 15px
+        rgba(59,130,246,.20);
+}
+
+
+.btn-red {
+    background:
+        #fff1f2;
+
+    color:
+        #dc2626;
+
+    border:
+        1px solid #fecdd3;
+}
+
+
+/* =========================================================
+   FORM DESCRIPTION
+========================================================= */
+
+.form-note {
+    margin-top: 9px;
+
+    color: #98a2b3;
+
+    font-size: 11px;
+
+    line-height: 1.4;
+}
+
+
+/* =========================================================
+   HISTORY
+========================================================= */
+
+.history-card {
+    overflow: hidden;
+}
+
+
+.history {
+    overflow-x: auto;
+
+    border:
+        1px solid #edf0f4;
+
+    border-radius: 12px;
+}
+
+
+table {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    min-width: 520px;
+
+    background: white;
+}
+
+
+th,
+td {
+    padding:
+        11px
+        10px;
+
+    border-bottom:
+        1px solid #edf0f4;
+
+    text-align: left;
+
+    font-size: 12px;
+}
+
+
+th {
+    color: #7b8494;
+
+    font-weight: 700;
+
+    background:
+        #f8fafc;
+}
+
+
+td {
+    color: #344054;
+}
+
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+
+.empty {
+    text-align: center;
+
+    padding: 22px;
+
+    color: #98a2b3;
+}
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+.reset-area {
+    text-align: right;
+
+    margin-top: 2px;
+}
+
+
+.reset-area button {
+    width: auto;
+
+    padding:
+        9px
+        14px;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+footer {
+    text-align: center;
+
+    color: #98a2b3;
+
+    font-size: 10px;
+
+    line-height: 1.5;
+
+    margin-top: 18px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 650px) {
 
     .container {
-        width: min(1100px, 94%);
-        margin: auto;
-        padding: 25px 0 50px;
+        width: 94%;
+
+        padding-top: 10px;
     }
 
-    header {
-        text-align: center;
-        margin-bottom: 25px;
-    }
-
-    header h1 {
-        font-size: 30px;
-        margin-bottom: 8px;
-    }
-
-    header p {
-        color: #9ca3af;
-        font-size: 14px;
-    }
-
-    .status {
-        display: inline-block;
-        margin-top: 12px;
-        padding: 7px 14px;
-        border-radius: 20px;
-        background: #1f2937;
-        color: #9ca3af;
-        font-size: 13px;
-    }
-
-    .status.active {
-        background: #064e3b;
-        color: #6ee7b7;
-    }
-
-    .status.closed {
-        background: #3f1d1d;
-        color: #fca5a5;
-    }
-
-    .cards {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 15px;
-        margin-bottom: 20px;
-    }
-
-    .card {
-        background: #181b23;
-        border: 1px solid #262b36;
-        border-radius: 16px;
-        padding: 22px;
-        box-shadow: 0 8px 30px rgba(0,0,0,0.18);
-    }
-
-    .card-title {
-        color: #9ca3af;
-        font-size: 13px;
-        margin-bottom: 10px;
-    }
-
-    .amount {
-        font-size: 28px;
-        font-weight: bold;
-    }
-
-    .green {
-        color: #4ade80;
-    }
-
-    .red {
-        color: #f87171;
-    }
-
-    .yellow {
-        color: #facc15;
-    }
-
-    .blue {
-        color: #60a5fa;
-    }
 
     .main-card {
-        background: #181b23;
-        border: 1px solid #262b36;
-        border-radius: 18px;
-        padding: 25px;
-        margin-bottom: 20px;
-    }
+        padding: 16px;
 
-    .main-card h2 {
-        font-size: 20px;
-        margin-bottom: 18px;
-    }
-
-    .live-box {
-        text-align: center;
-        padding: 30px 15px;
-        background: linear-gradient(
-            135deg,
-            #151a20,
-            #111827
-        );
         border-radius: 15px;
-        border: 1px solid #263040;
     }
 
-    .live-label {
-        color: #9ca3af;
-        font-size: 14px;
-        margin-bottom: 8px;
+
+    .live-card {
+        padding:
+            24px
+            12px;
     }
 
-    .live-amount {
-        font-size: 45px;
-        font-weight: bold;
-        color: #4ade80;
-        letter-spacing: 1px;
+
+    .summary-grid {
+        grid-template-columns:
+            repeat(2, 1fr);
+
+        gap: 8px;
     }
 
-    .live-sub {
-        margin-top: 8px;
-        color: #9ca3af;
-        font-size: 13px;
+
+    .summary-box {
+        min-height: 68px;
+
+        padding: 12px;
     }
 
-    .info-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 12px;
-        margin-top: 20px;
-    }
 
-    .info-item {
-        background: #11141a;
-        padding: 15px;
-        border-radius: 12px;
-    }
-
-    .info-item span {
-        display: block;
-    }
-
-    .info-label {
-        color: #9ca3af;
-        font-size: 12px;
-        margin-bottom: 6px;
-    }
-
-    .info-value {
+    .summary-box strong {
         font-size: 17px;
-        font-weight: bold;
     }
+
 
     .forms {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
-        margin-bottom: 20px;
+        grid-template-columns: 1fr;
+
+        gap: 12px;
     }
 
-    label {
-        display: block;
-        color: #9ca3af;
-        font-size: 13px;
-        margin-bottom: 7px;
+
+    .form-card {
+        margin-bottom: 0;
     }
 
-    input {
-        width: 100%;
-        padding: 13px;
-        border-radius: 10px;
-        border: 1px solid #303642;
-        background: #101319;
-        color: white;
-        outline: none;
+}
+
+
+@media (max-width: 380px) {
+
+    .summary-box strong {
         font-size: 15px;
     }
 
-    input:focus {
-        border-color: #60a5fa;
+
+    .live-amount {
+        font-size: 34px;
     }
 
-    button {
-        border: none;
-        cursor: pointer;
-        padding: 12px 18px;
-        border-radius: 10px;
-        font-weight: bold;
-        margin-top: 12px;
-        transition: 0.2s;
-    }
+}
 
-    button:hover {
-        transform: translateY(-1px);
-        opacity: 0.9;
-    }
-
-    .btn-green {
-        background: #22c55e;
-        color: #06130a;
-    }
-
-    .btn-blue {
-        background: #3b82f6;
-        color: white;
-    }
-
-    .btn-red {
-        background: #ef4444;
-        color: white;
-    }
-
-    .history-section {
-        margin-top: 20px;
-    }
-
-    .history-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 15px;
-    }
-
-    .history-header h2 {
-        font-size: 20px;
-    }
-
-    .history {
-        overflow-x: auto;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        min-width: 600px;
-    }
-
-    th, td {
-        padding: 13px 10px;
-        border-bottom: 1px solid #282d38;
-        text-align: left;
-        font-size: 13px;
-    }
-
-    th {
-        color: #9ca3af;
-        font-weight: normal;
-    }
-
-    td {
-        color: #e5e7eb;
-    }
-
-    .empty {
-        text-align: center;
-        padding: 25px;
-        color: #6b7280;
-    }
-
-    .summary {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 15px;
-        margin-top: 20px;
-    }
-
-    .summary-box {
-        background: #11141a;
-        border-radius: 12px;
-        padding: 18px;
-    }
-
-    .summary-box small {
-        color: #9ca3af;
-        display: block;
-        margin-bottom: 8px;
-    }
-
-    footer {
-        text-align: center;
-        color: #6b7280;
-        font-size: 12px;
-        margin-top: 25px;
-    }
-
-    .danger-zone {
-        margin-top: 20px;
-        text-align: right;
-    }
-
-    @media (max-width: 800px) {
-        .cards,
-        .forms,
-        .summary {
-            grid-template-columns: 1fr;
-        }
-
-        .info-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-
-        .live-amount {
-            font-size: 36px;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .container {
-            width: 92%;
-        }
-
-        header h1 {
-            font-size: 25px;
-        }
-
-        .info-grid {
-            grid-template-columns: 1fr 1fr;
-        }
-
-        .card {
-            padding: 18px;
-        }
-
-        .amount {
-            font-size: 24px;
-        }
-
-        .live-amount {
-            font-size: 32px;
-        }
-    }
 </style>
 </head>
 
+
 <body>
+
 
 <div class="container">
 
 
-    <!-- LIVE CALCULATOR -->
+    <!-- =================================================
+         LIVE EARNING
+    ================================================== -->
 
-    <div class="main-card">
+    <div class="main-card live-card">
 
-        <h2>⚡ Live Earning</h2>
-
-        <div class="live-box">
-
-            <div class="live-label">
-                Today's earning so far
-            </div>
-
-            <div class="live-amount" id="liveEarning">
-                ₹0.00
-            </div>
-
-            <div class="live-sub">
-                Updates every second
-            </div>
-
+        <div class="live-label">
+            ⚡ Live Earning
         </div>
+
+        <div
+            class="live-amount"
+            id="liveEarning"
+        >
+            ₹0.00
+        </div>
+
+        <div class="live-sub">
+            Your earning is updating every second
+        </div>
+
+        <div
+            id="dutyStatus"
+            class="status"
+        >
+            Checking duty status...
         </div>
 
     </div>
 
 
-    <!-- TOTAL BALANCE -->
+    <!-- =================================================
+         SALARY SUMMARY
+    ================================================== -->
 
     <div class="main-card">
 
-        <h2>📊 Salary Summary</h2>
+        <div class="section-title">
 
-        <div class="cards" style="margin-bottom:0;">
-
-            <div class="card">
-                <div class="card-title">
-                    Normal Salary Earned
-                </div>
-
-                <div class="amount blue" id="normalSalary">
-                    ₹0.00
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-title">
-                    Total Overtime
-                </div>
-
-                <div class="amount yellow" id="totalOvertime">
-                    ₹0.00
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-title">
-                    Total Salary Balance
-                </div>
-
-                <div class="amount green" id="totalBalance">
-                    ₹0.00
-                </div>
-            </div>
+            <h2>
+                💰 Salary Summary
+            </h2>
 
         </div>
 
-        <div class="summary">
+
+        <div class="summary-grid">
+
+
+            <!-- 1 -->
 
             <div class="summary-box">
-                <small>Total Advance</small>
-                <strong class="red" id="summaryAdvance">
+
+                <small>
+                    Normal Salary Earned
+                </small>
+
+                <strong
+                    class="blue"
+                    id="normalSalary"
+                >
                     ₹0.00
                 </strong>
+
             </div>
 
+
+            <!-- 2 -->
+
             <div class="summary-box">
-                <small>Total Overtime Hours</small>
-                <strong class="yellow" id="summaryOTHours">
+
+                <small>
+                    Total Overtime
+                </small>
+
+                <strong
+                    class="yellow"
+                    id="totalOvertime"
+                >
+                    ₹0.00
+                </strong>
+
+            </div>
+
+
+            <!-- 3 -->
+
+            <div class="summary-box">
+
+                <small>
+                    Total Salary Balance
+                </small>
+
+                <strong
+                    class="green"
+                    id="totalBalance"
+                >
+                    ₹0.00
+                </strong>
+
+            </div>
+
+
+            <!-- 4 -->
+
+            <div class="summary-box">
+
+                <small>
+                    Total Advance
+                </small>
+
+                <strong
+                    class="red"
+                    id="summaryAdvance"
+                >
+                    ₹0.00
+                </strong>
+
+            </div>
+
+
+            <!-- 5 -->
+
+            <div class="summary-box">
+
+                <small>
+                    Overtime Hours
+                </small>
+
+                <strong
+                    class="yellow"
+                    id="summaryOTHours"
+                >
                     0.00 hrs
                 </strong>
+
             </div>
 
+
+            <!-- 6 -->
+
             <div class="summary-box">
-                <small>Month</small>
-                <strong id="monthName">
+
+                <small>
+                    Current Month
+                </small>
+
+                <strong
+                    id="monthName"
+                >
                     --
                 </strong>
+
             </div>
+
 
         </div>
 
     </div>
 
 
-    <!-- ADD DATA -->
+    <!-- =================================================
+         OVERTIME + ADVANCE
+    ================================================== -->
 
     <div class="forms">
 
+
         <!-- OVERTIME -->
 
-        <div class="main-card">
+        <div class="main-card form-card">
 
-            <h2>⏱️ Add Overtime</h2>
+            <h2>
+                ⏱️ Add Overtime
+            </h2>
 
             <label for="overtimeHours">
                 Overtime Hours
@@ -484,8 +941,8 @@
                 Add Overtime
             </button>
 
-            <p style="margin-top:12px;color:#6b7280;font-size:12px;">
-                ₹50/hour automatically added to salary.
+            <p class="form-note">
+                ₹50/hour will automatically be added.
             </p>
 
         </div>
@@ -493,12 +950,14 @@
 
         <!-- ADVANCE -->
 
-        <div class="main-card">
+        <div class="main-card form-card">
 
-            <h2>💸 Add Advance</h2>
+            <h2>
+                💸 Add Advance
+            </h2>
 
             <label for="advanceAmount">
-                Advance Amount (₹)
+                Advance Amount
             </label>
 
             <input
@@ -516,22 +975,30 @@
                 Add Advance
             </button>
 
-            <p style="margin-top:12px;color:#6b7280;font-size:12px;">
-                Advance will automatically be deducted from total balance.
+            <p class="form-note">
+                Amount will automatically be deducted.
             </p>
 
         </div>
 
+
     </div>
 
 
-    <!-- OVERTIME HISTORY -->
+    <!-- =================================================
+         OVERTIME HISTORY
+    ================================================== -->
 
-    <div class="main-card history-section">
+    <div class="main-card history-card">
 
-        <div class="history-header">
-            <h2>⏱️ Overtime History</h2>
+        <div class="section-title">
+
+            <h2>
+                ⏱️ Overtime History
+            </h2>
+
         </div>
+
 
         <div class="history">
 
@@ -540,17 +1007,35 @@
                 <thead>
 
                     <tr>
-                        <th>Date</th>
-                        <th>Time</th>
-                        <th>Hours</th>
-                        <th>Rate</th>
-                        <th>Earned</th>
+
+                        <th>
+                            Date
+                        </th>
+
+                        <th>
+                            Time
+                        </th>
+
+                        <th>
+                            Hours
+                        </th>
+
+                        <th>
+                            Rate
+                        </th>
+
+                        <th>
+                            Earned
+                        </th>
+
                     </tr>
 
                 </thead>
 
-                <tbody id="overtimeHistory">
-                </tbody>
+
+                <tbody
+                    id="overtimeHistory"
+                ></tbody>
 
             </table>
 
@@ -559,13 +1044,20 @@
     </div>
 
 
-    <!-- ADVANCE HISTORY -->
+    <!-- =================================================
+         ADVANCE HISTORY
+    ================================================== -->
 
-    <div class="main-card history-section">
+    <div class="main-card history-card">
 
-        <div class="history-header">
-            <h2>💸 Advance History</h2>
+        <div class="section-title">
+
+            <h2>
+                💸 Advance History
+            </h2>
+
         </div>
+
 
         <div class="history">
 
@@ -574,15 +1066,27 @@
                 <thead>
 
                     <tr>
-                        <th>Date</th>
-                        <th>Time</th>
-                        <th>Advance</th>
+
+                        <th>
+                            Date
+                        </th>
+
+                        <th>
+                            Time
+                        </th>
+
+                        <th>
+                            Advance
+                        </th>
+
                     </tr>
 
                 </thead>
 
-                <tbody id="advanceHistory">
-                </tbody>
+
+                <tbody
+                    id="advanceHistory"
+                ></tbody>
 
             </table>
 
@@ -591,9 +1095,11 @@
     </div>
 
 
-    <!-- RESET -->
+    <!-- =================================================
+         RESET
+    ================================================== -->
 
-    <div class="danger-zone">
+    <div class="reset-area">
 
         <button
             class="btn-red"
@@ -606,18 +1112,22 @@
 
 
     <footer>
-        Data is stored locally on this device using browser localStorage.
+
+        Data is stored locally on this device.
         <br>
-        Salary calculations run automatically while this page is open.
+        Refreshing or closing the page will not delete your data.
+
     </footer>
 
+
 </div>
+
 
 
 <script>
 
 /* =========================================================
-   SALARY SETTINGS
+   SETTINGS
 ========================================================= */
 
 const HOURLY_RATE = 50;
@@ -628,12 +1138,8 @@ const DUTY_START_HOUR = 7;
 
 const DUTY_END_HOUR = 19;
 
-
-/* =========================================================
-   STORAGE KEYS
-========================================================= */
-
-const STORAGE_KEY = "salaryTrackerData_v1";
+const STORAGE_KEY =
+    "salaryTrackerData_v1";
 
 
 /* =========================================================
@@ -641,8 +1147,11 @@ const STORAGE_KEY = "salaryTrackerData_v1";
 ========================================================= */
 
 let data = {
+
     overtime: [],
+
     advances: []
+
 };
 
 
@@ -655,31 +1164,50 @@ function loadData() {
     try {
 
         const saved =
-            localStorage.getItem(STORAGE_KEY);
+            localStorage.getItem(
+                STORAGE_KEY
+            );
 
-        if (saved) {
 
-            const parsed =
-                JSON.parse(saved);
+        if (!saved) {
 
-            if (parsed && typeof parsed === "object") {
+            return;
 
-                data.overtime =
-                    Array.isArray(parsed.overtime)
-                        ? parsed.overtime
-                        : [];
-
-                data.advances =
-                    Array.isArray(parsed.advances)
-                        ? parsed.advances
-                        : [];
-            }
         }
 
-    } catch (error) {
+
+        const parsed =
+            JSON.parse(saved);
+
+
+        if (
+            parsed &&
+            typeof parsed === "object"
+        ) {
+
+            data.overtime =
+                Array.isArray(
+                    parsed.overtime
+                )
+                    ? parsed.overtime
+                    : [];
+
+
+            data.advances =
+                Array.isArray(
+                    parsed.advances
+                )
+                    ? parsed.advances
+                    : [];
+
+        }
+
+    }
+
+    catch (error) {
 
         console.error(
-            "Could not load saved data:",
+            "Storage loading error:",
             error
         );
 
@@ -701,15 +1229,13 @@ function saveData() {
             JSON.stringify(data)
         );
 
-    } catch (error) {
+    }
+
+    catch (error) {
 
         console.error(
-            "Could not save data:",
+            "Storage saving error:",
             error
-        );
-
-        alert(
-            "Your browser blocked local storage. Data may not persist."
         );
 
     }
@@ -718,19 +1244,22 @@ function saveData() {
 
 
 /* =========================================================
-   FORMAT MONEY
+   MONEY
 ========================================================= */
 
 function money(value) {
 
-    return "₹" +
-        Number(value || 0).toFixed(2);
+    return (
+        "₹" +
+        Number(value || 0)
+            .toFixed(2)
+    );
 
 }
 
 
 /* =========================================================
-   FORMAT DATE
+   DATE
 ========================================================= */
 
 function formatDate(date) {
@@ -748,7 +1277,7 @@ function formatDate(date) {
 
 
 /* =========================================================
-   FORMAT TIME
+   TIME
 ========================================================= */
 
 function formatTime(date) {
@@ -766,34 +1295,14 @@ function formatTime(date) {
 
 
 /* =========================================================
-   GET MONTH KEY
-========================================================= */
-
-function getMonthKey(date) {
-
-    return (
-        date.getFullYear() +
-        "-" +
-        String(
-            date.getMonth() + 1
-        ).padStart(2, "0")
-    );
-
-}
-
-
-/* =========================================================
-   GET NORMAL SALARY FOR A SPECIFIC DAY
+   DAILY EARNING
 ========================================================= */
 
 function getDailyEarning(date) {
 
-    const now = new Date();
+    const now =
+        new Date();
 
-    /*
-        If the date is before today,
-        full daily salary = ₹600.
-    */
 
     const dateOnly =
         new Date(
@@ -801,6 +1310,7 @@ function getDailyEarning(date) {
             date.getMonth(),
             date.getDate()
         );
+
 
     const todayOnly =
         new Date(
@@ -810,28 +1320,29 @@ function getDailyEarning(date) {
         );
 
 
-    if (dateOnly < todayOnly) {
+    /* Previous day */
+
+    if (
+        dateOnly < todayOnly
+    ) {
 
         return DAILY_SALARY;
 
     }
 
 
-    /*
-        Future date = ₹0.
-    */
+    /* Future day */
 
-    if (dateOnly > todayOnly) {
+    if (
+        dateOnly > todayOnly
+    ) {
 
         return 0;
 
     }
 
 
-    /*
-        Today:
-        calculate between 7 AM and 7 PM.
-    */
+    /* Today */
 
     const start =
         new Date(
@@ -843,6 +1354,7 @@ function getDailyEarning(date) {
             0,
             0
         );
+
 
     const end =
         new Date(
@@ -888,24 +1400,24 @@ function getDailyEarning(date) {
 
 
 /* =========================================================
-   GET NORMAL MONTH SALARY
+   MONTH SALARY
 ========================================================= */
 
 function getNormalMonthSalary() {
 
-    const now = new Date();
+    const now =
+        new Date();
+
 
     const year =
         now.getFullYear();
 
+
     const month =
         now.getMonth();
 
-    /*
-        The salary cycle is 1st to last day of month.
-    */
 
-    const daysInMonth =
+    const days =
         new Date(
             year,
             month + 1,
@@ -918,19 +1430,18 @@ function getNormalMonthSalary() {
 
     for (
         let day = 1;
-        day <= daysInMonth;
+        day <= days;
         day++
     ) {
 
-        const date =
-            new Date(
-                year,
-                month,
-                day
-            );
-
         total +=
-            getDailyEarning(date);
+            getDailyEarning(
+                new Date(
+                    year,
+                    month,
+                    day
+                )
+            );
 
     }
 
@@ -947,8 +1458,19 @@ function getNormalMonthSalary() {
 function getOvertimeTotal() {
 
     return data.overtime.reduce(
-        (sum, item) =>
-            sum + Number(item.amount || 0),
+        (
+            total,
+            item
+        ) => {
+
+            return (
+                total +
+                Number(
+                    item.amount || 0
+                )
+            );
+
+        },
         0
     );
 
@@ -962,8 +1484,19 @@ function getOvertimeTotal() {
 function getOvertimeHours() {
 
     return data.overtime.reduce(
-        (sum, item) =>
-            sum + Number(item.hours || 0),
+        (
+            total,
+            item
+        ) => {
+
+            return (
+                total +
+                Number(
+                    item.hours || 0
+                )
+            );
+
+        },
         0
     );
 
@@ -977,63 +1510,21 @@ function getOvertimeHours() {
 function getAdvanceTotal() {
 
     return data.advances.reduce(
-        (sum, item) =>
-            sum + Number(item.amount || 0),
+        (
+            total,
+            item
+        ) => {
+
+            return (
+                total +
+                Number(
+                    item.amount || 0
+                )
+            );
+
+        },
         0
     );
-
-}
-
-
-/* =========================================================
-   TODAY OVERTIME
-========================================================= */
-
-function getTodayOvertime() {
-
-    const todayKey =
-        getMonthKey(new Date());
-
-    const todayDate =
-        new Date().toDateString();
-
-
-    return data.overtime
-        .filter(item =>
-            new Date(
-                item.timestamp
-            ).toDateString() === todayDate
-        )
-        .reduce(
-            (sum, item) =>
-                sum + Number(item.amount || 0),
-            0
-        );
-
-}
-
-
-/* =========================================================
-   TODAY ADVANCE
-========================================================= */
-
-function getTodayAdvance() {
-
-    const todayDate =
-        new Date().toDateString();
-
-
-    return data.advances
-        .filter(item =>
-            new Date(
-                item.timestamp
-            ).toDateString() === todayDate
-        )
-        .reduce(
-            (sum, item) =>
-                sum + Number(item.amount || 0),
-            0
-        );
 
 }
 
@@ -1049,8 +1540,11 @@ function addOvertime() {
             "overtimeHours"
         );
 
+
     const hours =
-        parseFloat(input.value);
+        parseFloat(
+            input.value
+        );
 
 
     if (
@@ -1059,7 +1553,7 @@ function addOvertime() {
     ) {
 
         alert(
-            "Enter a valid overtime hour."
+            "Please enter a valid overtime hour."
         );
 
         return;
@@ -1068,7 +1562,8 @@ function addOvertime() {
 
 
     const amount =
-        hours * HOURLY_RATE;
+        hours *
+        HOURLY_RATE;
 
 
     data.overtime.push({
@@ -1080,16 +1575,20 @@ function addOvertime() {
 
         hours: hours,
 
-        rate: HOURLY_RATE,
+        rate:
+            HOURLY_RATE,
 
-        amount: amount
+        amount:
+            amount
 
     });
 
 
     saveData();
 
+
     input.value = "";
+
 
     renderAll();
 
@@ -1107,8 +1606,11 @@ function addAdvance() {
             "advanceAmount"
         );
 
+
     const amount =
-        parseFloat(input.value);
+        parseFloat(
+            input.value
+        );
 
 
     if (
@@ -1117,7 +1619,7 @@ function addAdvance() {
     ) {
 
         alert(
-            "Enter a valid advance amount."
+            "Please enter a valid advance amount."
         );
 
         return;
@@ -1132,14 +1634,17 @@ function addAdvance() {
         timestamp:
             new Date().toISOString(),
 
-        amount: amount
+        amount:
+            amount
 
     });
 
 
     saveData();
 
+
     input.value = "";
+
 
     renderAll();
 
@@ -1147,7 +1652,7 @@ function addAdvance() {
 
 
 /* =========================================================
-   UPDATE LIVE EARNING
+   LIVE EARNING
 ========================================================= */
 
 function updateLiveEarning() {
@@ -1166,24 +1671,6 @@ function updateLiveEarning() {
         money(earning);
 
 
-    document.getElementById(
-        "todayEarning"
-    ).textContent =
-        money(earning);
-
-
-    document.getElementById(
-        "currentDate"
-    ).textContent =
-        formatDate(now);
-
-
-    document.getElementById(
-        "currentTime"
-    ).textContent =
-        formatTime(now);
-
-
     updateDutyStatus();
 
 }
@@ -1198,20 +1685,17 @@ function updateDutyStatus() {
     const now =
         new Date();
 
-    const hour =
-        now.getHours();
 
-    const minute =
+    const minutes =
+        now.getHours() * 60 +
         now.getMinutes();
 
-    const currentMinutes =
-        hour * 60 + minute;
 
-
-    const startMinutes =
+    const start =
         DUTY_START_HOUR * 60;
 
-    const endMinutes =
+
+    const end =
         DUTY_END_HOUR * 60;
 
 
@@ -1222,20 +1706,24 @@ function updateDutyStatus() {
 
 
     if (
-        currentMinutes >= startMinutes &&
-        currentMinutes < endMinutes
+        minutes >= start &&
+        minutes < end
     ) {
 
         status.textContent =
-            "🟢 Duty Active — Earning Live";
+            "🟢 Duty Active • Earning Live";
+
 
         status.className =
             "status active";
 
-    } else {
+    }
+
+    else {
 
         status.textContent =
-            "🔴 Duty Closed — Normal Earning Paused";
+            "🔴 Duty Closed • Normal Earning Paused";
+
 
         status.className =
             "status closed";
@@ -1246,7 +1734,7 @@ function updateDutyStatus() {
 
 
 /* =========================================================
-   RENDER SUMMARY
+   SUMMARY
 ========================================================= */
 
 function renderSummary() {
@@ -1254,8 +1742,10 @@ function renderSummary() {
     const normal =
         getNormalMonthSalary();
 
+
     const overtime =
         getOvertimeTotal();
+
 
     const advance =
         getAdvanceTotal();
@@ -1275,18 +1765,6 @@ function renderSummary() {
 
     document.getElementById(
         "totalOvertime"
-    ).textContent =
-        money(overtime);
-
-
-    document.getElementById(
-        "advanceTotal"
-    ).textContent =
-        money(advance);
-
-
-    document.getElementById(
-        "overtimeTotal"
     ).textContent =
         money(overtime);
 
@@ -1326,7 +1804,7 @@ function renderSummary() {
 
 
 /* =========================================================
-   RENDER OVERTIME HISTORY
+   OVERTIME HISTORY
 ========================================================= */
 
 function renderOvertimeHistory() {
@@ -1343,7 +1821,10 @@ function renderOvertimeHistory() {
 
         tbody.innerHTML = `
             <tr>
-                <td colspan="5" class="empty">
+                <td
+                    colspan="5"
+                    class="empty"
+                >
                     No overtime added yet.
                 </td>
             </tr>
@@ -1358,47 +1839,67 @@ function renderOvertimeHistory() {
         [...data.overtime]
         .sort(
             (a,b) =>
-                new Date(b.timestamp) -
-                new Date(a.timestamp)
+                new Date(
+                    b.timestamp
+                ) -
+                new Date(
+                    a.timestamp
+                )
         );
 
 
     tbody.innerHTML =
-        sorted.map(item => {
+        sorted.map(
+            item => {
 
-            const date =
-                new Date(
-                    item.timestamp
-                );
+                const date =
+                    new Date(
+                        item.timestamp
+                    );
 
 
-            return `
-                <tr>
-                    <td>${formatDate(date)}</td>
+                return `
 
-                    <td>${formatTime(date)}</td>
+                    <tr>
 
-                    <td>
-                        ${Number(item.hours).toFixed(2)} hrs
-                    </td>
+                        <td>
+                            ${formatDate(date)}
+                        </td>
 
-                    <td>
-                        ${money(item.rate)}/hr
-                    </td>
+                        <td>
+                            ${formatTime(date)}
+                        </td>
 
-                    <td class="green">
-                        ${money(item.amount)}
-                    </td>
-                </tr>
-            `;
+                        <td>
+                            ${Number(
+                                item.hours
+                            ).toFixed(2)} hrs
+                        </td>
 
-        }).join("");
+                        <td>
+                            ${money(
+                                item.rate
+                            )}/hr
+                        </td>
+
+                        <td class="green">
+                            ${money(
+                                item.amount
+                            )}
+                        </td>
+
+                    </tr>
+
+                `;
+
+            }
+        ).join("");
 
 }
 
 
 /* =========================================================
-   RENDER ADVANCE HISTORY
+   ADVANCE HISTORY
 ========================================================= */
 
 function renderAdvanceHistory() {
@@ -1415,7 +1916,10 @@ function renderAdvanceHistory() {
 
         tbody.innerHTML = `
             <tr>
-                <td colspan="3" class="empty">
+                <td
+                    colspan="3"
+                    class="empty"
+                >
                     No advance added yet.
                 </td>
             </tr>
@@ -1430,39 +1934,55 @@ function renderAdvanceHistory() {
         [...data.advances]
         .sort(
             (a,b) =>
-                new Date(b.timestamp) -
-                new Date(a.timestamp)
+                new Date(
+                    b.timestamp
+                ) -
+                new Date(
+                    a.timestamp
+                )
         );
 
 
     tbody.innerHTML =
-        sorted.map(item => {
+        sorted.map(
+            item => {
 
-            const date =
-                new Date(
-                    item.timestamp
-                );
+                const date =
+                    new Date(
+                        item.timestamp
+                    );
 
 
-            return `
-                <tr>
-                    <td>${formatDate(date)}</td>
+                return `
 
-                    <td>${formatTime(date)}</td>
+                    <tr>
 
-                    <td class="red">
-                        -${money(item.amount)}
-                    </td>
-                </tr>
-            `;
+                        <td>
+                            ${formatDate(date)}
+                        </td>
 
-        }).join("");
+                        <td>
+                            ${formatTime(date)}
+                        </td>
+
+                        <td class="red">
+                            -${money(
+                                item.amount
+                            )}
+                        </td>
+
+                    </tr>
+
+                `;
+
+            }
+        ).join("");
 
 }
 
 
 /* =========================================================
-   RENDER EVERYTHING
+   RENDER ALL
 ========================================================= */
 
 function renderAll() {
@@ -1479,18 +1999,18 @@ function renderAll() {
 
 
 /* =========================================================
-   RESET ALL DATA
+   RESET
 ========================================================= */
 
 function resetAllData() {
 
-    const confirmReset =
+    const confirmation =
         confirm(
-            "Are you sure you want to delete ALL salary, overtime and advance history?"
+            "Delete all overtime and advance history?"
         );
 
 
-    if (!confirmReset) {
+    if (!confirmation) {
 
         return;
 
@@ -1517,7 +2037,7 @@ function resetAllData() {
 
 
 /* =========================================================
-   INITIALIZE
+   START
 ========================================================= */
 
 loadData();
@@ -1525,13 +2045,9 @@ loadData();
 renderAll();
 
 
-/*
-    Update every second.
-
-    This makes the normal earning
-    increase continuously during
-    7 AM - 7 PM.
-*/
+/* =========================================================
+   LIVE UPDATE
+========================================================= */
 
 setInterval(
     () => {
@@ -1545,10 +2061,9 @@ setInterval(
 );
 
 
-/*
-    Also refresh everything when
-    the browser tab becomes visible.
-*/
+/* =========================================================
+   TAB RETURN
+========================================================= */
 
 document.addEventListener(
     "visibilitychange",
@@ -1566,14 +2081,9 @@ document.addEventListener(
 );
 
 
-/*
-    Save again when the page is
-    being hidden/unloaded.
-
-    localStorage already persists,
-    but this gives an additional
-    safety write.
-*/
+/* =========================================================
+   SAVE BEFORE EXIT
+========================================================= */
 
 window.addEventListener(
     "beforeunload",
