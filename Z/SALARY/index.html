@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
 
 <meta
@@ -8,9 +9,13 @@
     content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
 >
 
-<meta name="color-scheme" content="light only">
+<meta
+    name="color-scheme"
+    content="light only"
+>
 
 <title>Salary Tracker</title>
+
 
 <style>
 
@@ -22,28 +27,14 @@
     color-scheme: light only;
 }
 
-
-/* =========================================================
-   RESET
-========================================================= */
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-
-/* =========================================================
-   BODY
-========================================================= */
-
 html {
     background: #f5f7fb !important;
     color-scheme: light only;
 }
 
 body {
+    color-scheme: light only;
+
     font-family:
         Inter,
         -apple-system,
@@ -63,7 +54,20 @@ body {
 
     min-height: 100vh;
 
+    margin: 0;
+
     forced-color-adjust: none;
+}
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 
@@ -73,6 +77,7 @@ body {
 
 .container {
     width: min(900px, 94%);
+
     margin: auto;
 
     padding:
@@ -87,7 +92,8 @@ body {
 ========================================================= */
 
 .main-card {
-    background: rgba(255,255,255,0.96) !important;
+    background:
+        rgba(255,255,255,0.97) !important;
 
     border:
         1px solid #e5eaf2;
@@ -100,14 +106,14 @@ body {
 
     box-shadow:
         0 8px 30px
-        rgba(31, 41, 55, 0.07);
+        rgba(31,41,55,0.07);
 
     color: #172033 !important;
 }
 
 
 /* =========================================================
-   LIVE EARNING
+   LIVE CARD
 ========================================================= */
 
 .live-card {
@@ -161,6 +167,7 @@ body {
 
 .live-label {
     position: relative;
+
     z-index: 2;
 
     color: #667085;
@@ -175,6 +182,7 @@ body {
 
 .live-amount {
     position: relative;
+
     z-index: 2;
 
     font-size:
@@ -195,6 +203,7 @@ body {
 
 .live-sub {
     position: relative;
+
     z-index: 2;
 
     margin-top: 8px;
@@ -213,6 +222,7 @@ body {
     display: inline-flex;
 
     align-items: center;
+
     justify-content: center;
 
     margin-top: 15px;
@@ -250,7 +260,7 @@ body {
 
 
 /* =========================================================
-   SECTION TITLES
+   SECTION TITLE
 ========================================================= */
 
 .section-title {
@@ -296,8 +306,7 @@ body {
 
     border-radius: 13px;
 
-    padding:
-        14px;
+    padding: 14px;
 
     min-height: 72px;
 
@@ -367,7 +376,7 @@ body {
 
 
 /* =========================================================
-   FORMS
+   FORM LAYOUT
 ========================================================= */
 
 .forms {
@@ -453,23 +462,11 @@ input::placeholder {
 ========================================================= */
 
 button {
-    width: 100%;
-
     border: none;
 
     cursor: pointer;
 
-    padding:
-        11px
-        15px;
-
-    border-radius: 10px;
-
-    font-weight: 750;
-
-    font-size: 13px;
-
-    margin-top: 10px;
+    font-family: inherit;
 
     transition:
         transform .18s ease,
@@ -491,6 +488,8 @@ button:active {
 
 
 .btn-green {
+    width: 100%;
+
     background:
         linear-gradient(
             135deg,
@@ -500,6 +499,18 @@ button:active {
 
     color: white;
 
+    padding:
+        11px
+        15px;
+
+    border-radius: 10px;
+
+    font-weight: 750;
+
+    font-size: 13px;
+
+    margin-top: 10px;
+
     box-shadow:
         0 5px 15px
         rgba(34,197,94,.20);
@@ -507,6 +518,8 @@ button:active {
 
 
 .btn-blue {
+    width: 100%;
+
     background:
         linear-gradient(
             135deg,
@@ -515,6 +528,18 @@ button:active {
         );
 
     color: white;
+
+    padding:
+        11px
+        15px;
+
+    border-radius: 10px;
+
+    font-weight: 750;
+
+    font-size: 13px;
+
+    margin-top: 10px;
 
     box-shadow:
         0 5px 15px
@@ -531,11 +556,21 @@ button:active {
 
     border:
         1px solid #fecdd3;
+
+    border-radius: 10px;
+
+    padding:
+        9px
+        14px;
+
+    font-size: 11px;
+
+    font-weight: 700;
 }
 
 
 /* =========================================================
-   FORM DESCRIPTION
+   FORM NOTE
 ========================================================= */
 
 .form-note {
@@ -582,7 +617,6 @@ table {
 th,
 td {
     padding:
-        11px
         10px;
 
     border-bottom:
@@ -591,6 +625,8 @@ td {
     text-align: left;
 
     font-size: 12px;
+
+    white-space: nowrap;
 }
 
 
@@ -624,24 +660,67 @@ tr:last-child td {
 
 
 /* =========================================================
-   RESET
+   ACTION BUTTONS
+========================================================= */
+
+.action-buttons {
+    display: flex;
+
+    align-items: center;
+
+    gap: 6px;
+}
+
+
+.action-btn {
+    width: 32px;
+    height: 32px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 8px;
+
+    font-size: 15px;
+
+    padding: 0;
+
+    background: #f8fafc;
+
+    border:
+        1px solid #e2e8f0;
+}
+
+
+.edit-btn {
+    background:
+        #eff6ff;
+
+    border-color:
+        #bfdbfe;
+}
+
+
+.delete-btn {
+    background:
+        #fff1f2;
+
+    border-color:
+        #fecdd3;
+}
+
+
+/* =========================================================
+   RESET AREA
 ========================================================= */
 
 .reset-area {
     text-align: right;
 
     margin-top: 2px;
-}
-
-
-.reset-area button {
-    width: auto;
-
-    padding:
-        9px
-        14px;
-
-    font-size: 11px;
 }
 
 
@@ -659,6 +738,126 @@ footer {
     line-height: 1.5;
 
     margin-top: 18px;
+}
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.modal-overlay {
+    position: fixed;
+
+    inset: 0;
+
+    background:
+        rgba(15,23,42,0.45);
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    z-index: 9999;
+
+    backdrop-filter:
+        blur(5px);
+}
+
+
+.modal-overlay.show {
+    display: flex;
+}
+
+
+.modal {
+    width: min(400px, 100%);
+
+    background:
+        #ffffff;
+
+    border-radius: 18px;
+
+    padding: 22px;
+
+    box-shadow:
+        0 25px 70px
+        rgba(15,23,42,.25);
+
+    animation:
+        modalIn .18s ease;
+}
+
+
+@keyframes modalIn {
+
+    from {
+        opacity: 0;
+        transform:
+            translateY(10px)
+            scale(.98);
+    }
+
+    to {
+        opacity: 1;
+        transform:
+            translateY(0)
+            scale(1);
+    }
+
+}
+
+
+.modal h3 {
+    font-size: 19px;
+
+    color: #172033;
+
+    margin-bottom: 17px;
+}
+
+
+.modal-actions {
+    display: flex;
+
+    gap: 9px;
+
+    margin-top: 15px;
+}
+
+
+.modal-actions button {
+    flex: 1;
+
+    padding:
+        11px;
+
+    border-radius: 10px;
+
+    font-weight: 700;
+}
+
+
+.cancel-btn {
+    background:
+        #f1f5f9;
+
+    color:
+        #475467;
+
+    border:
+        1px solid #e2e8f0;
+}
+
+
+.save-btn {
+    background:
+        #2563eb;
+
+    color: white;
 }
 
 
@@ -715,11 +914,6 @@ footer {
         gap: 12px;
     }
 
-
-    .form-card {
-        margin-bottom: 0;
-    }
-
 }
 
 
@@ -737,6 +931,7 @@ footer {
 }
 
 </style>
+
 </head>
 
 
@@ -795,8 +990,6 @@ footer {
         <div class="summary-grid">
 
 
-            <!-- 1 -->
-
             <div class="summary-box">
 
                 <small>
@@ -812,8 +1005,6 @@ footer {
 
             </div>
 
-
-            <!-- 2 -->
 
             <div class="summary-box">
 
@@ -831,8 +1022,6 @@ footer {
             </div>
 
 
-            <!-- 3 -->
-
             <div class="summary-box">
 
                 <small>
@@ -848,8 +1037,6 @@ footer {
 
             </div>
 
-
-            <!-- 4 -->
 
             <div class="summary-box">
 
@@ -867,25 +1054,21 @@ footer {
             </div>
 
 
-            <!-- 5 -->
-
             <div class="summary-box">
 
                 <small>
-                    Overtime Hours
+                    Overtime Entries
                 </small>
 
                 <strong
                     class="yellow"
                     id="summaryOTHours"
                 >
-                    0.00 hrs
+                    0
                 </strong>
 
             </div>
 
-
-            <!-- 6 -->
 
             <div class="summary-box">
 
@@ -922,16 +1105,16 @@ footer {
                 ⏱️ Add Overtime
             </h2>
 
-            <label for="overtimeHours">
-                Overtime Hours
+            <label for="overtimeAmount">
+                Overtime Amount (₹)
             </label>
 
             <input
-                id="overtimeHours"
+                id="overtimeAmount"
                 type="number"
                 min="0"
                 step="0.01"
-                placeholder="Example: 2.5"
+                placeholder="Example: 150"
             >
 
             <button
@@ -942,7 +1125,7 @@ footer {
             </button>
 
             <p class="form-note">
-                ₹50/hour will automatically be added.
+                Enter the overtime amount directly.
             </p>
 
         </div>
@@ -957,7 +1140,7 @@ footer {
             </h2>
 
             <label for="advanceAmount">
-                Advance Amount
+                Advance Amount (₹)
             </label>
 
             <input
@@ -1017,15 +1200,11 @@ footer {
                         </th>
 
                         <th>
-                            Hours
+                            Overtime Amount
                         </th>
 
                         <th>
-                            Rate
-                        </th>
-
-                        <th>
-                            Earned
+                            Actions
                         </th>
 
                     </tr>
@@ -1079,6 +1258,10 @@ footer {
                             Advance
                         </th>
 
+                        <th>
+                            Actions
+                        </th>
+
                     </tr>
 
                 </thead>
@@ -1115,10 +1298,65 @@ footer {
 
         Data is stored locally on this device.
         <br>
+
         Refreshing or closing the page will not delete your data.
 
     </footer>
 
+
+</div>
+
+
+
+<!-- =====================================================
+     EDIT MODAL
+====================================================== -->
+
+<div
+    class="modal-overlay"
+    id="editModal"
+>
+
+    <div class="modal">
+
+        <h3 id="modalTitle">
+            Edit Entry
+        </h3>
+
+
+        <label id="modalLabel">
+            Amount (₹)
+        </label>
+
+
+        <input
+            id="editAmount"
+            type="number"
+            min="0"
+            step="0.01"
+        >
+
+
+        <div class="modal-actions">
+
+            <button
+                class="cancel-btn"
+                onclick="closeEditModal()"
+            >
+                Cancel
+            </button>
+
+
+            <button
+                class="save-btn"
+                onclick="saveEditedEntry()"
+            >
+                Save Changes
+            </button>
+
+        </div>
+
+    </div>
 
 </div>
 
@@ -1153,6 +1391,15 @@ let data = {
     advances: []
 
 };
+
+
+/* =========================================================
+   EDIT STATE
+========================================================= */
+
+let editingType = null;
+
+let editingId = null;
 
 
 /* =========================================================
@@ -1320,7 +1567,10 @@ function getDailyEarning(date) {
         );
 
 
-    /* Previous day */
+    /*
+        Previous days:
+        Full ₹600
+    */
 
     if (
         dateOnly < todayOnly
@@ -1331,7 +1581,10 @@ function getDailyEarning(date) {
     }
 
 
-    /* Future day */
+    /*
+        Future days:
+        ₹0
+    */
 
     if (
         dateOnly > todayOnly
@@ -1342,7 +1595,9 @@ function getDailyEarning(date) {
     }
 
 
-    /* Today */
+    /*
+        Today
+    */
 
     const start =
         new Date(
@@ -1368,14 +1623,18 @@ function getDailyEarning(date) {
         );
 
 
-    if (now <= start) {
+    if (
+        now <= start
+    ) {
 
         return 0;
 
     }
 
 
-    if (now >= end) {
+    if (
+        now >= end
+    ) {
 
         return DAILY_SALARY;
 
@@ -1392,7 +1651,9 @@ function getDailyEarning(date) {
 
 
     return Math.min(
-        elapsedHours * HOURLY_RATE,
+        elapsedHours *
+        HOURLY_RATE,
+
         DAILY_SALARY
     );
 
@@ -1400,7 +1661,7 @@ function getDailyEarning(date) {
 
 
 /* =========================================================
-   MONTH SALARY
+   MONTH NORMAL SALARY
 ========================================================= */
 
 function getNormalMonthSalary() {
@@ -1463,12 +1724,45 @@ function getOvertimeTotal() {
             item
         ) => {
 
-            return (
-                total +
-                Number(
-                    item.amount || 0
-                )
-            );
+            /*
+                New entries use amount directly.
+
+                Old entries from the previous
+                version are also supported.
+            */
+
+            if (
+                item.amount !== undefined
+            ) {
+
+                return (
+                    total +
+                    Number(
+                        item.amount || 0
+                    )
+                );
+
+            }
+
+
+            if (
+                item.hours !== undefined
+            ) {
+
+                return (
+                    total +
+                    (
+                        Number(
+                            item.hours || 0
+                        ) *
+                        HOURLY_RATE
+                    )
+                );
+
+            }
+
+
+            return total;
 
         },
         0
@@ -1478,27 +1772,12 @@ function getOvertimeTotal() {
 
 
 /* =========================================================
-   OVERTIME HOURS
+   OVERTIME ENTRIES
 ========================================================= */
 
-function getOvertimeHours() {
+function getOvertimeEntries() {
 
-    return data.overtime.reduce(
-        (
-            total,
-            item
-        ) => {
-
-            return (
-                total +
-                Number(
-                    item.hours || 0
-                )
-            );
-
-        },
-        0
-    );
+    return data.overtime.length;
 
 }
 
@@ -1537,33 +1816,28 @@ function addOvertime() {
 
     const input =
         document.getElementById(
-            "overtimeHours"
+            "overtimeAmount"
         );
 
 
-    const hours =
+    const amount =
         parseFloat(
             input.value
         );
 
 
     if (
-        isNaN(hours) ||
-        hours <= 0
+        isNaN(amount) ||
+        amount <= 0
     ) {
 
         alert(
-            "Please enter a valid overtime hour."
+            "Please enter a valid overtime amount."
         );
 
         return;
 
     }
-
-
-    const amount =
-        hours *
-        HOURLY_RATE;
 
 
     data.overtime.push({
@@ -1572,11 +1846,6 @@ function addOvertime() {
 
         timestamp:
             new Date().toISOString(),
-
-        hours: hours,
-
-        rate:
-            HOURLY_RATE,
 
         amount:
             amount
@@ -1784,9 +2053,7 @@ function renderSummary() {
     document.getElementById(
         "summaryOTHours"
     ).textContent =
-        getOvertimeHours()
-            .toFixed(2) +
-        " hrs";
+        getOvertimeEntries();
 
 
     document.getElementById(
@@ -1820,14 +2087,18 @@ function renderOvertimeHistory() {
     ) {
 
         tbody.innerHTML = `
+
             <tr>
+
                 <td
-                    colspan="5"
+                    colspan="4"
                     class="empty"
                 >
                     No overtime added yet.
                 </td>
+
             </tr>
+
         `;
 
         return;
@@ -1858,6 +2129,23 @@ function renderOvertimeHistory() {
                     );
 
 
+                /*
+                    Support old entries.
+                */
+
+                const amount =
+                    item.amount !== undefined
+
+                        ? Number(
+                            item.amount
+                        )
+
+                        : Number(
+                            item.hours || 0
+                        ) *
+                        HOURLY_RATE;
+
+
                 return `
 
                     <tr>
@@ -1870,22 +2158,49 @@ function renderOvertimeHistory() {
                             ${formatTime(date)}
                         </td>
 
-                        <td>
-                            ${Number(
-                                item.hours
-                            ).toFixed(2)} hrs
-                        </td>
-
-                        <td>
-                            ${money(
-                                item.rate
-                            )}/hr
-                        </td>
-
                         <td class="green">
-                            ${money(
-                                item.amount
-                            )}
+                            +${money(amount)}
+                        </td>
+
+                        <td>
+
+                            <div
+                                class="action-buttons"
+                            >
+
+                                <button
+                                    class="
+                                        action-btn
+                                        edit-btn
+                                    "
+                                    title="Edit"
+                                    onclick="
+                                        editOvertime(
+                                            ${item.id}
+                                        )
+                                    "
+                                >
+                                    ✏️
+                                </button>
+
+
+                                <button
+                                    class="
+                                        action-btn
+                                        delete-btn
+                                    "
+                                    title="Delete"
+                                    onclick="
+                                        deleteOvertime(
+                                            ${item.id}
+                                        )
+                                    "
+                                >
+                                    🗑️
+                                </button>
+
+                            </div>
+
                         </td>
 
                     </tr>
@@ -1915,14 +2230,18 @@ function renderAdvanceHistory() {
     ) {
 
         tbody.innerHTML = `
+
             <tr>
+
                 <td
-                    colspan="3"
+                    colspan="4"
                     class="empty"
                 >
                     No advance added yet.
                 </td>
+
             </tr>
+
         `;
 
         return;
@@ -1971,6 +2290,47 @@ function renderAdvanceHistory() {
                             )}
                         </td>
 
+                        <td>
+
+                            <div
+                                class="action-buttons"
+                            >
+
+                                <button
+                                    class="
+                                        action-btn
+                                        edit-btn
+                                    "
+                                    title="Edit"
+                                    onclick="
+                                        editAdvance(
+                                            ${item.id}
+                                        )
+                                    "
+                                >
+                                    ✏️
+                                </button>
+
+
+                                <button
+                                    class="
+                                        action-btn
+                                        delete-btn
+                                    "
+                                    title="Delete"
+                                    onclick="
+                                        deleteAdvance(
+                                            ${item.id}
+                                        )
+                                    "
+                                >
+                                    🗑️
+                                </button>
+
+                            </div>
+
+                        </td>
+
                     </tr>
 
                 `;
@@ -1982,31 +2342,397 @@ function renderAdvanceHistory() {
 
 
 /* =========================================================
-   RENDER ALL
+   EDIT OVERTIME
 ========================================================= */
 
-function renderAll() {
+function editOvertime(id) {
 
-    updateLiveEarning();
+    const item =
+        data.overtime.find(
+            entry =>
+                entry.id === id
+        );
 
-    renderSummary();
 
-    renderOvertimeHistory();
+    if (!item) {
 
-    renderAdvanceHistory();
+        return;
+
+    }
+
+
+    editingType =
+        "overtime";
+
+
+    editingId =
+        id;
+
+
+    const amount =
+        item.amount !== undefined
+
+            ? Number(item.amount)
+
+            : Number(item.hours || 0) *
+              HOURLY_RATE;
+
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
+        "Edit Overtime";
+
+
+    document.getElementById(
+        "modalLabel"
+    ).textContent =
+        "Overtime Amount (₹)";
+
+
+    document.getElementById(
+        "editAmount"
+    ).value =
+        amount;
+
+
+    document.getElementById(
+        "editModal"
+    ).classList.add(
+        "show"
+    );
+
+
+    setTimeout(
+        () => {
+
+            document.getElementById(
+                "editAmount"
+            ).focus();
+
+        },
+        100
+    );
 
 }
 
 
 /* =========================================================
-   RESET
+   EDIT ADVANCE
+========================================================= */
+
+function editAdvance(id) {
+
+    const item =
+        data.advances.find(
+            entry =>
+                entry.id === id
+        );
+
+
+    if (!item) {
+
+        return;
+
+    }
+
+
+    editingType =
+        "advance";
+
+
+    editingId =
+        id;
+
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
+        "Edit Advance";
+
+
+    document.getElementById(
+        "modalLabel"
+    ).textContent =
+        "Advance Amount (₹)";
+
+
+    document.getElementById(
+        "editAmount"
+    ).value =
+        Number(
+            item.amount
+        );
+
+
+    document.getElementById(
+        "editModal"
+    ).classList.add(
+        "show"
+    );
+
+
+    setTimeout(
+        () => {
+
+            document.getElementById(
+                "editAmount"
+            ).focus();
+
+        },
+        100
+    );
+
+}
+
+
+/* =========================================================
+   SAVE EDITED ENTRY
+========================================================= */
+
+function saveEditedEntry() {
+
+    const input =
+        document.getElementById(
+            "editAmount"
+        );
+
+
+    const amount =
+        parseFloat(
+            input.value
+        );
+
+
+    if (
+        isNaN(amount) ||
+        amount <= 0
+    ) {
+
+        alert(
+            "Please enter a valid amount."
+        );
+
+        return;
+
+    }
+
+
+    if (
+        editingType ===
+        "overtime"
+    ) {
+
+        const item =
+            data.overtime.find(
+                entry =>
+                    entry.id ===
+                    editingId
+            );
+
+
+        if (item) {
+
+            item.amount =
+                amount;
+
+
+            /*
+                Remove old hours/rate fields
+                so the entry becomes fully
+                compatible with the new system.
+            */
+
+            delete item.hours;
+
+            delete item.rate;
+
+        }
+
+    }
+
+
+    else if (
+        editingType ===
+        "advance"
+    ) {
+
+        const item =
+            data.advances.find(
+                entry =>
+                    entry.id ===
+                    editingId
+            );
+
+
+        if (item) {
+
+            item.amount =
+                amount;
+
+        }
+
+    }
+
+
+    saveData();
+
+
+    closeEditModal();
+
+
+    renderAll();
+
+}
+
+
+/* =========================================================
+   CLOSE EDIT MODAL
+========================================================= */
+
+function closeEditModal() {
+
+    document.getElementById(
+        "editModal"
+    ).classList.remove(
+        "show"
+    );
+
+
+    editingType =
+        null;
+
+
+    editingId =
+        null;
+
+
+    document.getElementById(
+        "editAmount"
+    ).value =
+        "";
+
+}
+
+
+/* =========================================================
+   DELETE OVERTIME
+========================================================= */
+
+function deleteOvertime(id) {
+
+    const item =
+        data.overtime.find(
+            entry =>
+                entry.id === id
+        );
+
+
+    if (!item) {
+
+        return;
+
+    }
+
+
+    const amount =
+        item.amount !== undefined
+
+            ? Number(item.amount)
+
+            : Number(item.hours || 0) *
+              HOURLY_RATE;
+
+
+    const confirmation =
+        confirm(
+            "Delete this overtime entry of " +
+            money(amount) +
+            "?"
+        );
+
+
+    if (!confirmation) {
+
+        return;
+
+    }
+
+
+    data.overtime =
+        data.overtime.filter(
+            entry =>
+                entry.id !== id
+        );
+
+
+    saveData();
+
+
+    renderAll();
+
+}
+
+
+/* =========================================================
+   DELETE ADVANCE
+========================================================= */
+
+function deleteAdvance(id) {
+
+    const item =
+        data.advances.find(
+            entry =>
+                entry.id === id
+        );
+
+
+    if (!item) {
+
+        return;
+
+    }
+
+
+    const confirmation =
+        confirm(
+            "Delete this advance of " +
+            money(item.amount) +
+            "?"
+        );
+
+
+    if (!confirmation) {
+
+        return;
+
+    }
+
+
+    data.advances =
+        data.advances.filter(
+            entry =>
+                entry.id !== id
+        );
+
+
+    saveData();
+
+
+    renderAll();
+
+}
+
+
+/* =========================================================
+   RESET EVERYTHING
 ========================================================= */
 
 function resetAllData() {
 
     const confirmation =
         confirm(
-            "Delete all overtime and advance history?"
+            "Delete ALL overtime and advance history? This cannot be undone."
         );
 
 
@@ -2037,7 +2763,71 @@ function resetAllData() {
 
 
 /* =========================================================
-   START
+   CLOSE MODAL BY CLICKING OUTSIDE
+========================================================= */
+
+document.getElementById(
+    "editModal"
+).addEventListener(
+    "click",
+    function(event) {
+
+        if (
+            event.target === this
+        ) {
+
+            closeEditModal();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   ESC KEY CLOSE MODAL
+========================================================= */
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            event.key === "Escape"
+        ) {
+
+            closeEditModal();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   ENTER KEY IN MODAL
+========================================================= */
+
+document.getElementById(
+    "editAmount"
+).addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            event.key === "Enter"
+        ) {
+
+            saveEditedEntry();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   INITIALIZE
 ========================================================= */
 
 loadData();
@@ -2046,7 +2836,7 @@ renderAll();
 
 
 /* =========================================================
-   LIVE UPDATE
+   LIVE UPDATE EVERY SECOND
 ========================================================= */
 
 setInterval(
@@ -2062,7 +2852,7 @@ setInterval(
 
 
 /* =========================================================
-   TAB RETURN
+   REFRESH WHEN TAB BECOMES ACTIVE
 ========================================================= */
 
 document.addEventListener(
