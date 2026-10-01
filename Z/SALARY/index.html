@@ -1,0 +1,1659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>My Salary Tracker</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        background: #0f1117;
+        color: #f5f5f5;
+        min-height: 100vh;
+    }
+
+    .container {
+        width: min(1100px, 94%);
+        margin: auto;
+        padding: 25px 0 50px;
+    }
+
+    header {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+    header h1 {
+        font-size: 30px;
+        margin-bottom: 8px;
+    }
+
+    header p {
+        color: #9ca3af;
+        font-size: 14px;
+    }
+
+    .status {
+        display: inline-block;
+        margin-top: 12px;
+        padding: 7px 14px;
+        border-radius: 20px;
+        background: #1f2937;
+        color: #9ca3af;
+        font-size: 13px;
+    }
+
+    .status.active {
+        background: #064e3b;
+        color: #6ee7b7;
+    }
+
+    .status.closed {
+        background: #3f1d1d;
+        color: #fca5a5;
+    }
+
+    .cards {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .card {
+        background: #181b23;
+        border: 1px solid #262b36;
+        border-radius: 16px;
+        padding: 22px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.18);
+    }
+
+    .card-title {
+        color: #9ca3af;
+        font-size: 13px;
+        margin-bottom: 10px;
+    }
+
+    .amount {
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .green {
+        color: #4ade80;
+    }
+
+    .red {
+        color: #f87171;
+    }
+
+    .yellow {
+        color: #facc15;
+    }
+
+    .blue {
+        color: #60a5fa;
+    }
+
+    .main-card {
+        background: #181b23;
+        border: 1px solid #262b36;
+        border-radius: 18px;
+        padding: 25px;
+        margin-bottom: 20px;
+    }
+
+    .main-card h2 {
+        font-size: 20px;
+        margin-bottom: 18px;
+    }
+
+    .live-box {
+        text-align: center;
+        padding: 30px 15px;
+        background: linear-gradient(
+            135deg,
+            #151a20,
+            #111827
+        );
+        border-radius: 15px;
+        border: 1px solid #263040;
+    }
+
+    .live-label {
+        color: #9ca3af;
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    .live-amount {
+        font-size: 45px;
+        font-weight: bold;
+        color: #4ade80;
+        letter-spacing: 1px;
+    }
+
+    .live-sub {
+        margin-top: 8px;
+        color: #9ca3af;
+        font-size: 13px;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-top: 20px;
+    }
+
+    .info-item {
+        background: #11141a;
+        padding: 15px;
+        border-radius: 12px;
+    }
+
+    .info-item span {
+        display: block;
+    }
+
+    .info-label {
+        color: #9ca3af;
+        font-size: 12px;
+        margin-bottom: 6px;
+    }
+
+    .info-value {
+        font-size: 17px;
+        font-weight: bold;
+    }
+
+    .forms {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        color: #9ca3af;
+        font-size: 13px;
+        margin-bottom: 7px;
+    }
+
+    input {
+        width: 100%;
+        padding: 13px;
+        border-radius: 10px;
+        border: 1px solid #303642;
+        background: #101319;
+        color: white;
+        outline: none;
+        font-size: 15px;
+    }
+
+    input:focus {
+        border-color: #60a5fa;
+    }
+
+    button {
+        border: none;
+        cursor: pointer;
+        padding: 12px 18px;
+        border-radius: 10px;
+        font-weight: bold;
+        margin-top: 12px;
+        transition: 0.2s;
+    }
+
+    button:hover {
+        transform: translateY(-1px);
+        opacity: 0.9;
+    }
+
+    .btn-green {
+        background: #22c55e;
+        color: #06130a;
+    }
+
+    .btn-blue {
+        background: #3b82f6;
+        color: white;
+    }
+
+    .btn-red {
+        background: #ef4444;
+        color: white;
+    }
+
+    .history-section {
+        margin-top: 20px;
+    }
+
+    .history-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .history-header h2 {
+        font-size: 20px;
+    }
+
+    .history {
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 600px;
+    }
+
+    th, td {
+        padding: 13px 10px;
+        border-bottom: 1px solid #282d38;
+        text-align: left;
+        font-size: 13px;
+    }
+
+    th {
+        color: #9ca3af;
+        font-weight: normal;
+    }
+
+    td {
+        color: #e5e7eb;
+    }
+
+    .empty {
+        text-align: center;
+        padding: 25px;
+        color: #6b7280;
+    }
+
+    .summary {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    .summary-box {
+        background: #11141a;
+        border-radius: 12px;
+        padding: 18px;
+    }
+
+    .summary-box small {
+        color: #9ca3af;
+        display: block;
+        margin-bottom: 8px;
+    }
+
+    footer {
+        text-align: center;
+        color: #6b7280;
+        font-size: 12px;
+        margin-top: 25px;
+    }
+
+    .danger-zone {
+        margin-top: 20px;
+        text-align: right;
+    }
+
+    @media (max-width: 800px) {
+        .cards,
+        .forms,
+        .summary {
+            grid-template-columns: 1fr;
+        }
+
+        .info-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .live-amount {
+            font-size: 36px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .container {
+            width: 92%;
+        }
+
+        header h1 {
+            font-size: 25px;
+        }
+
+        .info-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .card {
+            padding: 18px;
+        }
+
+        .amount {
+            font-size: 24px;
+        }
+
+        .live-amount {
+            font-size: 32px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <header>
+        <h1>💰 My Salary Tracker</h1>
+        <p>Live salary calculation • ₹50/hour • ₹600/day</p>
+
+        <div id="dutyStatus" class="status">
+            Checking duty status...
+        </div>
+    </header>
+
+
+    <!-- TOP CARDS -->
+
+    <div class="cards">
+
+        <div class="card">
+            <div class="card-title">Today's Normal Earning</div>
+            <div class="amount green" id="todayEarning">
+                ₹0.00
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Overtime Added</div>
+            <div class="amount yellow" id="overtimeTotal">
+                ₹0.00
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Advance Deducted</div>
+            <div class="amount red" id="advanceTotal">
+                ₹0.00
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- LIVE CALCULATOR -->
+
+    <div class="main-card">
+
+        <h2>⚡ Live Earning</h2>
+
+        <div class="live-box">
+
+            <div class="live-label">
+                Today's earning so far
+            </div>
+
+            <div class="live-amount" id="liveEarning">
+                ₹0.00
+            </div>
+
+            <div class="live-sub">
+                Updates every second
+            </div>
+
+        </div>
+
+
+        <div class="info-grid">
+
+            <div class="info-item">
+                <span class="info-label">Today's Date</span>
+                <span class="info-value" id="currentDate">
+                    --
+                </span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">Current Time</span>
+                <span class="info-value" id="currentTime">
+                    --
+                </span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">Duty Time</span>
+                <span class="info-value">
+                    7 AM - 7 PM
+                </span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">Hourly Rate</span>
+                <span class="info-value">
+                    ₹50.00
+                </span>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- TOTAL BALANCE -->
+
+    <div class="main-card">
+
+        <h2>📊 Salary Summary</h2>
+
+        <div class="cards" style="margin-bottom:0;">
+
+            <div class="card">
+                <div class="card-title">
+                    Normal Salary Earned
+                </div>
+
+                <div class="amount blue" id="normalSalary">
+                    ₹0.00
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">
+                    Total Overtime
+                </div>
+
+                <div class="amount yellow" id="totalOvertime">
+                    ₹0.00
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">
+                    Total Salary Balance
+                </div>
+
+                <div class="amount green" id="totalBalance">
+                    ₹0.00
+                </div>
+            </div>
+
+        </div>
+
+        <div class="summary">
+
+            <div class="summary-box">
+                <small>Total Advance</small>
+                <strong class="red" id="summaryAdvance">
+                    ₹0.00
+                </strong>
+            </div>
+
+            <div class="summary-box">
+                <small>Total Overtime Hours</small>
+                <strong class="yellow" id="summaryOTHours">
+                    0.00 hrs
+                </strong>
+            </div>
+
+            <div class="summary-box">
+                <small>Month</small>
+                <strong id="monthName">
+                    --
+                </strong>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ADD DATA -->
+
+    <div class="forms">
+
+        <!-- OVERTIME -->
+
+        <div class="main-card">
+
+            <h2>⏱️ Add Overtime</h2>
+
+            <label for="overtimeHours">
+                Overtime Hours
+            </label>
+
+            <input
+                id="overtimeHours"
+                type="number"
+                min="0"
+                step="0.01"
+                placeholder="Example: 2.5"
+            >
+
+            <button
+                class="btn-green"
+                onclick="addOvertime()"
+            >
+                Add Overtime
+            </button>
+
+            <p style="margin-top:12px;color:#6b7280;font-size:12px;">
+                ₹50/hour automatically added to salary.
+            </p>
+
+        </div>
+
+
+        <!-- ADVANCE -->
+
+        <div class="main-card">
+
+            <h2>💸 Add Advance</h2>
+
+            <label for="advanceAmount">
+                Advance Amount (₹)
+            </label>
+
+            <input
+                id="advanceAmount"
+                type="number"
+                min="0"
+                step="0.01"
+                placeholder="Example: 1000"
+            >
+
+            <button
+                class="btn-blue"
+                onclick="addAdvance()"
+            >
+                Add Advance
+            </button>
+
+            <p style="margin-top:12px;color:#6b7280;font-size:12px;">
+                Advance will automatically be deducted from total balance.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- OVERTIME HISTORY -->
+
+    <div class="main-card history-section">
+
+        <div class="history-header">
+            <h2>⏱️ Overtime History</h2>
+        </div>
+
+        <div class="history">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Hours</th>
+                        <th>Rate</th>
+                        <th>Earned</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="overtimeHistory">
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- ADVANCE HISTORY -->
+
+    <div class="main-card history-section">
+
+        <div class="history-header">
+            <h2>💸 Advance History</h2>
+        </div>
+
+        <div class="history">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Advance</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="advanceHistory">
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- RESET -->
+
+    <div class="danger-zone">
+
+        <button
+            class="btn-red"
+            onclick="resetAllData()"
+        >
+            Reset All Data
+        </button>
+
+    </div>
+
+
+    <footer>
+        Data is stored locally on this device using browser localStorage.
+        <br>
+        Salary calculations run automatically while this page is open.
+    </footer>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   SALARY SETTINGS
+========================================================= */
+
+const HOURLY_RATE = 50;
+
+const DAILY_SALARY = 600;
+
+const DUTY_START_HOUR = 7;
+
+const DUTY_END_HOUR = 19;
+
+
+/* =========================================================
+   STORAGE KEYS
+========================================================= */
+
+const STORAGE_KEY = "salaryTrackerData_v1";
+
+
+/* =========================================================
+   DATA
+========================================================= */
+
+let data = {
+    overtime: [],
+    advances: []
+};
+
+
+/* =========================================================
+   LOAD DATA
+========================================================= */
+
+function loadData() {
+
+    try {
+
+        const saved =
+            localStorage.getItem(STORAGE_KEY);
+
+        if (saved) {
+
+            const parsed =
+                JSON.parse(saved);
+
+            if (parsed && typeof parsed === "object") {
+
+                data.overtime =
+                    Array.isArray(parsed.overtime)
+                        ? parsed.overtime
+                        : [];
+
+                data.advances =
+                    Array.isArray(parsed.advances)
+                        ? parsed.advances
+                        : [];
+            }
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Could not load saved data:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   SAVE DATA
+========================================================= */
+
+function saveData() {
+
+    try {
+
+        localStorage.setItem(
+            STORAGE_KEY,
+            JSON.stringify(data)
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Could not save data:",
+            error
+        );
+
+        alert(
+            "Your browser blocked local storage. Data may not persist."
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   FORMAT MONEY
+========================================================= */
+
+function money(value) {
+
+    return "₹" +
+        Number(value || 0).toFixed(2);
+
+}
+
+
+/* =========================================================
+   FORMAT DATE
+========================================================= */
+
+function formatDate(date) {
+
+    return date.toLocaleDateString(
+        "en-IN",
+        {
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
+        }
+    );
+
+}
+
+
+/* =========================================================
+   FORMAT TIME
+========================================================= */
+
+function formatTime(date) {
+
+    return date.toLocaleTimeString(
+        "en-IN",
+        {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit"
+        }
+    );
+
+}
+
+
+/* =========================================================
+   GET MONTH KEY
+========================================================= */
+
+function getMonthKey(date) {
+
+    return (
+        date.getFullYear() +
+        "-" +
+        String(
+            date.getMonth() + 1
+        ).padStart(2, "0")
+    );
+
+}
+
+
+/* =========================================================
+   GET NORMAL SALARY FOR A SPECIFIC DAY
+========================================================= */
+
+function getDailyEarning(date) {
+
+    const now = new Date();
+
+    /*
+        If the date is before today,
+        full daily salary = ₹600.
+    */
+
+    const dateOnly =
+        new Date(
+            date.getFullYear(),
+            date.getMonth(),
+            date.getDate()
+        );
+
+    const todayOnly =
+        new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            now.getDate()
+        );
+
+
+    if (dateOnly < todayOnly) {
+
+        return DAILY_SALARY;
+
+    }
+
+
+    /*
+        Future date = ₹0.
+    */
+
+    if (dateOnly > todayOnly) {
+
+        return 0;
+
+    }
+
+
+    /*
+        Today:
+        calculate between 7 AM and 7 PM.
+    */
+
+    const start =
+        new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            now.getDate(),
+            DUTY_START_HOUR,
+            0,
+            0,
+            0
+        );
+
+    const end =
+        new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            now.getDate(),
+            DUTY_END_HOUR,
+            0,
+            0,
+            0
+        );
+
+
+    if (now <= start) {
+
+        return 0;
+
+    }
+
+
+    if (now >= end) {
+
+        return DAILY_SALARY;
+
+    }
+
+
+    const elapsedMs =
+        now.getTime() -
+        start.getTime();
+
+
+    const elapsedHours =
+        elapsedMs / 3600000;
+
+
+    return Math.min(
+        elapsedHours * HOURLY_RATE,
+        DAILY_SALARY
+    );
+
+}
+
+
+/* =========================================================
+   GET NORMAL MONTH SALARY
+========================================================= */
+
+function getNormalMonthSalary() {
+
+    const now = new Date();
+
+    const year =
+        now.getFullYear();
+
+    const month =
+        now.getMonth();
+
+    /*
+        The salary cycle is 1st to last day of month.
+    */
+
+    const daysInMonth =
+        new Date(
+            year,
+            month + 1,
+            0
+        ).getDate();
+
+
+    let total = 0;
+
+
+    for (
+        let day = 1;
+        day <= daysInMonth;
+        day++
+    ) {
+
+        const date =
+            new Date(
+                year,
+                month,
+                day
+            );
+
+        total +=
+            getDailyEarning(date);
+
+    }
+
+
+    return total;
+
+}
+
+
+/* =========================================================
+   OVERTIME TOTAL
+========================================================= */
+
+function getOvertimeTotal() {
+
+    return data.overtime.reduce(
+        (sum, item) =>
+            sum + Number(item.amount || 0),
+        0
+    );
+
+}
+
+
+/* =========================================================
+   OVERTIME HOURS
+========================================================= */
+
+function getOvertimeHours() {
+
+    return data.overtime.reduce(
+        (sum, item) =>
+            sum + Number(item.hours || 0),
+        0
+    );
+
+}
+
+
+/* =========================================================
+   ADVANCE TOTAL
+========================================================= */
+
+function getAdvanceTotal() {
+
+    return data.advances.reduce(
+        (sum, item) =>
+            sum + Number(item.amount || 0),
+        0
+    );
+
+}
+
+
+/* =========================================================
+   TODAY OVERTIME
+========================================================= */
+
+function getTodayOvertime() {
+
+    const todayKey =
+        getMonthKey(new Date());
+
+    const todayDate =
+        new Date().toDateString();
+
+
+    return data.overtime
+        .filter(item =>
+            new Date(
+                item.timestamp
+            ).toDateString() === todayDate
+        )
+        .reduce(
+            (sum, item) =>
+                sum + Number(item.amount || 0),
+            0
+        );
+
+}
+
+
+/* =========================================================
+   TODAY ADVANCE
+========================================================= */
+
+function getTodayAdvance() {
+
+    const todayDate =
+        new Date().toDateString();
+
+
+    return data.advances
+        .filter(item =>
+            new Date(
+                item.timestamp
+            ).toDateString() === todayDate
+        )
+        .reduce(
+            (sum, item) =>
+                sum + Number(item.amount || 0),
+            0
+        );
+
+}
+
+
+/* =========================================================
+   ADD OVERTIME
+========================================================= */
+
+function addOvertime() {
+
+    const input =
+        document.getElementById(
+            "overtimeHours"
+        );
+
+    const hours =
+        parseFloat(input.value);
+
+
+    if (
+        isNaN(hours) ||
+        hours <= 0
+    ) {
+
+        alert(
+            "Enter a valid overtime hour."
+        );
+
+        return;
+
+    }
+
+
+    const amount =
+        hours * HOURLY_RATE;
+
+
+    data.overtime.push({
+
+        id: Date.now(),
+
+        timestamp:
+            new Date().toISOString(),
+
+        hours: hours,
+
+        rate: HOURLY_RATE,
+
+        amount: amount
+
+    });
+
+
+    saveData();
+
+    input.value = "";
+
+    renderAll();
+
+}
+
+
+/* =========================================================
+   ADD ADVANCE
+========================================================= */
+
+function addAdvance() {
+
+    const input =
+        document.getElementById(
+            "advanceAmount"
+        );
+
+    const amount =
+        parseFloat(input.value);
+
+
+    if (
+        isNaN(amount) ||
+        amount <= 0
+    ) {
+
+        alert(
+            "Enter a valid advance amount."
+        );
+
+        return;
+
+    }
+
+
+    data.advances.push({
+
+        id: Date.now(),
+
+        timestamp:
+            new Date().toISOString(),
+
+        amount: amount
+
+    });
+
+
+    saveData();
+
+    input.value = "";
+
+    renderAll();
+
+}
+
+
+/* =========================================================
+   UPDATE LIVE EARNING
+========================================================= */
+
+function updateLiveEarning() {
+
+    const now =
+        new Date();
+
+
+    const earning =
+        getDailyEarning(now);
+
+
+    document.getElementById(
+        "liveEarning"
+    ).textContent =
+        money(earning);
+
+
+    document.getElementById(
+        "todayEarning"
+    ).textContent =
+        money(earning);
+
+
+    document.getElementById(
+        "currentDate"
+    ).textContent =
+        formatDate(now);
+
+
+    document.getElementById(
+        "currentTime"
+    ).textContent =
+        formatTime(now);
+
+
+    updateDutyStatus();
+
+}
+
+
+/* =========================================================
+   DUTY STATUS
+========================================================= */
+
+function updateDutyStatus() {
+
+    const now =
+        new Date();
+
+    const hour =
+        now.getHours();
+
+    const minute =
+        now.getMinutes();
+
+    const currentMinutes =
+        hour * 60 + minute;
+
+
+    const startMinutes =
+        DUTY_START_HOUR * 60;
+
+    const endMinutes =
+        DUTY_END_HOUR * 60;
+
+
+    const status =
+        document.getElementById(
+            "dutyStatus"
+        );
+
+
+    if (
+        currentMinutes >= startMinutes &&
+        currentMinutes < endMinutes
+    ) {
+
+        status.textContent =
+            "🟢 Duty Active — Earning Live";
+
+        status.className =
+            "status active";
+
+    } else {
+
+        status.textContent =
+            "🔴 Duty Closed — Normal Earning Paused";
+
+        status.className =
+            "status closed";
+
+    }
+
+}
+
+
+/* =========================================================
+   RENDER SUMMARY
+========================================================= */
+
+function renderSummary() {
+
+    const normal =
+        getNormalMonthSalary();
+
+    const overtime =
+        getOvertimeTotal();
+
+    const advance =
+        getAdvanceTotal();
+
+
+    const balance =
+        normal +
+        overtime -
+        advance;
+
+
+    document.getElementById(
+        "normalSalary"
+    ).textContent =
+        money(normal);
+
+
+    document.getElementById(
+        "totalOvertime"
+    ).textContent =
+        money(overtime);
+
+
+    document.getElementById(
+        "advanceTotal"
+    ).textContent =
+        money(advance);
+
+
+    document.getElementById(
+        "overtimeTotal"
+    ).textContent =
+        money(overtime);
+
+
+    document.getElementById(
+        "totalBalance"
+    ).textContent =
+        money(balance);
+
+
+    document.getElementById(
+        "summaryAdvance"
+    ).textContent =
+        money(advance);
+
+
+    document.getElementById(
+        "summaryOTHours"
+    ).textContent =
+        getOvertimeHours()
+            .toFixed(2) +
+        " hrs";
+
+
+    document.getElementById(
+        "monthName"
+    ).textContent =
+        new Date().toLocaleDateString(
+            "en-IN",
+            {
+                month: "long",
+                year: "numeric"
+            }
+        );
+
+}
+
+
+/* =========================================================
+   RENDER OVERTIME HISTORY
+========================================================= */
+
+function renderOvertimeHistory() {
+
+    const tbody =
+        document.getElementById(
+            "overtimeHistory"
+        );
+
+
+    if (
+        data.overtime.length === 0
+    ) {
+
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="5" class="empty">
+                    No overtime added yet.
+                </td>
+            </tr>
+        `;
+
+        return;
+
+    }
+
+
+    const sorted =
+        [...data.overtime]
+        .sort(
+            (a,b) =>
+                new Date(b.timestamp) -
+                new Date(a.timestamp)
+        );
+
+
+    tbody.innerHTML =
+        sorted.map(item => {
+
+            const date =
+                new Date(
+                    item.timestamp
+                );
+
+
+            return `
+                <tr>
+                    <td>${formatDate(date)}</td>
+
+                    <td>${formatTime(date)}</td>
+
+                    <td>
+                        ${Number(item.hours).toFixed(2)} hrs
+                    </td>
+
+                    <td>
+                        ${money(item.rate)}/hr
+                    </td>
+
+                    <td class="green">
+                        ${money(item.amount)}
+                    </td>
+                </tr>
+            `;
+
+        }).join("");
+
+}
+
+
+/* =========================================================
+   RENDER ADVANCE HISTORY
+========================================================= */
+
+function renderAdvanceHistory() {
+
+    const tbody =
+        document.getElementById(
+            "advanceHistory"
+        );
+
+
+    if (
+        data.advances.length === 0
+    ) {
+
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="3" class="empty">
+                    No advance added yet.
+                </td>
+            </tr>
+        `;
+
+        return;
+
+    }
+
+
+    const sorted =
+        [...data.advances]
+        .sort(
+            (a,b) =>
+                new Date(b.timestamp) -
+                new Date(a.timestamp)
+        );
+
+
+    tbody.innerHTML =
+        sorted.map(item => {
+
+            const date =
+                new Date(
+                    item.timestamp
+                );
+
+
+            return `
+                <tr>
+                    <td>${formatDate(date)}</td>
+
+                    <td>${formatTime(date)}</td>
+
+                    <td class="red">
+                        -${money(item.amount)}
+                    </td>
+                </tr>
+            `;
+
+        }).join("");
+
+}
+
+
+/* =========================================================
+   RENDER EVERYTHING
+========================================================= */
+
+function renderAll() {
+
+    updateLiveEarning();
+
+    renderSummary();
+
+    renderOvertimeHistory();
+
+    renderAdvanceHistory();
+
+}
+
+
+/* =========================================================
+   RESET ALL DATA
+========================================================= */
+
+function resetAllData() {
+
+    const confirmReset =
+        confirm(
+            "Are you sure you want to delete ALL salary, overtime and advance history?"
+        );
+
+
+    if (!confirmReset) {
+
+        return;
+
+    }
+
+
+    localStorage.removeItem(
+        STORAGE_KEY
+    );
+
+
+    data = {
+
+        overtime: [],
+
+        advances: []
+
+    };
+
+
+    renderAll();
+
+}
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+loadData();
+
+renderAll();
+
+
+/*
+    Update every second.
+
+    This makes the normal earning
+    increase continuously during
+    7 AM - 7 PM.
+*/
+
+setInterval(
+    () => {
+
+        updateLiveEarning();
+
+        renderSummary();
+
+    },
+    1000
+);
+
+
+/*
+    Also refresh everything when
+    the browser tab becomes visible.
+*/
+
+document.addEventListener(
+    "visibilitychange",
+    () => {
+
+        if (
+            !document.hidden
+        ) {
+
+            renderAll();
+
+        }
+
+    }
+);
+
+
+/*
+    Save again when the page is
+    being hidden/unloaded.
+
+    localStorage already persists,
+    but this gives an additional
+    safety write.
+*/
+
+window.addEventListener(
+    "beforeunload",
+    () => {
+
+        saveData();
+
+    }
+);
+
+</script>
+
+</body>
+</html>
