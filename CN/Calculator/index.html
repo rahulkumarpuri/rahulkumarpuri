@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f8f9fd">
+  <meta name="description" content="A Chinese-numeral calculator with offline history.">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+  <title>中文计算器</title>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <button class="icon-btn" id="historyBtn" aria-label="历史记录">↶</button>
+      <div class="status" id="offlineStatus">●</div>
+      <button class="icon-btn" id="menuBtn" aria-label="更多">⋮</button>
+    </header>
+
+    <section class="display-wrap" aria-live="polite">
+      <div class="expression" id="expression"></div>
+      <div class="result" id="result">〇</div>
+      <div class="cursor-line"><span></span></div>
+    </section>
+
+    <section class="calculator" id="calculator">
+      <div class="key-row">
+        <button class="key fn" data-action="clear">AC</button>
+        <button class="key fn" data-action="paren">()</button>
+        <button class="key fn" data-action="percent">%</button>
+        <button class="key op" data-action="operator" data-value="/">÷</button>
+      </div>
+      <div class="key-row">
+        <button class="key num" data-digit="7">七</button>
+        <button class="key num" data-digit="8">八</button>
+        <button class="key num" data-digit="9">九</button>
+        <button class="key op" data-action="operator" data-value="*">×</button>
+      </div>
+      <div class="key-row">
+        <button class="key num" data-digit="4">四</button>
+        <button class="key num" data-digit="5">五</button>
+        <button class="key num" data-digit="6">六</button>
+        <button class="key op" data-action="operator" data-value="-">−</button>
+      </div>
+      <div class="key-row">
+        <button class="key num" data-digit="1">一</button>
+        <button class="key num" data-digit="2">二</button>
+        <button class="key num" data-digit="3">三</button>
+        <button class="key op" data-action="operator" data-value="+">+</button>
+      </div>
+      <div class="key-row">
+        <button class="key num zero" data-digit="0">零</button>
+        <button class="key num" data-action="decimal">·</button>
+        <button class="key num" data-action="backspace">⌫</button>
+        <button class="key equals" data-action="equals">=</button>
+      </div>
+    </section>
+
+    <section class="history-panel hidden" id="historyPanel">
+      <div class="history-head">
+        <div>
+          <div class="history-title">历史记录</div>
+          <div class="history-sub">自动保存最近一个月</div>
+        </div>
+        <button class="clear-history" id="clearHistory">清空</button>
+      </div>
+      <div class="history-list" id="historyList"></div>
+      <div class="empty-history" id="emptyHistory">还没有计算记录</div>
+    </section>
+
+    <div class="toast" id="toast" role="status"></div>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
