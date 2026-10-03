@@ -26,11 +26,11 @@
   const refs = {
     periodLabel: $("#periodLabel"),
     liveEarning: $("#liveEarning"),
-    totalSalary: $("#totalSalary"),
+    normalSalaryEarned: $("#normalSalaryEarned"),
     overtimeTotal: $("#overtimeTotal"),
     advanceTotal: $("#advanceTotal"),
     estimatedSalary: $("#estimatedSalary"),
-    dailySalary: $("#dailySalary"),
+    totalSalaryBalance: $("#totalSalaryBalance"),
     workingDays: $("#workingDays"),
     historyOvertimeTotal: $("#historyOvertimeTotal"),
     historyAdvanceTotal: $("#historyAdvanceTotal"),
@@ -125,14 +125,21 @@
 
   function isValidDate(value) {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
-    const d = new Date(`${value}T00:00:00`);
-    return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === value;
+    const [year, month, day] = value.split("-").map(Number);
+    const d = new Date(year, month - 1, day);
+    return (
+      d.getFullYear() === year &&
+      d.getMonth() === month - 1 &&
+      d.getDate() === day
+    );
   }
 
   function todayISO() {
     const d = new Date();
-    const offset = d.getTimezoneOffset();
-    return new Date(d.getTime() - offset * 60000).toISOString().slice(0, 10);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
   }
 
   function parseTime(time) {
@@ -153,9 +160,16 @@
     };
   }
 
-  function calculateNormalSalary(now = new Date()) {
-    // Salary is earned day-by-day. Future days are never counted.
-    return currentMonthInfo(now).elapsedDays * state.settings.dailySalary;
+  function calculateNormalSalaryEarned(now = new Date()) {
+    // Before today's duty finishes, only completed previous days are fully earned.
+    // Today's earning is represented by the live earning amount.
+    const info = currentMonthInfo(now);
+    const completedPreviousDays = Math.max(0, info.elapsedDays - 1);
+    return completedPreviousDays * state.settings.dailySalary + calculateLiveEarning(now);
+  }
+
+  function calculateFullMonthSalary(now = new Date()) {
+    return currentMonthInfo(now).daysInMonth * state.settings.dailySalary;
   }
 
   function calculateLiveEarning(now = new Date()) {
@@ -171,15 +185,26 @@
 
   function calculateSalarySummary(now = new Date()) {
     const info = currentMonthInfo(now);
-    const totalSalary = calculateNormalSalary(now);
+    const normalSalaryEarned = calculateNormalSalaryEarned(now);
+    const fullMonthSalary = calculateFullMonthSalary(now);
     const overtimeTotal = state.overtime.reduce((sum, entry) => sum + entry.amount, 0);
     const advanceTotal = state.advances.reduce((sum, entry) => sum + entry.amount, 0);
-    const estimatedSalary = totalSalary - advanceTotal + overtimeTotal;
+
+    // Estimated Salary is the projected full-month payable amount.
+    // Example: 18,600 - 5,000 + 400 = 14,000.
+    const estimatedSalary = fullMonthSalary - advanceTotal + overtimeTotal;
+
+    // Current balance is what has actually been earned so far, adjusted by
+    // advances and overtime. Today's live earning is included in this value.
+    const totalSalaryBalance = normalSalaryEarned - advanceTotal + overtimeTotal;
+
     return {
-      totalSalary,
+      normalSalaryEarned,
+      fullMonthSalary,
       overtimeTotal,
       advanceTotal,
       estimatedSalary,
+      totalSalaryBalance,
       workingDays: info.elapsedDays,
       totalDays: info.daysInMonth
     };
@@ -208,11 +233,11 @@
 
     refs.periodLabel.textContent = `${new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric" }).format(now)} · ${formatDate(info.start.toISOString().slice(0,10))} → ${formatDate(info.end.toISOString().slice(0,10))}`;
     refs.liveEarning.textContent = money(calculateLiveEarning(now));
-    refs.totalSalary.textContent = money(summary.totalSalary);
+    refs.normalSalaryEarned.textContent = money(summary.normalSalaryEarned);
     refs.overtimeTotal.textContent = money(summary.overtimeTotal);
     refs.advanceTotal.textContent = money(summary.advanceTotal);
     refs.estimatedSalary.textContent = money(summary.estimatedSalary);
-    refs.dailySalary.textContent = money(state.settings.dailySalary);
+    refs.totalSalaryBalance.textContent = money(summary.totalSalaryBalance);
     refs.workingDays.textContent = `${summary.workingDays} / ${summary.totalDays}`;
     refs.historyOvertimeTotal.textContent = money(summary.overtimeTotal);
     refs.historyAdvanceTotal.textContent = money(summary.advanceTotal);
@@ -394,10 +419,10 @@
     </style></head><body><main class="receipt">
       <div class="head"><div><h1>Salary Receipt</h1><p>${monthName}</p></div><div><p>${formatDate(period.start.toISOString().slice(0,10))} → ${formatDate(period.end.toISOString().slice(0,10))}</p></div></div>
       <section class="summary">
-        <div class="line"><span>Normal Salary</span><strong>${escapeHtml(money(summary.totalSalary))}</strong></div>
+        <div class="line"><span>Full-Month Normal Salary</span><strong>${escapeHtml(money(summary.fullMonthSalary))}</strong></div>
         <div class="line plus"><span>Overtime</span><strong>+${escapeHtml(money(summary.overtimeTotal))}</strong></div>
         <div class="line minus"><span>Advance</span><strong>-${escapeHtml(money(summary.advanceTotal))}</strong></div>
-        <div class="line total"><span>Estimated Salary</span><strong>${escapeHtml(money(summary.estimatedSalary))}</strong></div>
+        <div class="line"><span>Salary Earned So Far</span><strong>${escapeHtml(money(summary.normalSalaryEarned))}</strong></div><div class="line"><span>Current Salary Balance</span><strong>${escapeHtml(money(summary.totalSalaryBalance))}</strong></div><div class="line total"><span>Estimated Salary</span><strong>${escapeHtml(money(summary.estimatedSalary))}</strong></div>
       </section>
       <h2>Overtime Entries</h2><table><thead><tr><th>Date</th><th>Amount</th><th>Note</th></tr></thead><tbody>${rows(overtime, "+")}</tbody></table>
       <h2>Advance Entries</h2><table><thead><tr><th>Date</th><th>Amount</th><th>Note</th></tr></thead><tbody>${rows(advances, "-")}</tbody></table>
