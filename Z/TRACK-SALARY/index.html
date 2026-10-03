@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Salary Tracker</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">SALARY TRACKER</p>
+        <h1>Know exactly where your salary stands.</h1>
+        <p class="subtle" id="periodLabel"></p>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-secondary" id="printBtn">🧾 Print Receipt</button>
+        <button class="btn btn-danger-outline" id="resetBtn">Reset All Data</button>
+      </div>
+    </header>
+
+    <section class="live-card" aria-labelledby="liveTitle">
+      <div>
+        <span class="status-dot"></span>
+        <span class="eyebrow" id="liveTitle">LIVE EARNING</span>
+        <p class="live-copy">Today’s normal earning</p>
+      </div>
+      <strong class="live-amount" id="liveEarning">₹0.00</strong>
+    </section>
+
+    <section class="section">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">OVERVIEW</p>
+          <h2>Salary Summary</h2>
+        </div>
+      </div>
+      <div class="summary-grid">
+        <article class="summary-card"><span>Total Salary</span><strong id="totalSalary">₹0.00</strong></article>
+        <article class="summary-card"><span>Overtime</span><strong id="overtimeTotal">₹0.00</strong></article>
+        <article class="summary-card"><span>Advance</span><strong id="advanceTotal">₹0.00</strong></article>
+        <article class="summary-card featured"><span>Estimated Salary</span><strong id="estimatedSalary">₹0.00</strong></article>
+        <article class="summary-card"><span>Daily Salary</span><strong id="dailySalary">₹600.00</strong></article>
+        <article class="summary-card"><span>Working Days</span><strong id="workingDays">0 / 0</strong></article>
+      </div>
+    </section>
+
+    <section class="entry-grid">
+      <form class="panel entry-form" id="overtimeForm" novalidate>
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">EXTRA EARNINGS</p>
+            <h2>Overtime</h2>
+          </div>
+          <span class="pill positive">Adds to salary</span>
+        </div>
+        <label>Amount
+          <div class="money-input"><span>₹</span><input id="overtimeAmount" name="amount" inputmode="decimal" autocomplete="off" placeholder="500.00" required></div>
+        </label>
+        <label>Date
+          <input id="overtimeDate" name="date" type="date" required>
+        </label>
+        <label>Custom Note
+          <input id="overtimeNote" name="note" maxlength="150" placeholder="Example: Sunday extra duty">
+        </label>
+        <p class="form-error" id="overtimeError" role="alert"></p>
+        <button class="btn btn-primary" type="submit">Add Overtime</button>
+      </form>
+
+      <form class="panel entry-form" id="advanceForm" novalidate>
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">SALARY ADVANCE</p>
+            <h2>Advance</h2>
+          </div>
+          <span class="pill negative">Reduces payable</span>
+        </div>
+        <label>Amount
+          <div class="money-input"><span>₹</span><input id="advanceAmount" name="amount" inputmode="decimal" autocomplete="off" placeholder="3000.00" required></div>
+        </label>
+        <label>Date
+          <input id="advanceDate" name="date" type="date" required>
+        </label>
+        <label>Custom Note
+          <input id="advanceNote" name="note" maxlength="150" placeholder="Example: Emergency expense">
+        </label>
+        <p class="form-error" id="advanceError" role="alert"></p>
+        <button class="btn btn-primary" type="submit">Add Advance</button>
+      </form>
+    </section>
+
+    <section class="history-grid">
+      <section class="panel">
+        <div class="panel-heading">
+          <div><p class="eyebrow">RECORDS</p><h2>Overtime History</h2></div>
+          <strong class="panel-total" id="historyOvertimeTotal">₹0.00</strong>
+        </div>
+        <div class="history-list" id="overtimeHistory"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-heading">
+          <div><p class="eyebrow">RECORDS</p><h2>Advance History</h2></div>
+          <strong class="panel-total" id="historyAdvanceTotal">₹0.00</strong>
+        </div>
+        <div class="history-list" id="advanceHistory"></div>
+      </section>
+    </section>
+  </main>
+
+  <div class="modal-backdrop" id="modalBackdrop" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-heading">
+        <div><p class="eyebrow" id="modalEyebrow">EDIT ENTRY</p><h2 id="modalTitle">Edit Entry</h2></div>
+        <button class="icon-btn" data-action="close-modal" aria-label="Close">×</button>
+      </div>
+      <form id="editForm" novalidate>
+        <input type="hidden" id="editType">
+        <input type="hidden" id="editId">
+        <label>Amount
+          <div class="money-input"><span>₹</span><input id="editAmount" inputmode="decimal" required></div>
+        </label>
+        <label>Date><input id="editDate" type="date" required></label>
+        <label>Note><input id="editNote" maxlength="150"></label>
+        <p class="form-error" id="editError" role="alert"></p>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" data-action="close-modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="confirmBackdrop" hidden>
+    <div class="modal small-modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+      <p class="eyebrow">CONFIRM ACTION</p>
+      <h2 id="confirmTitle">Are you sure?</h2>
+      <p id="confirmMessage" class="subtle"></p>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" data-action="cancel-confirm">Cancel</button>
+        <button class="btn btn-danger" id="confirmButton">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js" defer></script>
+</body>
+</html>
