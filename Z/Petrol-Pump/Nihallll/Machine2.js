@@ -1,1970 +1,751 @@
-
 /* =========================================================
-   Machine2.js
-   ---------------------------------------------------------
-   OPTIONAL MACHINE 2
+   MACHINE 2 — OPTIONAL 2-NOZZLE DIESEL MACHINE
+   FIXED VERSION
+   ========================================================= */
 
-   Machine 2:
-   Nozzle 1 → Diesel
-   Nozzle 2 → Diesel
+(function () {
+    "use strict";
 
-   This module extends the existing petrol pump website.
+    const STORAGE_OPENING = "pumpMachine2Opening";
+    const STORAGE_CLOSING = "pumpMachine2Closing";
+    const STORAGE_DAY = "pumpMachine2Day";
 
-   IMPORTANT:
-   - Machine 1 remains untouched.
-   - Machine 2 is completely optional.
-   - If Machine 2 is not entered, it contributes ₹0.
-   - If Machine 2 is entered, its sale is merged with
-     the existing Machine 1 fuel sale.
-========================================================= */
+    const MACHINE2_ID = "machine2UI";
 
-(function(){
+    // Machine 2 has ONLY 2 DIESEL nozzles
+    const MACHINE2_NOZZLES = 2;
 
-  "use strict";
+    // Fallback diesel rate
+    const DIESEL_RATE_FALLBACK = 103.19;
 
-
-  /* =======================================================
-     CONFIGURATION
-  ======================================================= */
-
-  const M2 = {
-
-    openingKey:
-      "pumpMachine2Opening",
-
-    closingKey:
-      "pumpMachine2Closing",
-
-    dayKey:
-      "pumpMachine2Day",
-
-    uiId:
-      "machine2UI",
-
-    dieselRate:
-      103.19
-
-  };
+    let uiCreated = false;
+    let calcSaleWrapped = false;
+    let observer = null;
 
 
-  /* =======================================================
-     TODAY
-  ======================================================= */
+    /* =========================================================
+       HELPERS
+       ========================================================= */
 
-  function todayKey(){
+    function num(value) {
+        const n = parseFloat(value);
+        return Number.isFinite(n) ? n : 0;
+    }
 
-    const d =
-      new Date();
+    function todayKey() {
+        const d = new Date();
 
-    const y =
-      d.getFullYear();
+        return [
+            d.getFullYear(),
+            String(d.getMonth() + 1).padStart(2, "0"),
+            String(d.getDate()).padStart(2, "0")
+        ].join("-");
+    }
 
-    const m =
-      String(
-        d.getMonth() + 1
-      ).padStart(2,"0");
+    function getDieselRate() {
+        try {
+            if (
+                Array.isArray(window.RATES) &&
+                window.RATES.length >= 2 &&
+                Number.isFinite(Number(window.RATES[1]))
+            ) {
+                return Number(window.RATES[1]);
+            }
+        } catch (e) {}
 
-    const day =
-      String(
-        d.getDate()
-      ).padStart(2,"0");
-
-    return (
-      y + "-" +
-      m + "-" +
-      day
-    );
-
-  }
+        return DIESEL_RATE_FALLBACK;
+    }
 
 
-  /* =======================================================
-     STORAGE HELPERS
-  ======================================================= */
+    /* =========================================================
+       DAILY RESET
+       ========================================================= */
 
-  function getJSON(
-    key,
-    fallback
-  ){
+    function checkNewDay() {
 
-    try{
+        const today = todayKey();
+        const savedDay = localStorage.getItem(STORAGE_DAY);
 
-      const value =
-        localStorage.getItem(
-          key
+        if (savedDay !== today) {
+
+            localStorage.removeItem(STORAGE_OPENING);
+            localStorage.removeItem(STORAGE_CLOSING);
+
+            localStorage.setItem(STORAGE_DAY, today);
+        }
+    }
+
+
+    /* =========================================================
+       STORAGE
+       ========================================================= */
+
+    function getMachine2Opening() {
+        try {
+            return JSON.parse(
+                localStorage.getItem(STORAGE_OPENING) || "null"
+            );
+        } catch (e) {
+            return null;
+        }
+    }
+
+    function getMachine2Closing() {
+        try {
+            return JSON.parse(
+                localStorage.getItem(STORAGE_CLOSING) || "null"
+            );
+        } catch (e) {
+            return null;
+        }
+    }
+
+
+    function saveMachine2Opening() {
+
+        const inputs = document.querySelectorAll(
+            "#machine2Opening input"
         );
 
-
-      if(
-        value === null
-      ){
-
-        return fallback;
-
-      }
-
-
-      return JSON.parse(
-        value
-      );
-
-    }
-    catch(e){
-
-      return fallback;
-
-    }
-
-  }
-
-
-  function setJSON(
-    key,
-    value
-  ){
-
-    localStorage.setItem(
-      key,
-      JSON.stringify(value)
-    );
-
-  }
-
-
-  /* =======================================================
-     DAILY STORAGE
-  ======================================================= */
-
-  function ensureDay(){
-
-    const today =
-      todayKey();
-
-
-    const stored =
-      localStorage.getItem(
-        M2.dayKey
-      );
-
-
-    if(
-      stored !== today
-    ){
-
-      localStorage.removeItem(
-        M2.openingKey
-      );
-
-      localStorage.removeItem(
-        M2.closingKey
-      );
-
-      localStorage.setItem(
-        M2.dayKey,
-        today
-      );
-
-    }
-
-  }
-
-
-  ensureDay();
-
-
-  /* =======================================================
-     MACHINE 2 DATA
-  ======================================================= */
-
-  function emptyReading(){
-
-    return {
-
-      saved:false,
-
-      values:[
-        null,
-        null
-      ]
-
-    };
-
-  }
-
-
-  function getOpening(){
-
-    return getJSON(
-      M2.openingKey,
-      emptyReading()
-    );
-
-  }
-
-
-  function setOpening(data){
-
-    setJSON(
-      M2.openingKey,
-      data
-    );
-
-  }
-
-
-  function getClosing(){
-
-    return getJSON(
-      M2.closingKey,
-      emptyReading()
-    );
-
-  }
-
-
-  function setClosing(data){
-
-    setJSON(
-      M2.closingKey,
-      data
-    );
-
-  }
-
-
-  /* =======================================================
-     NUMBER / FORMAT
-  ======================================================= */
-
-  function num(value){
-
-    const n =
-      parseFloat(value);
-
-
-    return isNaN(n)
-      ? 0
-      : n;
-
-  }
-
-
-  function fmt(value){
-
-    const n =
-      num(value);
-
-
-    return n.toLocaleString(
-      "en-IN",
-      {
-        minimumFractionDigits:2,
-        maximumFractionDigits:2
-      }
-    );
-
-  }
-
-
-  /* =======================================================
-     DIESEL RATE
-     
-     Prefer existing global RATES array.
-     
-     Existing website:
-     RATES[1] = Diesel = 103.19
-  ======================================================= */
-
-  function getDieselRate(){
-
-    try{
-
-      if(
-        typeof RATES !==
-        "undefined" &&
-        Array.isArray(RATES) &&
-        RATES.length > 1 &&
-        Number(RATES[1]) > 0
-      ){
-
-        return Number(
-          RATES[1]
+        const values = Array.from(inputs).map(input => num(input.value));
+
+        if (values.length !== MACHINE2_NOZZLES) {
+            return;
+        }
+
+        localStorage.setItem(
+            STORAGE_OPENING,
+            JSON.stringify({
+                values: values,
+                timestamp: Date.now()
+            })
         );
 
-      }
+        renderMachine2();
 
-    }
-    catch(e){}
-
-
-    return M2.dieselRate;
-
-  }
-
-
-  /* =======================================================
-     MACHINE 2 STATUS
-  ======================================================= */
-
-  function isOpeningSaved(){
-
-    return getOpening().saved === true;
-
-  }
-
-
-  function isClosingSaved(){
-
-    return getClosing().saved === true;
-
-  }
-
-
-  function isMachine2Ready(){
-
-    return (
-      isOpeningSaved() &&
-      isClosingSaved()
-    );
-
-  }
-
-
-  /*
-    Machine 2 is considered active only when
-    BOTH Opening and Closing are saved.
-
-    If neither exists:
-       contribution = ₹0
-
-    If only one exists:
-       contribution = ₹0
-
-    This prevents half-entered Machine 2 data
-    from accidentally changing today's sale.
-  */
-
-
-  /* =======================================================
-     MACHINE 2 SALE
-  ======================================================= */
-
-  function calculateMachine2(){
-
-    const opening =
-      getOpening();
-
-
-    const closing =
-      getClosing();
-
-
-    if(
-      !opening.saved ||
-      !closing.saved
-    ){
-
-      return {
-
-        ready:false,
-
-        dieselVolume:0,
-
-        dieselSale:0
-
-      };
-
+        updateMainTotals();
     }
 
 
-    let volume1 =
-      num(
-        closing.values[0]
-      ) -
-      num(
-        opening.values[0]
-      );
+    function saveMachine2Closing() {
 
-
-    let volume2 =
-      num(
-        closing.values[1]
-      ) -
-      num(
-        opening.values[1]
-      );
-
-
-    /*
-      Prevent negative sale.
-    */
-
-    if(volume1 < 0)
-      volume1 = 0;
-
-
-    if(volume2 < 0)
-      volume2 = 0;
-
-
-    const totalVolume =
-      volume1 +
-      volume2;
-
-
-    const dieselSale =
-      totalVolume *
-      getDieselRate();
-
-
-    return {
-
-      ready:true,
-
-      dieselVolume:
-        totalVolume,
-
-      dieselSale:
-        dieselSale,
-
-      nozzle1Volume:
-        volume1,
-
-      nozzle2Volume:
-        volume2
-
-    };
-
-  }
-
-
-  /* =======================================================
-     READ INPUTS
-  ======================================================= */
-
-  function readOpening(){
-
-    const values = [];
-
-
-    for(
-      let i=0;
-      i<2;
-      i++
-    ){
-
-      const input =
-        document.getElementById(
-          "machine2_opening_" + i
+        const inputs = document.querySelectorAll(
+            "#machine2Closing input"
         );
 
+        const values = Array.from(inputs).map(input => num(input.value));
 
-      values.push(
-        input
-          ? num(input.value)
-          : 0
-      );
+        if (values.length !== MACHINE2_NOZZLES) {
+            return;
+        }
 
-    }
-
-
-    return values;
-
-  }
-
-
-  function readClosing(){
-
-    const values = [];
-
-
-    for(
-      let i=0;
-      i<2;
-      i++
-    ){
-
-      const input =
-        document.getElementById(
-          "machine2_closing_" + i
+        localStorage.setItem(
+            STORAGE_CLOSING,
+            JSON.stringify({
+                values: values,
+                timestamp: Date.now()
+            })
         );
 
+        renderMachine2();
 
-      values.push(
-        input
-          ? num(input.value)
-          : 0
-      );
-
+        updateMainTotals();
     }
 
 
-    return values;
-
-  }
-
-
-  /* =======================================================
-     SAVE OPENING
-  ======================================================= */
-
-  function saveMachine2Opening(){
-
-    const values =
-      readOpening();
-
-
-    setOpening({
-
-      saved:true,
-
-      values:values
-
-    });
-
-
-    renderMachine2();
-
-
-    updateExistingSale();
-
-  }
-
-
-  /* =======================================================
-     UPDATE OPENING
-  ======================================================= */
-
-  function updateMachine2Opening(){
-
-    const values =
-      readOpening();
-
-
-    setOpening({
-
-      saved:true,
-
-      values:values
-
-    });
-
-
-    renderMachine2();
-
-
-    updateExistingSale();
-
-  }
-
-
-  /* =======================================================
-     SAVE CLOSING
-  ======================================================= */
-
-  function saveMachine2Closing(){
-
-    const values =
-      readClosing();
-
-
-    setClosing({
-
-      saved:true,
-
-      values:values
-
-    });
-
-
-    renderMachine2();
-
-
-    updateExistingSale();
-
-  }
-
-
-  /* =======================================================
-     UPDATE CLOSING
-  ======================================================= */
-
-  function updateMachine2Closing(){
-
-    const values =
-      readClosing();
-
-
-    setClosing({
-
-      saved:true,
-
-      values:values
-
-    });
-
-
-    renderMachine2();
-
-
-    updateExistingSale();
-
-  }
-
-
-  /* =======================================================
-     EXPAND / COLLAPSE STATE
-  ======================================================= */
-
-  let openingExpanded =
-    false;
-
-
-  let closingExpanded =
-    false;
-
-
-  function toggleOpening(){
-
-    openingExpanded =
-      !openingExpanded;
-
-
-    renderMachine2();
-
-  }
-
-
-  function toggleClosing(){
-
-    closingExpanded =
-      !closingExpanded;
-
-
-    renderMachine2();
-
-  }
-
-
-  /* =======================================================
-     MACHINE 2 HTML
-  ======================================================= */
-
-  function createReadingHTML(
-    type
-  ){
-
-    const isOpening =
-      type === "opening";
-
-
-    const data =
-      isOpening
-        ? getOpening()
-        : getClosing();
-
-
-    const expanded =
-      isOpening
-        ? openingExpanded
-        : closingExpanded;
-
-
-    const label =
-      isOpening
-        ? "Opening CumVolume"
-        : "Closing CumVolume";
-
-
-    const values =
-      data.values || [
-        null,
-        null
-      ];
-
-
-    let inputs = "";
-
-
-    for(
-      let i=0;
-      i<2;
-      i++
-    ){
-
-      const value =
-        values[i] !== null &&
-        values[i] !== undefined
-          ? values[i]
-          : "";
-
-
-      inputs += `
-
-        <div class="m2-nozzle-box">
-
-          <div class="m2-nozzle-title">
-
-            <span>
-              Diesel Nozzle ${i + 1}
-            </span>
-
-            <span class="m2-fuel-badge">
-              DIESEL
-            </span>
-
-          </div>
-
-
-          <input
-            type="number"
-            step="0.001"
-            id="machine2_${type}_${i}"
-            value="${value}"
-            placeholder="0.000"
-            inputmode="decimal"
-          >
-
-        </div>
-
-      `;
-
+    /* =========================================================
+       CALCULATION
+       ========================================================= */
+
+    function calculateMachine2() {
+
+        const opening = getMachine2Opening();
+        const closing = getMachine2Closing();
+
+        // Machine 2 is OPTIONAL.
+        // Unless BOTH opening and closing exist,
+        // Machine 2 contributes ₹0.
+
+        if (
+            !opening ||
+            !closing ||
+            !Array.isArray(opening.values) ||
+            !Array.isArray(closing.values) ||
+            opening.values.length !== 2 ||
+            closing.values.length !== 2
+        ) {
+            return {
+                ready: false,
+                dieselVolume: 0,
+                dieselSale: 0
+            };
+        }
+
+        let volume1 =
+            num(closing.values[0]) -
+            num(opening.values[0]);
+
+        let volume2 =
+            num(closing.values[1]) -
+            num(opening.values[1]);
+
+        // Never allow negative sale volume
+        volume1 = Math.max(0, volume1);
+        volume2 = Math.max(0, volume2);
+
+        const dieselVolume = volume1 + volume2;
+
+        const dieselSale =
+            dieselVolume * getDieselRate();
+
+        return {
+            ready: true,
+            volume1: volume1,
+            volume2: volume2,
+            dieselVolume: dieselVolume,
+            dieselSale: dieselSale
+        };
     }
 
 
-    /*
-      Not saved yet
-    */
+    /* =========================================================
+       MAIN CALCULATION INTEGRATION
+       ========================================================= */
 
-    if(
-      !data.saved
-    ){
+    function updateMainTotals() {
 
-      return `
+        try {
 
-        <div class="m2-card">
+            if (typeof window.renderTotals === "function") {
+                window.renderTotals();
+            }
 
-          <div class="m2-card-title">
+        } catch (error) {
 
-            <div>
+            console.error(
+                "Machine 2: renderTotals error",
+                error
+            );
 
-              <div class="m2-card-heading">
-                ${label}
-              </div>
-
-              <div class="m2-card-sub">
-                Machine 2 • Optional •
-                2 Diesel Nozzles
-              </div>
-
-            </div>
-
-          </div>
-
-
-          <div class="m2-nozzle-grid">
-
-            ${inputs}
-
-          </div>
-
-
-          <button
-            class="m2-save-btn"
-            onclick="${
-              isOpening
-                ? "saveMachine2Opening()"
-                : "saveMachine2Closing()"
-            }"
-          >
-
-            💾 Save ${label}
-
-          </button>
-
-        </div>
-
-      `;
-
+        }
     }
 
 
-    /*
-      Saved / collapsed
-    */
+    function wrapCalcSale() {
 
-    return `
+        // Do not wrap more than once
+        if (calcSaleWrapped) {
+            return;
+        }
 
-      <div class="m2-card">
+        if (typeof window.calcSale !== "function") {
+            return;
+        }
 
-        <div
-          class="m2-card-header"
-          onclick="${
-            isOpening
-              ? "toggleMachine2Opening()"
-              : "toggleMachine2Closing()"
-          }"
-        >
+        const originalCalcSale = window.calcSale;
 
-          <div>
+        window.calcSale = function () {
 
-            <div class="m2-card-heading">
+            const base = originalCalcSale();
 
-              ${label}
+            const machine2 = calculateMachine2();
 
-              <span class="m2-saved">
-                SAVED
-              </span>
+            // Machine 2 not completed → return Machine 1 exactly as before
+            if (!machine2.ready) {
+                return base;
+            }
+
+            return {
+                ...base,
+
+                // Add Machine 2 diesel to Machine 1 diesel
+                diesel:
+                    num(base.diesel) +
+                    machine2.dieselSale,
+
+                // Add Machine 2 to overall sale
+                sale:
+                    num(base.sale) +
+                    machine2.dieselSale,
+
+                machine2: machine2
+            };
+        };
+
+        calcSaleWrapped = true;
+    }
+
+
+    /* =========================================================
+       UI
+       ========================================================= */
+
+    function machine2HTML() {
+
+        const opening = getMachine2Opening();
+        const closing = getMachine2Closing();
+
+        const openingValues =
+            opening && Array.isArray(opening.values)
+                ? opening.values
+                : ["", ""];
+
+        const closingValues =
+            closing && Array.isArray(closing.values)
+                ? closing.values
+                : ["", ""];
+
+        return `
+            <div id="${MACHINE2_ID}" class="machine2-section">
+
+                <div class="machine2-title">
+                    <span>⚙️</span>
+                    <span>Machine 2</span>
+                    <small>2 Diesel Nozzles</small>
+                </div>
+
+
+                <!-- OPENING -->
+
+                <div class="machine2-card">
+
+                    <div class="machine2-card-title">
+                        Opening CumVolume
+                    </div>
+
+                    <div id="machine2Opening"
+                         class="machine2-input-grid">
+
+                        <input
+                            type="number"
+                            step="0.01"
+                            inputmode="decimal"
+                            placeholder="Nozzle 1"
+                            value="${openingValues[0] ?? ""}"
+                        >
+
+                        <input
+                            type="number"
+                            step="0.01"
+                            inputmode="decimal"
+                            placeholder="Nozzle 2"
+                            value="${openingValues[1] ?? ""}"
+                        >
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="machine2-save-btn"
+                        onclick="saveMachine2Opening()"
+                    >
+                        Save Opening
+                    </button>
+
+                </div>
+
+
+                <!-- CLOSING -->
+
+                <div class="machine2-card">
+
+                    <div class="machine2-card-title">
+                        Closing CumVolume
+                    </div>
+
+                    <div id="machine2Closing"
+                         class="machine2-input-grid">
+
+                        <input
+                            type="number"
+                            step="0.01"
+                            inputmode="decimal"
+                            placeholder="Nozzle 1"
+                            value="${closingValues[0] ?? ""}"
+                        >
+
+                        <input
+                            type="number"
+                            step="0.01"
+                            inputmode="decimal"
+                            placeholder="Nozzle 2"
+                            value="${closingValues[1] ?? ""}"
+                        >
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="machine2-save-btn"
+                        onclick="saveMachine2Closing()"
+                    >
+                        Save Closing
+                    </button>
+
+                </div>
+
+
+                <!-- RESULT -->
+
+                <div class="machine2-result">
+
+                    <div>
+                        <span>Diesel Volume</span>
+                        <strong id="machine2DieselVolume">
+                            0.00 L
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>Diesel Sale</span>
+                        <strong id="machine2DieselSale">
+                            ₹ 0.00
+                        </strong>
+                    </div>
+
+                </div>
+
+                <div class="machine2-note">
+                    ℹ️ Machine 2 is optional. If Opening + Closing
+                    are not both saved, it adds nothing to today's sale.
+                </div>
 
             </div>
+        `;
+    }
+
+
+    /* =========================================================
+       CSS
+       ========================================================= */
+
+    function injectCSS() {
+
+        if (document.getElementById("machine2CSS")) {
+            return;
+        }
+
+        const style = document.createElement("style");
+
+        style.id = "machine2CSS";
+
+        style.textContent = `
+
+            #machine2UI {
+                margin: 16px 0;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .machine2-title {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 20px;
+                font-weight: 800;
+                margin-bottom: 14px;
+            }
+
+            .machine2-title small {
+                margin-left: auto;
+                font-size: 12px;
+                font-weight: 600;
+                opacity: .6;
+            }
+
+            .machine2-card {
+                background: rgba(255,255,255,.9);
+                border: 1px solid rgba(0,0,0,.08);
+                border-radius: 18px;
+                padding: 15px;
+                margin-bottom: 12px;
+                box-shadow: 0 5px 18px rgba(0,0,0,.06);
+            }
+
+            .machine2-card-title {
+                font-size: 15px;
+                font-weight: 800;
+                margin-bottom: 10px;
+            }
+
+            .machine2-input-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .machine2-input-grid input {
+                width: 100%;
+                box-sizing: border-box;
+                padding: 13px;
+                border-radius: 12px;
+                border: 1px solid #d5d8df;
+                font-size: 16px;
+                outline: none;
+                background: #fff;
+            }
+
+            .machine2-input-grid input:focus {
+                border-color: #2864dc;
+                box-shadow: 0 0 0 3px rgba(40,100,220,.12);
+            }
+
+            .machine2-save-btn {
+                width: 100%;
+                margin-top: 12px;
+                border: 0;
+                border-radius: 12px;
+                padding: 12px;
+                font-size: 15px;
+                font-weight: 800;
+                color: white;
+                background: linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #4f46e5
+                );
+                cursor: pointer;
+            }
+
+            .machine2-result {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+                margin-top: 12px;
+            }
 
-            <div class="m2-card-sub">
-              Machine 2 • Diesel
-            </div>
+            .machine2-result > div {
+                padding: 14px;
+                border-radius: 15px;
+                background: rgba(255,255,255,.9);
+                border: 1px solid rgba(0,0,0,.07);
+            }
 
-          </div>
+            .machine2-result span {
+                display: block;
+                font-size: 12px;
+                opacity: .65;
+                margin-bottom: 5px;
+            }
 
+            .machine2-result strong {
+                font-size: 16px;
+            }
 
-          <span
-            class="m2-arrow ${
-              expanded
-                ? "open"
-                : ""
-            }"
-          >
-            ▸
-          </span>
+            .machine2-note {
+                margin-top: 10px;
+                font-size: 12px;
+                opacity: .65;
+                line-height: 1.5;
+            }
 
-        </div>
+            @media(max-width:480px) {
 
+                .machine2-input-grid {
+                    grid-template-columns: 1fr;
+                }
 
-        <div
-          class="${
-            expanded
-              ? "m2-card-content"
-              : "m2-card-content m2-hidden"
-          }"
-        >
+                .machine2-result {
+                    grid-template-columns: 1fr;
+                }
 
-          <div class="m2-nozzle-grid">
+            }
 
-            ${inputs}
+        `;
 
-          </div>
+        document.head.appendChild(style);
+    }
 
 
-          <button
-            class="m2-save-btn"
-            onclick="${
-              isOpening
-                ? "updateMachine2Opening()"
-                : "updateMachine2Closing()"
-            }"
-          >
+    /* =========================================================
+       RENDER
+       ========================================================= */
 
-            🔄 Update ${label}
+    function renderMachine2() {
 
-          </button>
+        checkNewDay();
 
-        </div>
+        injectCSS();
 
-      </div>
+        wrapCalcSale();
 
-    `;
+        const menuContent =
+            document.querySelector(
+                "#pumpMenu .pump-menu-content"
+            ) ||
+            document.querySelector(
+                "#pumpMenu"
+            );
 
-  }
+        if (!menuContent) {
+            return false;
+        }
 
+        let ui = document.getElementById(MACHINE2_ID);
 
-  /* =======================================================
-     MACHINE 2 MAIN UI
-  ======================================================= */
+        // Create ONLY if it doesn't already exist
+        if (!ui) {
 
-  function renderMachine2(){
+            ui = document.createElement("div");
 
-    const container =
-      document.getElementById(
-        M2.uiId
-      );
+            ui.id = MACHINE2_ID;
 
+            ui.innerHTML = machine2HTML();
 
-    if(!container)
-      return;
+            menuContent.appendChild(ui);
 
+            uiCreated = true;
 
-    const opening =
-      getOpening();
+        } else {
 
-
-    const closing =
-      getClosing();
-
-
-    const calc =
-      calculateMachine2();
-
-
-    container.innerHTML = `
-
-      <div class="m2-header">
-
-        <div class="m2-header-icon">
-          🛢️
-        </div>
-
-        <div class="m2-header-text">
-
-          <div class="m2-title">
-            Machine 2
-          </div>
-
-          <div class="m2-subtitle">
-            Optional • 2 Diesel Nozzles
-          </div>
-
-        </div>
-
-
-        <div class="m2-status">
-
-          ${
-            calc.ready
-              ? "ACTIVE"
-              : "OPTIONAL"
-          }
-
-        </div>
-
-      </div>
-
-
-      <div class="m2-info">
-
-        ℹ️ Machine 2 is optional.
-        Leave both readings empty if
-        this machine is not being used.
-
-      </div>
-
-
-      ${createReadingHTML("opening")}
-
-      ${createReadingHTML("closing")}
-
-
-      ${
-        calc.ready
-          ? `
-
-            <div class="m2-sale-card">
-
-              <div class="m2-sale-label">
-                Machine 2 Diesel Sale
-              </div>
-
-              <div class="m2-sale-value">
-                ₹ ${fmt(calc.dieselSale)}
-              </div>
-
-              <div class="m2-sale-detail">
-
-                ${fmt(calc.dieselVolume)}
-                L × ₹ ${fmt(getDieselRate())}
-
-              </div>
-
-            </div>
-
-          `
-          : ""
-
-      }
-
-    `;
-
-  }
-
-
-  /* =======================================================
-     EXPOSE FUNCTIONS
-     
-     Inline onclick attributes need access.
-  ======================================================= */
-
-  window.saveMachine2Opening =
-    saveMachine2Opening;
-
-
-  window.updateMachine2Opening =
-    updateMachine2Opening;
-
-
-  window.saveMachine2Closing =
-    saveMachine2Closing;
-
-
-  window.updateMachine2Closing =
-    updateMachine2Closing;
-
-
-  window.toggleMachine2Opening =
-    toggleOpening;
-
-
-  window.toggleMachine2Closing =
-    toggleClosing;
-
-
-  /* =======================================================
-     MACHINE 2 CSS
-  ======================================================= */
-
-  function injectCSS(){
-
-    if(
-      document.getElementById(
-        "machine2CSS"
-      )
-    )
-      return;
-
-
-    const style =
-      document.createElement(
-        "style"
-      );
-
-
-    style.id =
-      "machine2CSS";
-
-
-    style.textContent = `
-
-      /* =================================================
-         MACHINE 2 CONTAINER
-      ================================================= */
-
-      #machine2UI{
-
-        margin-top:10px;
-
-      }
-
-
-      /* =================================================
-         HEADER
-      ================================================= */
-
-      .m2-header{
-
-        display:flex;
-
-        align-items:center;
-
-        gap:11px;
-
-        padding:13px;
-
-        border-radius:15px;
-
-        background:
-          linear-gradient(
-            135deg,
-            #eff6ff,
-            #dbeafe
-          );
-
-        border:
-          1px solid #bfdbfe;
-
-      }
-
-
-      .m2-header-icon{
-
-        width:43px;
-
-        height:43px;
-
-        flex-shrink:0;
-
-        display:flex;
-
-        align-items:center;
-
-        justify-content:center;
-
-        border-radius:13px;
-
-        background:
-          rgba(255,255,255,.82);
-
-        font-size:23px;
-
-      }
-
-
-      .m2-header-text{
-
-        flex:1;
-
-        min-width:0;
-
-      }
-
-
-      .m2-title{
-
-        font-size:.98rem;
-
-        font-weight:900;
-
-        color:#172554;
-
-      }
-
-
-      .m2-subtitle{
-
-        margin-top:2px;
-
-        font-size:.7rem;
-
-        color:#64748b;
-
-      }
-
-
-      .m2-status{
-
-        padding:
-          5px 8px;
-
-        border-radius:8px;
-
-        background:
-          rgba(255,255,255,.8);
-
-        color:#2563eb;
-
-        font-size:.58rem;
-
-        font-weight:900;
-
-        letter-spacing:.5px;
-
-      }
-
-
-      /* =================================================
-         INFO
-      ================================================= */
-
-      .m2-info{
-
-        margin-top:8px;
-
-        padding:9px 11px;
-
-        border-radius:11px;
-
-        background:#f8fafc;
-
-        border:
-          1px solid #e2e8f0;
-
-        color:#64748b;
-
-        font-size:.7rem;
-
-        line-height:1.45;
-
-      }
-
-
-      /* =================================================
-         READING CARD
-      ================================================= */
-
-      .m2-card{
-
-        margin-top:9px;
-
-        border:
-          1px solid #e2e8f0;
-
-        border-radius:15px;
-
-        overflow:hidden;
-
-        background:#fff;
-
-      }
-
-
-      .m2-card-header{
-
-        display:flex;
-
-        align-items:center;
-
-        justify-content:space-between;
-
-        gap:10px;
-
-        padding:12px;
-
-        cursor:pointer;
-
-        background:#fafcff;
-
-      }
-
-
-      .m2-card-title{
-
-        padding:12px;
-
-      }
-
-
-      .m2-card-heading{
-
-        font-size:.86rem;
-
-        font-weight:850;
-
-        color:#1e293b;
-
-      }
-
-
-      .m2-card-sub{
-
-        margin-top:3px;
-
-        font-size:.67rem;
-
-        color:#94a3b8;
-
-      }
-
-
-      .m2-saved{
-
-        display:inline-block;
-
-        margin-left:5px;
-
-        padding:
-          3px 6px;
-
-        border-radius:6px;
-
-        background:#dcfce7;
-
-        color:#15803d;
-
-        font-size:.55rem;
-
-        font-weight:900;
-
-        vertical-align:middle;
-
-      }
-
-
-      .m2-arrow{
-
-        font-size:18px;
-
-        color:#64748b;
-
-        transition:
-          transform .15s;
-
-      }
-
-
-      .m2-arrow.open{
-
-        transform:
-          rotate(90deg);
-
-      }
-
-
-      .m2-card-content{
-
-        padding:
-          0 12px 12px;
-
-      }
-
-
-      .m2-hidden{
-
-        display:none;
-
-      }
-
-
-      /* =================================================
-         NOZZLES
-      ================================================= */
-
-      .m2-nozzle-grid{
-
-        display:grid;
-
-        grid-template-columns:
-          1fr 1fr;
-
-        gap:8px;
-
-      }
-
-
-      .m2-nozzle-box{
-
-        padding:9px;
-
-        border-radius:11px;
-
-        background:#f8fafc;
-
-        border:
-          1px solid #e2e8f0;
-
-      }
-
-
-      .m2-nozzle-title{
-
-        display:flex;
-
-        align-items:center;
-
-        justify-content:space-between;
-
-        gap:5px;
-
-        margin-bottom:6px;
-
-        font-size:.72rem;
-
-        font-weight:800;
-
-        color:#334155;
-
-      }
-
-
-      .m2-fuel-badge{
-
-        padding:
-          3px 5px;
-
-        border-radius:5px;
-
-        background:#dbeafe;
-
-        color:#1d4ed8;
-
-        font-size:.5rem;
-
-        font-weight:900;
-
-      }
-
-
-      .m2-nozzle-box input{
-
-        width:100%;
-
-        box-sizing:border-box;
-
-        padding:9px;
-
-        border:
-          1px solid #cbd5e1;
-
-        border-radius:8px;
-
-        background:#fff;
-
-        outline:none;
-
-        font-size:.82rem;
-
-      }
-
-
-      .m2-nozzle-box input:focus{
-
-        border-color:#2563eb;
-
-        box-shadow:
-          0 0 0 3px
-          rgba(37,99,235,.09);
-
-      }
-
-
-      /* =================================================
-         BUTTON
-      ================================================= */
-
-      .m2-save-btn{
-
-        width:100%;
-
-        margin-top:9px;
-
-        padding:10px;
-
-        border:0;
-
-        border-radius:10px;
-
-        background:#2563eb;
-
-        color:#fff;
-
-        font-weight:850;
-
-        font-size:.78rem;
-
-        cursor:pointer;
-
-      }
-
-
-      .m2-save-btn:active{
-
-        transform:
-          scale(.98);
-
-      }
-
-
-      /* =================================================
-         SALE CARD
-      ================================================= */
-
-      .m2-sale-card{
-
-        margin-top:10px;
-
-        padding:13px;
-
-        border-radius:15px;
-
-        background:
-          linear-gradient(
-            135deg,
-            #ecfdf5,
-            #f0fdf4
-          );
-
-        border:
-          1px solid #bbf7d0;
-
-      }
-
-
-      .m2-sale-label{
-
-        color:#166534;
-
-        font-size:.7rem;
-
-        font-weight:800;
-
-      }
-
-
-      .m2-sale-value{
-
-        margin-top:3px;
-
-        color:#15803d;
-
-        font-size:1.2rem;
-
-        font-weight:950;
-
-      }
-
-
-      .m2-sale-detail{
-
-        margin-top:3px;
-
-        color:#65a30d;
-
-        font-size:.65rem;
-
-      }
-
-
-      /* =================================================
-         MOBILE
-      ================================================= */
-
-      @media(max-width:400px){
-
-        .m2-nozzle-grid{
-
-          grid-template-columns:
-            1fr;
+            // Update result only.
+            // DO NOT rebuild the whole UI every mutation.
+            updateMachine2Result();
 
         }
 
-      }
+        updateMachine2Result();
 
-    `;
-
-
-    document.head.appendChild(
-      style
-    );
-
-  }
-
-
-  /* =======================================================
-     INSERT MACHINE 2 INTO EXISTING MENU
-  ======================================================= */
-
-  function findMenu(){
-
-    /*
-      Your current website uses #pumpMenu.
-      Additional fallbacks are included for
-      future redesigns.
-    */
-
-    return (
-      document.getElementById(
-        "pumpMenu"
-      ) ||
-
-      document.querySelector(
-        ".side-menu"
-      ) ||
-
-      document.querySelector(
-        ".menu-panel"
-      ) ||
-
-      document.querySelector(
-        ".mobile-menu"
-      ) ||
-
-      document.querySelector(
-        ".hamburger-menu"
-      )
-
-    );
-
-  }
-
-
-  function findMachine1Container(){
-
-    return (
-      document.getElementById(
-        "openingSection"
-      )?.parentElement ||
-
-      null
-    );
-
-  }
-
-
-  function insertIntoMenu(){
-
-    const menu =
-      findMenu();
-
-
-    if(!menu)
-      return;
-
-
-    let ui =
-      document.getElementById(
-        M2.uiId
-      );
-
-
-    /*
-      Create our container if required.
-    */
-
-    if(!ui){
-
-      ui =
-        document.createElement(
-          "div"
-        );
-
-
-      ui.id =
-        M2.uiId;
-
+        return true;
     }
 
 
-    /*
-      If already inside menu,
-      don't move unnecessarily.
-    */
+    /* =========================================================
+       RESULT UPDATE
+       ========================================================= */
 
-    if(
-      !menu.contains(ui)
-    ){
+    function updateMachine2Result() {
 
-      /*
-        Try to place Machine 2 after
-        existing Opening / Closing area.
+        const result = calculateMachine2();
 
-        Since the original application
-        dynamically moves those containers,
-        Machine 2 is placed at the end
-        of the menu content.
-      */
+        const volumeElement =
+            document.getElementById(
+                "machine2DieselVolume"
+            );
 
-      const content =
-        menu.querySelector(
-          ".pump-menu-content"
-        );
+        const saleElement =
+            document.getElementById(
+                "machine2DieselSale"
+            );
 
-
-      if(content){
-
-        content.appendChild(
-          ui
-        );
-
-      }else{
-
-        menu.appendChild(
-          ui
-        );
-
-      }
-
-    }
-
-
-    renderMachine2();
-
-  }
-
-
-  /* =======================================================
-     AUTOMATIC MENU RECONNECTION
-  ======================================================= */
-
-  const observer =
-    new MutationObserver(
-      function(){
-
-        insertIntoMenu();
-
-      }
-    );
-
-
-  observer.observe(
-    document.body,
-    {
-      childList:true,
-      subtree:true
-    }
-  );
-
-
-  /* =======================================================
-     SALE INTEGRATION
-  ======================================================= */
-
-  function updateExistingSale(){
-
-    /*
-      The original website has calcSale()
-      and renderTotals().
-
-      We DO NOT permanently replace Machine 1's
-      calculation.
-
-      Instead, we wrap calcSale so Machine 2
-      becomes part of the returned sale.
-
-      This keeps:
-        - Oil
-        - Discount Oil
-        - Machine 1
-        - Existing UI
-        - Short / Excess
-
-      working together.
-    */
-
-    if(
-      typeof window.calcSale !==
-      "function"
-    ){
-
-      return;
-
-    }
-
-
-    /*
-      Avoid wrapping multiple times.
-    */
-
-    if(
-      window.calcSale.__machine2Wrapped
-    ){
-
-      /*
-        Existing calculation will already
-        include Machine 2.
-
-        Just refresh UI.
-      */
-
-      if(
-        typeof window.renderTotals ===
-        "function"
-      ){
-
-        window.renderTotals();
-
-      }
-
-      return;
-
-    }
-
-
-    const originalCalcSale =
-      window.calcSale;
-
-
-    function machine2CalcSale(){
-
-      const base =
-        originalCalcSale();
-
-
-      const machine2 =
-        calculateMachine2();
-
-
-      /*
-        If Machine 2 isn't ready,
-        return the original result exactly.
-      */
-
-      if(
-        !machine2.ready
-      ){
-
-        return base;
-
-      }
-
-
-      /*
-        Merge Machine 2 Diesel sale
-        into existing diesel amount.
-
-        Existing base.sale contains:
-          Machine 1 Petrol
-          Machine 1 Diesel
-          Oil
-          Discount Oil (if present)
-
-        So only add Machine 2 Diesel.
-      */
-
-      const merged = {
-
-        ...base,
-
-        diesel:
-          num(base.diesel) +
-          machine2.dieselSale,
-
-        sale:
-          num(base.sale) +
-          machine2.dieselSale,
-
-        machine2:
-          machine2
-
-      };
-
-
-      return merged;
-
-    }
-
-
-    machine2CalcSale.__machine2Wrapped =
-      true;
-
-
-    machine2CalcSale.__machine2Original =
-      originalCalcSale;
-
-
-    window.calcSale =
-      machine2CalcSale;
-
-
-    /*
-      Refresh existing totals.
-    */
-
-    if(
-      typeof window.renderTotals ===
-      "function"
-    ){
-
-      window.renderTotals();
-
-    }
-
-  }
-
-
-  /* =======================================================
-     IMPORTANT:
-     calcSale may not exist yet when this
-     script executes.
-     
-     Wait until the existing website has
-     finished initializing.
-  ======================================================= */
-
-  function trySaleIntegration(){
-
-    if(
-      typeof window.calcSale ===
-      "function"
-    ){
-
-      updateExistingSale();
-
-      return true;
-
-    }
-
-    return false;
-
-  }
-
-
-  /* =======================================================
-     WAIT FOR EXISTING WEBSITE
-  ======================================================= */
-
-  let integrationAttempts =
-    0;
-
-
-  const integrationTimer =
-    setInterval(
-      function(){
-
-        integrationAttempts++;
-
-
-        const ready =
-          trySaleIntegration();
-
-
-        if(
-          ready ||
-          integrationAttempts > 40
-        ){
-
-          clearInterval(
-            integrationTimer
-          );
-
+        if (!volumeElement || !saleElement) {
+            return;
         }
 
-      },
-      250
-    );
+        volumeElement.textContent =
+            result.dieselVolume.toFixed(2) + " L";
+
+        saleElement.textContent =
+            "₹ " +
+            result.dieselSale.toLocaleString(
+                "en-IN",
+                {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }
+            );
+    }
 
 
-  /* =======================================================
-     UPDATE SALE WHEN MACHINE 2 DATA CHANGES
-  ======================================================= */
+    /* =========================================================
+       SAFE MENU WATCHER
+       ========================================================= */
 
-  function refreshAll(){
+    function startSafeObserver() {
 
-    renderMachine2();
+        // IMPORTANT:
+        // We do NOT render on every DOM mutation.
+        // We only look for the menu if it doesn't exist yet.
 
-    updateExistingSale();
+        if (observer) {
+            return;
+        }
 
-  }
+        observer = new MutationObserver(function () {
 
+            if (document.getElementById(MACHINE2_ID)) {
+                return;
+            }
 
-  /*
-    Expose optional debugging / manual refresh.
-  */
+            const menu =
+                document.querySelector(
+                    "#pumpMenu .pump-menu-content"
+                ) ||
+                document.querySelector("#pumpMenu");
 
-  window.refreshMachine2 =
-    refreshAll;
+            if (menu) {
 
+                renderMachine2();
 
-  /* =======================================================
-     INITIALIZE
-  ======================================================= */
+                // Stop watching once Machine 2 is installed.
+                if (document.getElementById(MACHINE2_ID)) {
 
-  injectCSS();
+                    observer.disconnect();
+                    observer = null;
+                }
+            }
 
-  renderMachine2();
+        });
 
-  insertIntoMenu();
-
-
-  /* =======================================================
-     FINAL DELAYED CONNECTIONS
-  ======================================================= */
-
-  setTimeout(
-    function(){
-
-      insertIntoMenu();
-
-      trySaleIntegration();
-
-    },
-    300
-  );
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    }
 
 
-  setTimeout(
-    function(){
+    /* =========================================================
+       INITIALIZE
+       ========================================================= */
 
-      insertIntoMenu();
+    function initMachine2() {
 
-      trySaleIntegration();
+        checkNewDay();
 
-    },
-    1000
-  );
+        injectCSS();
 
+        wrapCalcSale();
+
+        // Try immediately
+        renderMachine2();
+
+        // If hamburger menu is created later,
+        // safely wait for it.
+        if (!document.getElementById(MACHINE2_ID)) {
+            startSafeObserver();
+        }
+    }
+
+
+    /* =========================================================
+       GLOBAL FUNCTIONS
+       ========================================================= */
+
+    window.saveMachine2Opening =
+        saveMachine2Opening;
+
+    window.saveMachine2Closing =
+        saveMachine2Closing;
+
+    window.calculateMachine2 =
+        calculateMachine2;
+
+
+    /* =========================================================
+       START
+       ========================================================= */
+
+    if (document.readyState === "loading") {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            initMachine2
+        );
+
+    } else {
+
+        initMachine2();
+
+    }
 
 })();
