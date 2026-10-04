@@ -1,99 +1,69 @@
 /* =========================================================
-   MACHINE 2 — OPTIONAL 2-NOZZLE DIESEL MACHINE
-   FIXED VERSION
+   MACHINE 2
+   OPTIONAL 2-NOZZLE DIESEL MACHINE
+   FINAL SAFE VERSION
    ========================================================= */
 
 (function () {
     "use strict";
 
-    const STORAGE_OPENING = "pumpMachine2Opening";
-    const STORAGE_CLOSING = "pumpMachine2Closing";
-    const STORAGE_DAY = "pumpMachine2Day";
+    const OPENING_KEY = "pumpMachine2Opening";
+    const CLOSING_KEY = "pumpMachine2Closing";
+    const DAY_KEY = "pumpMachine2Day";
 
-    const MACHINE2_ID = "machine2UI";
+    const UI_ID = "machine2UI";
 
-    // Machine 2 has ONLY 2 DIESEL nozzles
-    const MACHINE2_NOZZLES = 2;
+    const DIESEL_RATE = 103.19;
 
-    // Fallback diesel rate
-    const DIESEL_RATE_FALLBACK = 103.19;
-
-    let uiCreated = false;
-    let calcSaleWrapped = false;
-    let observer = null;
+    let mounted = false;
+    let calcWrapped = false;
 
 
     /* =========================================================
        HELPERS
        ========================================================= */
 
-    function num(value) {
-        const n = parseFloat(value);
+    function num(v) {
+        const n = parseFloat(v);
         return Number.isFinite(n) ? n : 0;
     }
 
-    function todayKey() {
+    function today() {
         const d = new Date();
 
-        return [
-            d.getFullYear(),
-            String(d.getMonth() + 1).padStart(2, "0"),
+        return (
+            d.getFullYear() +
+            "-" +
+            String(d.getMonth() + 1).padStart(2, "0") +
+            "-" +
             String(d.getDate()).padStart(2, "0")
-        ].join("-");
-    }
-
-    function getDieselRate() {
-        try {
-            if (
-                Array.isArray(window.RATES) &&
-                window.RATES.length >= 2 &&
-                Number.isFinite(Number(window.RATES[1]))
-            ) {
-                return Number(window.RATES[1]);
-            }
-        } catch (e) {}
-
-        return DIESEL_RATE_FALLBACK;
+        );
     }
 
 
-    /* =========================================================
-       DAILY RESET
-       ========================================================= */
+    function checkDay() {
 
-    function checkNewDay() {
+        const currentDay = today();
+        const savedDay = localStorage.getItem(DAY_KEY);
 
-        const today = todayKey();
-        const savedDay = localStorage.getItem(STORAGE_DAY);
+        if (savedDay !== currentDay) {
 
-        if (savedDay !== today) {
+            localStorage.removeItem(OPENING_KEY);
+            localStorage.removeItem(CLOSING_KEY);
 
-            localStorage.removeItem(STORAGE_OPENING);
-            localStorage.removeItem(STORAGE_CLOSING);
-
-            localStorage.setItem(STORAGE_DAY, today);
-        }
-    }
-
-
-    /* =========================================================
-       STORAGE
-       ========================================================= */
-
-    function getMachine2Opening() {
-        try {
-            return JSON.parse(
-                localStorage.getItem(STORAGE_OPENING) || "null"
+            localStorage.setItem(
+                DAY_KEY,
+                currentDay
             );
-        } catch (e) {
-            return null;
         }
     }
 
-    function getMachine2Closing() {
+
+    function getOpening() {
+
         try {
             return JSON.parse(
-                localStorage.getItem(STORAGE_CLOSING) || "null"
+                localStorage.getItem(OPENING_KEY)
             );
         } catch (e) {
             return null;
@@ -101,70 +71,26 @@
     }
 
 
-    function saveMachine2Opening() {
+    function getClosing() {
 
-        const inputs = document.querySelectorAll(
-            "#machine2Opening input"
-        );
-
-        const values = Array.from(inputs).map(input => num(input.value));
-
-        if (values.length !== MACHINE2_NOZZLES) {
-            return;
+        try {
+            return JSON.parse(
+                localStorage.getItem(CLOSING_KEY)
+            );
+        } catch (e) {
+            return null;
         }
-
-        localStorage.setItem(
-            STORAGE_OPENING,
-            JSON.stringify({
-                values: values,
-                timestamp: Date.now()
-            })
-        );
-
-        renderMachine2();
-
-        updateMainTotals();
-    }
-
-
-    function saveMachine2Closing() {
-
-        const inputs = document.querySelectorAll(
-            "#machine2Closing input"
-        );
-
-        const values = Array.from(inputs).map(input => num(input.value));
-
-        if (values.length !== MACHINE2_NOZZLES) {
-            return;
-        }
-
-        localStorage.setItem(
-            STORAGE_CLOSING,
-            JSON.stringify({
-                values: values,
-                timestamp: Date.now()
-            })
-        );
-
-        renderMachine2();
-
-        updateMainTotals();
     }
 
 
     /* =========================================================
-       CALCULATION
+       MACHINE 2 CALCULATION
        ========================================================= */
 
     function calculateMachine2() {
 
-        const opening = getMachine2Opening();
-        const closing = getMachine2Closing();
-
-        // Machine 2 is OPTIONAL.
-        // Unless BOTH opening and closing exist,
-        // Machine 2 contributes ₹0.
+        const opening = getOpening();
+        const closing = getClosing();
 
         if (
             !opening ||
@@ -174,243 +100,297 @@
             opening.values.length !== 2 ||
             closing.values.length !== 2
         ) {
+
             return {
                 ready: false,
-                dieselVolume: 0,
-                dieselSale: 0
+                volume: 0,
+                sale: 0
             };
         }
 
-        let volume1 =
+
+        let nozzle1 =
             num(closing.values[0]) -
             num(opening.values[0]);
 
-        let volume2 =
+        let nozzle2 =
             num(closing.values[1]) -
             num(opening.values[1]);
 
-        // Never allow negative sale volume
-        volume1 = Math.max(0, volume1);
-        volume2 = Math.max(0, volume2);
 
-        const dieselVolume = volume1 + volume2;
+        nozzle1 = Math.max(0, nozzle1);
+        nozzle2 = Math.max(0, nozzle2);
 
-        const dieselSale =
-            dieselVolume * getDieselRate();
+
+        const volume =
+            nozzle1 + nozzle2;
+
+
+        const sale =
+            volume * DIESEL_RATE;
+
 
         return {
             ready: true,
-            volume1: volume1,
-            volume2: volume2,
-            dieselVolume: dieselVolume,
-            dieselSale: dieselSale
+            nozzle1: nozzle1,
+            nozzle2: nozzle2,
+            volume: volume,
+            sale: sale
         };
     }
 
 
     /* =========================================================
-       MAIN CALCULATION INTEGRATION
+       SAVE OPENING
        ========================================================= */
 
-    function updateMainTotals() {
+    window.saveMachine2Opening = function () {
 
-        try {
-
-            if (typeof window.renderTotals === "function") {
-                window.renderTotals();
-            }
-
-        } catch (error) {
-
-            console.error(
-                "Machine 2: renderTotals error",
-                error
+        const box =
+            document.getElementById(
+                "machine2Opening"
             );
 
-        }
-    }
+        if (!box) return;
 
 
-    function wrapCalcSale() {
+        const inputs =
+            box.querySelectorAll("input");
 
-        // Do not wrap more than once
-        if (calcSaleWrapped) {
-            return;
-        }
 
-        if (typeof window.calcSale !== "function") {
-            return;
-        }
+        const values =
+            Array.from(inputs).map(
+                input => num(input.value)
+            );
 
-        const originalCalcSale = window.calcSale;
 
-        window.calcSale = function () {
+        if (values.length !== 2) return;
 
-            const base = originalCalcSale();
 
-            const machine2 = calculateMachine2();
+        localStorage.setItem(
+            OPENING_KEY,
+            JSON.stringify({
+                values: values,
+                time: Date.now()
+            })
+        );
 
-            // Machine 2 not completed → return Machine 1 exactly as before
-            if (!machine2.ready) {
-                return base;
-            }
 
-            return {
-                ...base,
-
-                // Add Machine 2 diesel to Machine 1 diesel
-                diesel:
-                    num(base.diesel) +
-                    machine2.dieselSale,
-
-                // Add Machine 2 to overall sale
-                sale:
-                    num(base.sale) +
-                    machine2.dieselSale,
-
-                machine2: machine2
-            };
-        };
-
-        calcSaleWrapped = true;
-    }
+        updateMachine2Display();
+        updateMainSale();
+    };
 
 
     /* =========================================================
-       UI
+       SAVE CLOSING
        ========================================================= */
 
-    function machine2HTML() {
+    window.saveMachine2Closing = function () {
 
-        const opening = getMachine2Opening();
-        const closing = getMachine2Closing();
+        const box =
+            document.getElementById(
+                "machine2Closing"
+            );
 
-        const openingValues =
-            opening && Array.isArray(opening.values)
+        if (!box) return;
+
+
+        const inputs =
+            box.querySelectorAll("input");
+
+
+        const values =
+            Array.from(inputs).map(
+                input => num(input.value)
+            );
+
+
+        if (values.length !== 2) return;
+
+
+        localStorage.setItem(
+            CLOSING_KEY,
+            JSON.stringify({
+                values: values,
+                time: Date.now()
+            })
+        );
+
+
+        updateMachine2Display();
+        updateMainSale();
+    };
+
+
+    /* =========================================================
+       HTML
+       ========================================================= */
+
+    function getMachine2HTML() {
+
+        const opening = getOpening();
+        const closing = getClosing();
+
+
+        const ov =
+            opening &&
+            Array.isArray(opening.values)
                 ? opening.values
                 : ["", ""];
 
-        const closingValues =
-            closing && Array.isArray(closing.values)
+
+        const cv =
+            closing &&
+            Array.isArray(closing.values)
                 ? closing.values
                 : ["", ""];
 
+
         return `
-            <div id="${MACHINE2_ID}" class="machine2-section">
 
-                <div class="machine2-title">
-                    <span>⚙️</span>
-                    <span>Machine 2</span>
-                    <small>2 Diesel Nozzles</small>
+        <section id="${UI_ID}" class="machine2-wrapper">
+
+            <div class="machine2-heading">
+                <div>
+                    ⚙️ Machine 2
                 </div>
 
+                <span>
+                    2 Diesel Nozzles
+                </span>
+            </div>
 
-                <!-- OPENING -->
 
-                <div class="machine2-card">
+            <!-- OPENING -->
 
-                    <div class="machine2-card-title">
-                        Opening CumVolume
-                    </div>
+            <div class="machine2-card">
 
-                    <div id="machine2Opening"
-                         class="machine2-input-grid">
+                <div class="machine2-label">
+                    ⛽ Opening CumVolume
+                </div>
 
-                        <input
-                            type="number"
-                            step="0.01"
-                            inputmode="decimal"
-                            placeholder="Nozzle 1"
-                            value="${openingValues[0] ?? ""}"
-                        >
+                <div
+                    id="machine2Opening"
+                    class="machine2-inputs"
+                >
 
-                        <input
-                            type="number"
-                            step="0.01"
-                            inputmode="decimal"
-                            placeholder="Nozzle 2"
-                            value="${openingValues[1] ?? ""}"
-                        >
-
-                    </div>
-
-                    <button
-                        type="button"
-                        class="machine2-save-btn"
-                        onclick="saveMachine2Opening()"
+                    <input
+                        type="number"
+                        step="0.01"
+                        inputmode="decimal"
+                        placeholder="Nozzle 1"
+                        value="${ov[0] ?? ""}"
                     >
-                        Save Opening
-                    </button>
 
-                </div>
-
-
-                <!-- CLOSING -->
-
-                <div class="machine2-card">
-
-                    <div class="machine2-card-title">
-                        Closing CumVolume
-                    </div>
-
-                    <div id="machine2Closing"
-                         class="machine2-input-grid">
-
-                        <input
-                            type="number"
-                            step="0.01"
-                            inputmode="decimal"
-                            placeholder="Nozzle 1"
-                            value="${closingValues[0] ?? ""}"
-                        >
-
-                        <input
-                            type="number"
-                            step="0.01"
-                            inputmode="decimal"
-                            placeholder="Nozzle 2"
-                            value="${closingValues[1] ?? ""}"
-                        >
-
-                    </div>
-
-                    <button
-                        type="button"
-                        class="machine2-save-btn"
-                        onclick="saveMachine2Closing()"
+                    <input
+                        type="number"
+                        step="0.01"
+                        inputmode="decimal"
+                        placeholder="Nozzle 2"
+                        value="${ov[1] ?? ""}"
                     >
-                        Save Closing
-                    </button>
 
                 </div>
 
 
-                <!-- RESULT -->
+                <button
+                    type="button"
+                    onclick="saveMachine2Opening()"
+                    class="machine2-save"
+                >
+                    Save Opening
+                </button>
 
-                <div class="machine2-result">
+            </div>
 
-                    <div>
-                        <span>Diesel Volume</span>
-                        <strong id="machine2DieselVolume">
-                            0.00 L
-                        </strong>
-                    </div>
 
-                    <div>
-                        <span>Diesel Sale</span>
-                        <strong id="machine2DieselSale">
-                            ₹ 0.00
-                        </strong>
-                    </div>
+            <!-- CLOSING -->
+
+            <div class="machine2-card">
+
+                <div class="machine2-label">
+                    ⛽ Closing CumVolume
+                </div>
+
+                <div
+                    id="machine2Closing"
+                    class="machine2-inputs"
+                >
+
+                    <input
+                        type="number"
+                        step="0.01"
+                        inputmode="decimal"
+                        placeholder="Nozzle 1"
+                        value="${cv[0] ?? ""}"
+                    >
+
+                    <input
+                        type="number"
+                        step="0.01"
+                        inputmode="decimal"
+                        placeholder="Nozzle 2"
+                        value="${cv[1] ?? ""}"
+                    >
 
                 </div>
 
-                <div class="machine2-note">
-                    ℹ️ Machine 2 is optional. If Opening + Closing
-                    are not both saved, it adds nothing to today's sale.
+
+                <button
+                    type="button"
+                    onclick="saveMachine2Closing()"
+                    class="machine2-save"
+                >
+                    Save Closing
+                </button>
+
+            </div>
+
+
+            <!-- RESULT -->
+
+            <div class="machine2-result">
+
+                <div>
+
+                    <small>
+                        Diesel Volume
+                    </small>
+
+                    <strong
+                        id="machine2Volume"
+                    >
+                        0.00 L
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <small>
+                        Diesel Sale
+                    </small>
+
+                    <strong
+                        id="machine2Sale"
+                    >
+                        ₹ 0.00
+                    </strong>
+
                 </div>
 
             </div>
+
+
+            <div class="machine2-info">
+                ℹ️ Machine 2 is optional.
+                It contributes to today's sale only
+                when both Opening and Closing are saved.
+            </div>
+
+        </section>
+
         `;
     }
 
@@ -419,225 +399,384 @@
        CSS
        ========================================================= */
 
-    function injectCSS() {
+    function addCSS() {
 
-        if (document.getElementById("machine2CSS")) {
-            return;
-        }
+        if (
+            document.getElementById(
+                "machine2FinalCSS"
+            )
+        ) return;
 
-        const style = document.createElement("style");
 
-        style.id = "machine2CSS";
+        const style =
+            document.createElement("style");
+
+
+        style.id =
+            "machine2FinalCSS";
+
 
         style.textContent = `
 
-            #machine2UI {
-                margin: 16px 0;
-                width: 100%;
-                box-sizing: border-box;
-            }
+        .machine2-wrapper {
+            width: calc(100% - 28px);
+            margin: 18px auto;
+            box-sizing: border-box;
+        }
 
-            .machine2-title {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                font-size: 20px;
-                font-weight: 800;
-                margin-bottom: 14px;
-            }
 
-            .machine2-title small {
-                margin-left: auto;
-                font-size: 12px;
-                font-weight: 600;
-                opacity: .6;
-            }
+        .machine2-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
 
-            .machine2-card {
-                background: rgba(255,255,255,.9);
-                border: 1px solid rgba(0,0,0,.08);
-                border-radius: 18px;
-                padding: 15px;
-                margin-bottom: 12px;
-                box-shadow: 0 5px 18px rgba(0,0,0,.06);
-            }
+            padding: 18px;
 
-            .machine2-card-title {
-                font-size: 15px;
-                font-weight: 800;
-                margin-bottom: 10px;
-            }
+            border-radius: 18px;
 
-            .machine2-input-grid {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 10px;
-            }
+            background:
+                linear-gradient(
+                    135deg,
+                    #eef4ff,
+                    #ffffff
+                );
 
-            .machine2-input-grid input {
-                width: 100%;
-                box-sizing: border-box;
-                padding: 13px;
-                border-radius: 12px;
-                border: 1px solid #d5d8df;
-                font-size: 16px;
-                outline: none;
-                background: #fff;
-            }
+            border: 1px solid
+                rgba(30,60,120,.12);
 
-            .machine2-input-grid input:focus {
-                border-color: #2864dc;
-                box-shadow: 0 0 0 3px rgba(40,100,220,.12);
-            }
+            margin-bottom: 14px;
 
-            .machine2-save-btn {
-                width: 100%;
-                margin-top: 12px;
-                border: 0;
-                border-radius: 12px;
-                padding: 12px;
-                font-size: 15px;
-                font-weight: 800;
-                color: white;
-                background: linear-gradient(
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+
+        .machine2-heading span {
+            font-size: 11px;
+            font-weight: 700;
+            opacity: .55;
+        }
+
+
+        .machine2-card {
+
+            background: #ffffff;
+
+            border: 1px solid
+                rgba(20,30,50,.10);
+
+            border-radius: 18px;
+
+            padding: 16px;
+
+            margin-bottom: 12px;
+
+            box-shadow:
+                0 5px 20px
+                rgba(20,40,80,.07);
+
+            box-sizing: border-box;
+        }
+
+
+        .machine2-label {
+
+            font-size: 16px;
+            font-weight: 800;
+
+            margin-bottom: 12px;
+        }
+
+
+        .machine2-inputs {
+
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap: 10px;
+        }
+
+
+        .machine2-inputs input {
+
+            width: 100%;
+
+            box-sizing: border-box;
+
+            padding: 14px;
+
+            border-radius: 13px;
+
+            border: 1px solid #d5d9e0;
+
+            background: #fff;
+
+            font-size: 16px;
+
+            outline: none;
+        }
+
+
+        .machine2-inputs input:focus {
+
+            border-color: #2563eb;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(37,99,235,.12);
+        }
+
+
+        .machine2-save {
+
+            width: 100%;
+
+            border: none;
+
+            margin-top: 12px;
+
+            padding: 13px;
+
+            border-radius: 13px;
+
+            background:
+                linear-gradient(
                     135deg,
                     #2563eb,
                     #4f46e5
                 );
-                cursor: pointer;
+
+            color: white;
+
+            font-size: 15px;
+
+            font-weight: 800;
+        }
+
+
+        .machine2-result {
+
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap: 10px;
+
+            margin-top: 12px;
+        }
+
+
+        .machine2-result > div {
+
+            background: white;
+
+            border-radius: 16px;
+
+            padding: 15px;
+
+            border: 1px solid
+                rgba(20,30,50,.10);
+        }
+
+
+        .machine2-result small {
+
+            display: block;
+
+            opacity: .55;
+
+            margin-bottom: 5px;
+        }
+
+
+        .machine2-result strong {
+
+            font-size: 17px;
+        }
+
+
+        .machine2-info {
+
+            font-size: 12px;
+
+            line-height: 1.5;
+
+            opacity: .60;
+
+            padding: 8px 4px;
+        }
+
+
+        @media(max-width:500px) {
+
+            .machine2-inputs {
+                grid-template-columns: 1fr;
             }
 
             .machine2-result {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 10px;
-                margin-top: 12px;
+                grid-template-columns: 1fr;
             }
 
-            .machine2-result > div {
-                padding: 14px;
-                border-radius: 15px;
-                background: rgba(255,255,255,.9);
-                border: 1px solid rgba(0,0,0,.07);
+            .machine2-heading span {
+                font-size: 10px;
             }
 
-            .machine2-result span {
-                display: block;
-                font-size: 12px;
-                opacity: .65;
-                margin-bottom: 5px;
-            }
-
-            .machine2-result strong {
-                font-size: 16px;
-            }
-
-            .machine2-note {
-                margin-top: 10px;
-                font-size: 12px;
-                opacity: .65;
-                line-height: 1.5;
-            }
-
-            @media(max-width:480px) {
-
-                .machine2-input-grid {
-                    grid-template-columns: 1fr;
-                }
-
-                .machine2-result {
-                    grid-template-columns: 1fr;
-                }
-
-            }
+        }
 
         `;
+
 
         document.head.appendChild(style);
     }
 
 
     /* =========================================================
-       RENDER
+       FIND CURRENT MENU
        ========================================================= */
 
-    function renderMachine2() {
+    function findMenu() {
 
-        checkNewDay();
-
-        injectCSS();
-
-        wrapCalcSale();
-
-        const menuContent =
-            document.querySelector(
-                "#pumpMenu .pump-menu-content"
-            ) ||
-            document.querySelector(
-                "#pumpMenu"
+        // Your original menu
+        let menu =
+            document.getElementById(
+                "pumpMenu"
             );
 
-        if (!menuContent) {
+
+        if (menu) return menu;
+
+
+        // Backup selectors
+        menu =
+            document.querySelector(
+                ".pump-menu"
+            );
+
+        if (menu) return menu;
+
+
+        menu =
+            document.querySelector(
+                ".pump-menu-content"
+            );
+
+        if (menu) return menu;
+
+
+        return null;
+    }
+
+
+    /* =========================================================
+       MOUNT MACHINE 2
+       ========================================================= */
+
+    function mountMachine2() {
+
+        if (
+            document.getElementById(
+                UI_ID
+            )
+        ) {
+            mounted = true;
+            return true;
+        }
+
+
+        const menu = findMenu();
+
+
+        if (!menu) {
             return false;
         }
 
-        let ui = document.getElementById(MACHINE2_ID);
 
-        // Create ONLY if it doesn't already exist
-        if (!ui) {
+        addCSS();
 
-            ui = document.createElement("div");
 
-            ui.id = MACHINE2_ID;
+        const wrapper =
+            document.createElement(
+                "div"
+            );
 
-            ui.innerHTML = machine2HTML();
 
-            menuContent.appendChild(ui);
+        wrapper.innerHTML =
+            getMachine2HTML();
 
-            uiCreated = true;
 
-        } else {
+        const machine2 =
+            wrapper.firstElementChild;
 
-            // Update result only.
-            // DO NOT rebuild the whole UI every mutation.
-            updateMachine2Result();
 
+        if (!machine2) {
+            return false;
         }
 
-        updateMachine2Result();
+
+        /*
+         * Put Machine 2 at the bottom
+         * of the current Petrol Pump Menu.
+         *
+         * This is intentional.
+         *
+         * It will appear after Testing
+         * and before anything else that
+         * may be added later.
+         */
+
+        menu.appendChild(
+            machine2
+        );
+
+
+        mounted = true;
+
+
+        updateMachine2Display();
+
 
         return true;
     }
 
 
     /* =========================================================
-       RESULT UPDATE
+       UPDATE RESULT
        ========================================================= */
 
-    function updateMachine2Result() {
+    function updateMachine2Display() {
 
-        const result = calculateMachine2();
+        const result =
+            calculateMachine2();
 
-        const volumeElement =
+
+        const volume =
             document.getElementById(
-                "machine2DieselVolume"
+                "machine2Volume"
             );
 
-        const saleElement =
+
+        const sale =
             document.getElementById(
-                "machine2DieselSale"
+                "machine2Sale"
             );
 
-        if (!volumeElement || !saleElement) {
+
+        if (!volume || !sale) {
             return;
         }
 
-        volumeElement.textContent =
-            result.dieselVolume.toFixed(2) + " L";
 
-        saleElement.textContent =
+        volume.textContent =
+            result.volume.toFixed(2)
+            + " L";
+
+
+        sale.textContent =
             "₹ " +
-            result.dieselSale.toLocaleString(
+            result.sale.toLocaleString(
                 "en-IN",
                 {
                     minimumFractionDigits: 2,
@@ -648,49 +787,198 @@
 
 
     /* =========================================================
-       SAFE MENU WATCHER
+       ADD MACHINE 2 TO MAIN SALE
        ========================================================= */
 
-    function startSafeObserver() {
+    function wrapCalculation() {
 
-        // IMPORTANT:
-        // We do NOT render on every DOM mutation.
-        // We only look for the menu if it doesn't exist yet.
-
-        if (observer) {
+        if (calcWrapped) {
             return;
         }
 
-        observer = new MutationObserver(function () {
 
-            if (document.getElementById(MACHINE2_ID)) {
-                return;
-            }
+        if (
+            typeof window.calcSale !==
+            "function"
+        ) {
 
-            const menu =
-                document.querySelector(
-                    "#pumpMenu .pump-menu-content"
-                ) ||
-                document.querySelector("#pumpMenu");
+            // Main JS may not have loaded yet.
+            return;
+        }
 
-            if (menu) {
 
-                renderMachine2();
+        const originalCalcSale =
+            window.calcSale;
 
-                // Stop watching once Machine 2 is installed.
-                if (document.getElementById(MACHINE2_ID)) {
 
-                    observer.disconnect();
-                    observer = null;
+        window.calcSale =
+            function () {
+
+                const base =
+                    originalCalcSale();
+
+
+                const machine2 =
+                    calculateMachine2();
+
+
+                if (
+                    !machine2.ready
+                ) {
+                    return base;
                 }
+
+
+                return {
+
+                    ...base,
+
+                    diesel:
+                        num(base.diesel) +
+                        machine2.sale,
+
+                    sale:
+                        num(base.sale) +
+                        machine2.sale,
+
+                    machine2:
+                        machine2
+                };
+            };
+
+
+        calcWrapped = true;
+    }
+
+
+    /* =========================================================
+       REFRESH MAIN APP
+       ========================================================= */
+
+    function updateMainSale() {
+
+        wrapCalculation();
+
+
+        try {
+
+            if (
+                typeof window.renderTotals ===
+                "function"
+            ) {
+
+                window.renderTotals();
+
             }
 
-        });
+        } catch (error) {
 
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true
-        });
+            console.error(
+                "Machine 2 render error:",
+                error
+            );
+        }
+    }
+
+
+    /* =========================================================
+       WATCH FOR HAMBURGER MENU
+       ========================================================= */
+
+    function startMenuWatcher() {
+
+        const observer =
+            new MutationObserver(
+                function () {
+
+                    /*
+                     * IMPORTANT:
+                     *
+                     * Once Machine 2 exists,
+                     * STOP doing anything.
+                     *
+                     * This prevents the
+                     * infinite loading loop
+                     * from the previous version.
+                     */
+
+                    if (
+                        document.getElementById(
+                            UI_ID
+                        )
+                    ) {
+                        return;
+                    }
+
+
+                    mountMachine2();
+
+                }
+            );
+
+
+        observer.observe(
+            document.body,
+            {
+                childList: true,
+                subtree: true
+            }
+        );
+    }
+
+
+    /* =========================================================
+       HAMBURGER CLICK SUPPORT
+       ========================================================= */
+
+    function hookMenuButton() {
+
+        document.addEventListener(
+            "click",
+            function (event) {
+
+                const target =
+                    event.target.closest(
+                        "#pumpMenuBtn, " +
+                        "#pumpMenuButton, " +
+                        ".hamburger, " +
+                        ".menu-btn, " +
+                        "[aria-label*='menu' i]"
+                    );
+
+
+                if (!target) {
+                    return;
+                }
+
+
+                /*
+                 * Give the existing menu
+                 * time to open/create.
+                 */
+
+                setTimeout(
+                    function () {
+
+                        mountMachine2();
+
+                    },
+                    50
+                );
+
+
+                setTimeout(
+                    function () {
+
+                        mountMachine2();
+
+                    },
+                    250
+                );
+
+            },
+            true
+        );
     }
 
 
@@ -698,53 +986,75 @@
        INITIALIZE
        ========================================================= */
 
-    function initMachine2() {
+    function init() {
 
-        checkNewDay();
+        checkDay();
 
-        injectCSS();
+        addCSS();
 
-        wrapCalcSale();
+        wrapCalculation();
 
-        // Try immediately
-        renderMachine2();
+        /*
+         * Try immediately.
+         */
+        mountMachine2();
 
-        // If hamburger menu is created later,
-        // safely wait for it.
-        if (!document.getElementById(MACHINE2_ID)) {
-            startSafeObserver();
-        }
+
+        /*
+         * Watch for the hamburger
+         * menu being created later.
+         */
+        startMenuWatcher();
+
+
+        /*
+         * Also explicitly react to
+         * hamburger button.
+         */
+        hookMenuButton();
+
+
+        /*
+         * Retry a few times because
+         * your main app dynamically
+         * creates the menu.
+         */
+
+        setTimeout(
+            mountMachine2,
+            100
+        );
+
+        setTimeout(
+            mountMachine2,
+            500
+        );
+
+        setTimeout(
+            mountMachine2,
+            1000
+        );
+
+        setTimeout(
+            mountMachine2,
+            2000
+        );
     }
 
 
-    /* =========================================================
-       GLOBAL FUNCTIONS
-       ========================================================= */
-
-    window.saveMachine2Opening =
-        saveMachine2Opening;
-
-    window.saveMachine2Closing =
-        saveMachine2Closing;
-
-    window.calculateMachine2 =
-        calculateMachine2;
-
-
-    /* =========================================================
-       START
-       ========================================================= */
-
-    if (document.readyState === "loading") {
+    if (
+        document.readyState ===
+        "loading"
+    ) {
 
         document.addEventListener(
             "DOMContentLoaded",
-            initMachine2
+            init
         );
 
     } else {
 
-        initMachine2();
+        init();
 
     }
 
