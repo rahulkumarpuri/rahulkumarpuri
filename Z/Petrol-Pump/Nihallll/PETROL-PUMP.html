@@ -1,0 +1,10952 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1"
+>
+
+<title>MRPL HIQ</title>
+
+<style>
+
+/* =========================================================
+   PETROL PUMP MANAGER
+   FINAL PREMIUM CSS
+========================================================= */
+
+
+/* =========================================================
+   ROOT
+========================================================= */
+
+:root{
+
+  --primary:#2563eb;
+  --primary-dark:#1d4ed8;
+  --primary-soft:#eff6ff;
+
+  --success:#059669;
+  --success-soft:#ecfdf5;
+
+  --danger:#dc2626;
+  --danger-soft:#fef2f2;
+
+  --warning:#d97706;
+  --warning-soft:#fffbeb;
+
+  --purple:#7c3aed;
+  --purple-soft:#f5f3ff;
+
+  --text:#111827;
+  --text-soft:#4b5563;
+  --muted:#8b95a5;
+
+  --border:#e5e7eb;
+  --border-dark:#d1d5db;
+
+  --surface:#ffffff;
+  --surface-soft:#f8fafc;
+
+  --background:#f1f5f9;
+
+  --shadow-sm:
+    0 2px 8px rgba(15,23,42,.06);
+
+  --shadow:
+    0 8px 25px rgba(15,23,42,.08);
+
+  --shadow-lg:
+    0 18px 45px rgba(15,23,42,.13);
+
+  --radius-sm:8px;
+  --radius:13px;
+  --radius-lg:18px;
+
+}
+
+
+/* =========================================================
+   GLOBAL
+========================================================= */
+
+*{
+  box-sizing:border-box;
+}
+
+
+html{
+  scroll-behavior:smooth;
+}
+
+
+body{
+
+  margin:0;
+
+  min-height:100vh;
+
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+
+  color:var(--text);
+
+  background:
+    radial-gradient(
+      circle at 15% 0%,
+      rgba(37,99,235,.10),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 90% 15%,
+      rgba(124,58,237,.08),
+      transparent 28%
+    ),
+    var(--background);
+
+  -webkit-font-smoothing:antialiased;
+
+}
+
+
+button,
+input{
+  font:inherit;
+}
+
+
+button{
+  -webkit-tap-highlight-color:transparent;
+}
+
+
+input{
+  outline:none;
+}
+
+
+::selection{
+  background:#bfdbfe;
+  color:#1e3a8a;
+}
+
+
+/* =========================================================
+   APP
+========================================================= */
+
+.app{
+
+  width:min(
+    960px,
+    calc(100% - 28px)
+  );
+
+  margin:0 auto;
+
+  padding:
+    22px
+    0
+    50px;
+
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.app-header{
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  gap:16px;
+
+  margin-bottom:18px;
+
+  padding:
+    18px
+    18px
+    18px
+    20px;
+
+  border:
+    1px solid
+    rgba(255,255,255,.8);
+
+  border-radius:
+    var(--radius-lg);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,.96),
+      rgba(248,250,252,.92)
+    );
+
+  box-shadow:
+    var(--shadow);
+
+  backdrop-filter:
+    blur(14px);
+
+}
+
+
+.app-header h1{
+
+  margin:0;
+
+  font-size:
+    clamp(
+      1.35rem,
+      4vw,
+      1.8rem
+    );
+
+  letter-spacing:-.6px;
+
+}
+
+
+.app-header p{
+
+  margin:4px 0 0;
+
+  color:var(--muted);
+
+  font-size:.82rem;
+
+}
+
+
+#menuButton{
+
+  width:48px;
+
+  height:48px;
+
+  border:0;
+
+  border-radius:13px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #3b82f6,
+      #1d4ed8
+    );
+
+  color:#fff;
+
+  font-size:23px;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  cursor:pointer;
+
+  box-shadow:
+    0 7px 18px
+    rgba(37,99,235,.28);
+
+  transition:
+    transform .16s ease,
+    box-shadow .16s ease;
+
+}
+
+
+#menuButton:hover{
+
+  transform:
+    translateY(-2px);
+
+  box-shadow:
+    0 10px 23px
+    rgba(37,99,235,.35);
+
+}
+
+
+#menuButton:active{
+
+  transform:
+    scale(.94);
+
+}
+
+
+/* =========================================================
+   FLOATING CONTROLS
+========================================================= */
+
+.floating-controls{
+
+  position:fixed;
+
+  top:82px;
+
+  right:18px;
+
+  z-index:900;
+
+  display:flex;
+
+  flex-direction:column;
+
+  align-items:flex-end;
+
+  gap:8px;
+
+}
+
+
+#testingFloatingButton{
+
+  width:46px;
+
+  height:46px;
+
+  border:0;
+
+  border-radius:13px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #2563eb,
+      #1d4ed8
+    );
+
+  color:#fff;
+
+  font-size:21px;
+
+  cursor:pointer;
+
+  box-shadow:
+    0 7px 18px
+    rgba(37,99,235,.28);
+
+  transition:
+    transform .15s ease;
+
+}
+
+
+#testingFloatingButton:active{
+
+  transform:
+    scale(.91);
+
+}
+
+
+.difference-badge{
+
+  min-width:118px;
+
+  min-height:38px;
+
+  padding:
+    0 12px;
+
+  border-radius:11px;
+
+  background:
+    rgba(255,255,255,.96);
+
+  border:
+    1px solid
+    rgba(226,232,240,.9);
+
+  box-shadow:
+    0 7px 20px
+    rgba(15,23,42,.13);
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  color:var(--text);
+
+  font-size:.82rem;
+
+  font-weight:800;
+
+  white-space:nowrap;
+
+}
+
+
+/* =========================================================
+   MAIN SUMMARY / TODAY'S SALE
+========================================================= */
+
+.main-summary{
+
+  position:relative;
+
+  overflow:hidden;
+
+  margin-bottom:15px;
+
+  padding:22px;
+
+  border-radius:
+    var(--radius-lg);
+
+  color:#fff;
+
+  background:
+    linear-gradient(
+      135deg,
+      #1d4ed8 0%,
+      #2563eb 52%,
+      #3b82f6 100%
+    );
+
+  box-shadow:
+    0 14px 32px
+    rgba(37,99,235,.25);
+
+}
+
+
+.main-summary::before{
+
+  content:"";
+
+  position:absolute;
+
+  width:180px;
+
+  height:180px;
+
+  border-radius:50%;
+
+  right:-65px;
+
+  top:-80px;
+
+  background:
+    rgba(255,255,255,.10);
+
+}
+
+
+.main-summary::after{
+
+  content:"";
+
+  position:absolute;
+
+  width:110px;
+
+  height:110px;
+
+  border-radius:50%;
+
+  left:-55px;
+
+  bottom:-70px;
+
+  background:
+    rgba(255,255,255,.07);
+
+}
+
+
+.main-summary h2{
+
+  position:relative;
+
+  z-index:1;
+
+  margin:0 0 7px;
+
+  font-size:.9rem;
+
+  font-weight:600;
+
+  opacity:.85;
+
+  letter-spacing:.3px;
+
+}
+
+
+.sale-amount{
+
+  position:relative;
+
+  z-index:1;
+
+  font-size:
+    clamp(
+      2rem,
+      7vw,
+      3rem
+    );
+
+  font-weight:850;
+
+  letter-spacing:-1.5px;
+
+}
+
+
+#saleBreakdown{
+
+  position:relative;
+
+  z-index:1;
+
+  margin-top:8px;
+
+  color:rgba(255,255,255,.78);
+
+  font-size:.76rem;
+
+  line-height:1.55;
+
+}
+
+
+/* =========================================================
+   COMMON SECTION
+========================================================= */
+
+.section{
+
+  margin-bottom:15px;
+
+  padding:17px;
+
+  border:
+    1px solid
+    rgba(226,232,240,.9);
+
+  border-radius:
+    var(--radius-lg);
+
+  background:
+    rgba(255,255,255,.94);
+
+  box-shadow:
+    var(--shadow);
+
+}
+
+
+.section-heading{
+
+  display:flex;
+
+  align-items:flex-end;
+
+  justify-content:space-between;
+
+  gap:10px;
+
+  margin-bottom:13px;
+
+}
+
+
+.section-heading h2{
+
+  margin:0;
+
+  font-size:1.18rem;
+
+  letter-spacing:-.35px;
+
+}
+
+
+.section-heading p{
+
+  margin:3px 0 0;
+
+  color:var(--muted);
+
+  font-size:.78rem;
+
+}
+
+
+.section-heading > span{
+
+  color:var(--muted);
+
+  font-size:.72rem;
+
+  font-weight:600;
+
+}
+
+
+/* =========================================================
+   OIL SECTION
+========================================================= */
+
+.oil-section h2{
+
+  margin:
+    0
+    0
+    13px;
+
+  font-size:1.05rem;
+
+}
+
+
+.oil-grid{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(2,1fr);
+
+  gap:10px;
+
+}
+
+
+.oil-card{
+
+  position:relative;
+
+  padding:14px;
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius:
+    13px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #f8fafc
+    );
+
+  overflow:hidden;
+
+}
+
+
+.oil-card::before{
+
+  content:"";
+
+  position:absolute;
+
+  width:4px;
+
+  left:0;
+
+  top:0;
+
+  bottom:0;
+
+  background:
+    linear-gradient(
+      #2563eb,
+      #7c3aed
+    );
+
+}
+
+
+.oil-card label{
+
+  display:block;
+
+  margin-bottom:8px;
+
+  font-size:.84rem;
+
+  font-weight:750;
+
+}
+
+
+.oil-card input{
+
+  width:100%;
+
+  padding:11px 12px;
+
+  border:
+    1px solid
+    var(--border-dark);
+
+  border-radius:9px;
+
+  background:#fff;
+
+  color:var(--text);
+
+  font-size:.9rem;
+
+  transition:
+    border .15s ease,
+    box-shadow .15s ease;
+
+}
+
+
+.oil-card input:focus{
+
+  border-color:
+    var(--primary);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(37,99,235,.10);
+
+}
+
+
+.oil-card > div{
+
+  margin-top:6px;
+
+  color:var(--muted);
+
+  font-size:.72rem;
+
+}
+
+
+.oil-card > div:last-child{
+
+  color:var(--text-soft);
+
+  font-weight:700;
+
+}
+
+
+/* =========================================================
+   QUICK COLLECTION GRID
+========================================================= */
+
+.quick-grid{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(2,minmax(0,1fr));
+
+  gap:11px;
+
+}
+
+
+/* =========================================================
+   QUICK CARD
+========================================================= */
+
+.quick-card{
+
+  position:relative;
+
+  overflow:hidden;
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius:
+    15px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #fbfdff
+    );
+
+  box-shadow:
+    var(--shadow-sm);
+
+  transition:
+    transform .16s ease,
+    box-shadow .16s ease,
+    border-color .16s ease;
+
+}
+
+
+.quick-card:hover{
+
+  transform:
+    translateY(-2px);
+
+  border-color:
+    #dbe3ef;
+
+  box-shadow:
+    0 9px 25px
+    rgba(15,23,42,.09);
+
+}
+
+
+.quick-card > header{
+
+  display:flex;
+
+  align-items:center;
+
+  gap:10px;
+
+  min-height:67px;
+
+  padding:
+    11px 11px;
+
+  border-bottom:
+    1px solid
+    #edf0f4;
+
+  background:
+    linear-gradient(
+      135deg,
+      #fbfcff,
+      #f8fafc
+    );
+
+}
+
+
+.quick-icon{
+
+  width:39px;
+
+  height:39px;
+
+  flex-shrink:0;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  border-radius:11px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #eef2ff,
+      #e0e7ff
+    );
+
+  box-shadow:
+    inset 0 1px 0
+    rgba(255,255,255,.8);
+
+  font-size:20px;
+
+}
+
+
+.quick-card h3{
+
+  margin:0;
+
+  font-size:.9rem;
+
+  line-height:1.15;
+
+  letter-spacing:-.15px;
+
+}
+
+
+.quick-card header small{
+
+  display:block;
+
+  margin-top:3px;
+
+  color:var(--muted);
+
+  font-size:.68rem;
+
+}
+
+
+.quick-body{
+
+  padding:11px;
+
+}
+
+
+/* =========================================================
+   QUICK INPUT
+========================================================= */
+
+.quick-input-row{
+
+  display:flex;
+
+  align-items:center;
+
+  gap:6px;
+
+}
+
+
+.quick-input-row input{
+
+  min-width:0;
+
+  flex:1;
+
+  width:100%;
+
+  padding:10px;
+
+  border:
+    1px solid
+    var(--border-dark);
+
+  border-radius:9px;
+
+  background:#fff;
+
+  color:var(--text);
+
+  font-size:.86rem;
+
+  transition:
+    border .15s ease,
+    box-shadow .15s ease;
+
+}
+
+
+.quick-input-row input:focus{
+
+  border-color:
+    var(--primary);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(37,99,235,.09);
+
+}
+
+
+.quick-input-row button{
+
+  flex-shrink:0;
+
+  border:0;
+
+  border-radius:9px;
+
+  padding:
+    10px 11px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #3b82f6,
+      #2563eb
+    );
+
+  color:#fff;
+
+  font-size:.76rem;
+
+  font-weight:800;
+
+  cursor:pointer;
+
+  box-shadow:
+    0 4px 10px
+    rgba(37,99,235,.20);
+
+  transition:
+    transform .12s ease;
+
+}
+
+
+.quick-input-row button:active{
+
+  transform:
+    scale(.95);
+
+}
+
+
+.quick-total{
+
+  margin-top:8px;
+
+  padding-top:8px;
+
+  border-top:
+    1px solid
+    #eef0f3;
+
+  color:var(--text-soft);
+
+  font-size:.75rem;
+
+}
+
+
+.quick-total strong{
+
+  color:var(--text);
+
+}
+
+
+/* =========================================================
+   HISTORY BUTTON
+========================================================= */
+
+.history-button{
+
+  width:34px;
+
+  height:34px;
+
+  margin-left:auto;
+
+  flex-shrink:0;
+
+  border:0;
+
+  border-radius:9px;
+
+  background:
+    var(--primary-soft);
+
+  cursor:pointer;
+
+  font-size:17px;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  transition:
+    background .15s ease,
+    transform .15s ease;
+
+}
+
+
+.history-button:hover{
+
+  background:#dbeafe;
+
+}
+
+
+.history-button:active{
+
+  transform:
+    scale(.9);
+
+}
+
+
+/* =========================================================
+   HISTORY
+========================================================= */
+
+.quick-history{
+
+  margin-top:9px;
+
+  padding-top:8px;
+
+  border-top:
+    1px solid
+    var(--border);
+
+}
+
+
+.quick-history h4{
+
+  margin:
+    0
+    0
+    7px;
+
+  font-size:.73rem;
+
+  color:var(--text-soft);
+
+}
+
+
+.history-entry{
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  gap:10px;
+
+  padding:8px 0;
+
+  border-top:
+    1px solid
+    #f0f2f5;
+
+}
+
+
+.history-entry:first-of-type{
+
+  border-top:0;
+
+}
+
+
+.history-entry strong{
+
+  font-size:.79rem;
+
+}
+
+
+.history-entry small{
+
+  display:block;
+
+  margin-top:2px;
+
+  color:var(--muted);
+
+  font-size:.62rem;
+
+}
+
+
+.history-entry button{
+
+  width:28px;
+
+  height:28px;
+
+  border:0;
+
+  border-radius:7px;
+
+  background:
+    #fff1f2;
+
+  cursor:pointer;
+
+  font-size:14px;
+
+}
+
+
+.history-entry button:hover{
+
+  background:
+    #ffe4e6;
+
+}
+
+
+/* =========================================================
+   UPI FIXED
+========================================================= */
+
+.quick-fixed-value{
+
+  margin-top:8px;
+
+  padding-top:8px;
+
+  border-top:
+    1px solid
+    #eef0f3;
+
+  color:var(--text);
+
+  font-size:1rem;
+
+  font-weight:850;
+
+}
+
+
+/* =========================================================
+   PHYSICAL CASH
+========================================================= */
+
+.physical-cash-card{
+
+  grid-column:
+    1 / -1;
+
+}
+
+
+.physical-cash-card > header{
+
+  background:
+    linear-gradient(
+      135deg,
+      #f8fafc,
+      #f1f5f9
+    );
+
+}
+
+
+.cash-note-grid{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(6,1fr);
+
+  gap:7px;
+
+}
+
+
+.cash-note{
+
+  padding:9px 5px 8px;
+
+  text-align:center;
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius:10px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #fff,
+      #f8fafc
+    );
+
+}
+
+
+.cash-note label{
+
+  display:block;
+
+  margin-bottom:6px;
+
+  font-size:.75rem;
+
+  font-weight:850;
+
+}
+
+
+.cash-note input{
+
+  width:100%;
+
+  padding:8px 3px;
+
+  border:
+    1px solid
+    var(--border-dark);
+
+  border-radius:7px;
+
+  text-align:center;
+
+  font-size:.82rem;
+
+  background:#fff;
+
+}
+
+
+.cash-note input:focus{
+
+  border-color:
+    var(--primary);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(37,99,235,.08);
+
+}
+
+
+.cash-note small{
+
+  display:block;
+
+  margin-top:5px;
+
+  color:var(--muted);
+
+  font-size:.59rem;
+
+}
+
+
+/* =========================================================
+   COIN
+========================================================= */
+
+.coin-row{
+
+  display:flex;
+
+  align-items:center;
+
+  gap:8px;
+
+  margin-top:9px;
+
+  padding:10px;
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius:10px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #fff,
+      #f8fafc
+    );
+
+}
+
+
+.coin-icon{
+
+  width:31px;
+
+  height:31px;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  border-radius:8px;
+
+  background:
+    #fef3c7;
+
+  font-size:17px;
+
+}
+
+
+.coin-row label{
+
+  font-size:.77rem;
+
+  font-weight:800;
+
+}
+
+
+.coin-row input{
+
+  flex:1;
+
+  min-width:0;
+
+  padding:9px;
+
+  border:
+    1px solid
+    var(--border-dark);
+
+  border-radius:8px;
+
+  font-size:.84rem;
+
+}
+
+
+.coin-row input:focus{
+
+  border-color:
+    var(--primary);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(37,99,235,.08);
+
+}
+
+
+/* =========================================================
+   PHYSICAL TOTAL
+========================================================= */
+
+.physical-total{
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  gap:10px;
+
+  margin-top:9px;
+
+  padding:
+    12px 13px;
+
+  border-radius:11px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #eff6ff,
+      #eef2ff
+    );
+
+  border:
+    1px solid
+    #dbeafe;
+
+}
+
+
+.physical-total span{
+
+  color:var(--text-soft);
+
+  font-size:.78rem;
+
+  font-weight:650;
+
+}
+
+
+.physical-total strong{
+
+  color:
+    #1d4ed8;
+
+  font-size:1.02rem;
+
+}
+
+
+/* =========================================================
+   MANUAL COLLECTIONS
+========================================================= */
+
+.manual-collections{
+
+  margin-top:15px;
+
+}
+
+
+#addEntryButton{
+
+  width:100%;
+
+  padding:13px;
+
+  border:0;
+
+  border-radius:11px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #2563eb,
+      #1d4ed8
+    );
+
+  color:#fff;
+
+  font-size:.88rem;
+
+  font-weight:800;
+
+  cursor:pointer;
+
+  box-shadow:
+    0 7px 17px
+    rgba(37,99,235,.20);
+
+  transition:
+    transform .14s ease,
+    box-shadow .14s ease;
+
+}
+
+
+#addEntryButton:hover{
+
+  box-shadow:
+    0 10px 23px
+    rgba(37,99,235,.27);
+
+}
+
+
+#addEntryButton:active{
+
+  transform:
+    scale(.985);
+
+}
+
+
+/* =========================================================
+   MANUAL FORM
+========================================================= */
+
+#manualAddForm{
+
+  position:relative;
+
+  margin-top:9px;
+
+  padding:14px;
+
+  border:
+    1px solid
+    #dbeafe;
+
+  border-radius:12px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f8fbff,
+      #eff6ff
+    );
+
+}
+
+
+#manualAddForm label{
+
+  display:block;
+
+  margin:
+    8px 0
+    5px;
+
+  font-size:.76rem;
+
+  font-weight:750;
+
+}
+
+
+#manualAddForm label:first-child{
+
+  margin-top:0;
+
+}
+
+
+#manualAddForm input{
+
+  width:100%;
+
+  padding:10px;
+
+  border:
+    1px solid
+    var(--border-dark);
+
+  border-radius:8px;
+
+  background:#fff;
+
+}
+
+
+#manualAddForm input:focus{
+
+  border-color:
+    var(--primary);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(37,99,235,.08);
+
+}
+
+
+#manualSaveButton{
+
+  width:100%;
+
+  margin-top:10px;
+
+  padding:10px;
+
+  border:0;
+
+  border-radius:8px;
+
+  background:
+    #111827;
+
+  color:#fff;
+
+  font-size:.8rem;
+
+  font-weight:800;
+
+  cursor:pointer;
+
+}
+
+
+/* =========================================================
+   TAG SUGGESTIONS
+========================================================= */
+
+.tag-suggestions{
+
+  position:absolute;
+
+  left:14px;
+
+  right:14px;
+
+  margin-top:-2px;
+
+  z-index:20;
+
+  overflow:hidden;
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius:
+    0 0 9px 9px;
+
+  background:#fff;
+
+  box-shadow:
+    var(--shadow);
+
+}
+
+
+.tag-suggestions button{
+
+  display:block;
+
+  width:100%;
+
+  padding:9px 10px;
+
+  border:0;
+
+  border-bottom:
+    1px solid
+    #f0f0f0;
+
+  background:#fff;
+
+  text-align:left;
+
+  cursor:pointer;
+
+  font-size:.78rem;
+
+}
+
+
+.tag-suggestions button:hover{
+
+  background:
+    #eff6ff;
+
+}
+
+
+/* =========================================================
+   MANUAL GROUPS
+========================================================= */
+
+#manualCollections{
+
+  margin-top:9px;
+
+}
+
+
+.manual-tag{
+
+  margin-top:7px;
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius:11px;
+
+  overflow:hidden;
+
+  background:#fff;
+
+}
+
+
+.manual-tag summary{
+
+  padding:
+    13px;
+
+  cursor:pointer;
+
+  list-style:none;
+
+  font-size:.83rem;
+
+  font-weight:700;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ffffff,
+      #f8fafc
+    );
+
+}
+
+
+.manual-tag summary::-webkit-details-marker{
+
+  display:none;
+
+}
+
+
+.manual-tag summary::after{
+
+  content:"▸";
+
+  float:right;
+
+  color:var(--muted);
+
+  transition:
+    transform .15s ease;
+
+}
+
+
+.manual-tag[open]
+summary::after{
+
+  transform:
+    rotate(90deg);
+
+}
+
+
+.manual-entry{
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  gap:10px;
+
+  padding:
+    10px 13px;
+
+  border-top:
+    1px solid
+    #eef0f3;
+
+}
+
+
+.manual-entry strong{
+
+  font-size:.8rem;
+
+}
+
+
+.manual-entry small{
+
+  display:block;
+
+  margin-top:2px;
+
+  color:var(--muted);
+
+  font-size:.62rem;
+
+}
+
+
+.manual-entry button{
+
+  width:29px;
+
+  height:29px;
+
+  border:0;
+
+  border-radius:7px;
+
+  background:#f8fafc;
+
+  cursor:pointer;
+
+  font-size:14px;
+
+}
+
+
+.manual-entry button:last-child{
+
+  background:
+    #fff1f2;
+
+}
+
+
+/* =========================================================
+   TOTALS
+========================================================= */
+
+.totals-section{
+
+  padding:17px;
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius:
+    var(--radius-lg);
+
+  background:
+    rgba(255,255,255,.94);
+
+  box-shadow:
+    var(--shadow);
+
+}
+
+
+.total-card{
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  gap:10px;
+
+  padding:
+    16px;
+
+  border-radius:
+    13px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f8fafc,
+      #f1f5f9
+    );
+
+}
+
+
+.total-card span{
+
+  color:var(--text-soft);
+
+  font-size:.9rem;
+
+  font-weight:650;
+
+}
+
+
+.total-card strong{
+
+  font-size:
+    clamp(
+      1.15rem,
+      5vw,
+      1.55rem
+    );
+
+  letter-spacing:-.5px;
+
+}
+
+
+#testingNote{
+
+  margin:
+    9px 3px;
+
+  color:var(--muted);
+
+  font-size:.72rem;
+
+}
+
+
+.difference-result{
+
+  margin-top:9px;
+
+  padding:
+    14px;
+
+  border-radius:11px;
+
+  background:
+    #f8fafc;
+
+  font-weight:850;
+
+  text-align:center;
+
+}
+
+
+#clearDataButton{
+
+  width:100%;
+
+  margin-top:11px;
+
+  padding:12px;
+
+  border:0;
+
+  border-radius:10px;
+
+  background:
+    #475569;
+
+  color:#fff;
+
+  font-size:.82rem;
+
+  font-weight:800;
+
+  cursor:pointer;
+
+  transition:
+    background .15s ease,
+    transform .12s ease;
+
+}
+
+
+#clearDataButton:hover{
+
+  background:
+    #334155;
+
+}
+
+
+#clearDataButton:active{
+
+  transform:
+    scale(.985);
+
+}
+
+
+/* =========================================================
+   SIDE MENU OVERLAY
+========================================================= */
+
+.menu-overlay{
+
+  position:fixed;
+
+  inset:0;
+
+  z-index:1000;
+
+  background:
+    rgba(15,23,42,.46);
+
+  backdrop-filter:
+    blur(3px);
+
+  animation:
+    fadeIn .18s ease;
+
+}
+
+
+/* =========================================================
+   SIDE MENU
+========================================================= */
+
+.side-menu{
+
+  position:fixed;
+
+  top:0;
+
+  right:0;
+
+  z-index:1001;
+
+  width:
+    min(
+      430px,
+      92vw
+    );
+
+  height:100vh;
+
+  overflow-y:auto;
+
+  background:
+    #f8fafc;
+
+  box-shadow:
+    -15px 0 45px
+    rgba(15,23,42,.18);
+
+  animation:
+    slideIn .22s ease;
+
+}
+
+
+.side-menu-header{
+
+  position:sticky;
+
+  top:0;
+
+  z-index:5;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  padding:
+    16px;
+
+  border-bottom:
+    1px solid
+    var(--border);
+
+  background:
+    rgba(255,255,255,.94);
+
+  backdrop-filter:
+    blur(15px);
+
+}
+
+
+.side-menu-header strong{
+
+  font-size:1rem;
+
+}
+
+
+#closeMenuButton{
+
+  width:34px;
+
+  height:34px;
+
+  border:0;
+
+  border-radius:8px;
+
+  background:
+    #f1f5f9;
+
+  cursor:pointer;
+
+}
+
+
+.side-menu-content{
+
+  padding:13px;
+
+}
+
+
+/* =========================================================
+   MENU SECTIONS
+========================================================= */
+
+.menu-section{
+
+  margin-bottom:9px;
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius:12px;
+
+  overflow:hidden;
+
+  background:#fff;
+
+}
+
+
+.menu-section-header{
+
+  width:100%;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  padding:13px;
+
+  border:0;
+
+  background:#fff;
+
+  cursor:pointer;
+
+  font-size:.84rem;
+
+  font-weight:750;
+
+  text-align:left;
+
+}
+
+
+.menu-section-header:hover{
+
+  background:
+    #f8fafc;
+
+}
+
+
+.menu-section-content{
+
+  padding:
+    0 12px
+    12px;
+
+  border-top:
+    1px solid
+    #eef0f3;
+
+}
+
+
+.menu-section-content h3{
+
+  margin:
+    12px 0;
+
+  font-size:.9rem;
+
+}
+
+
+/* =========================================================
+   METER GRID
+========================================================= */
+
+.meter-grid{
+
+  display:grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap:8px;
+
+}
+
+
+.nozzle-input{
+
+  padding:9px;
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius:9px;
+
+  background:
+    #f8fafc;
+
+}
+
+
+.nozzle-input label{
+
+  display:block;
+
+  margin-bottom:5px;
+
+  font-size:.68rem;
+
+  font-weight:750;
+
+  color:var(--text-soft);
+
+}
+
+
+.nozzle-input input{
+
+  width:100%;
+
+  padding:8px;
+
+  border:
+    1px solid
+    var(--border-dark);
+
+  border-radius:7px;
+
+  background:#fff;
+
+}
+
+
+.menu-section-content
+> button{
+
+  width:100%;
+
+  margin-top:9px;
+
+  padding:9px;
+
+  border:0;
+
+  border-radius:8px;
+
+  background:
+    var(--primary);
+
+  color:#fff;
+
+  font-size:.76rem;
+
+  font-weight:800;
+
+  cursor:pointer;
+
+}
+
+
+.saved-meter-header{
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  padding-top:11px;
+
+}
+
+
+.saved-meter-header strong{
+
+  font-size:.8rem;
+
+}
+
+
+.saved-meter-header button{
+
+  width:30px;
+
+  height:30px;
+
+  border:0;
+
+  border-radius:7px;
+
+  background:
+    var(--primary-soft);
+
+  cursor:pointer;
+
+}
+
+
+/* =========================================================
+   MENU SALE
+========================================================= */
+
+.menu-sale{
+
+  margin:
+    10px 0;
+
+  padding:14px;
+
+  border-radius:13px;
+
+  color:#fff;
+
+  background:
+    linear-gradient(
+      135deg,
+      #1e40af,
+      #2563eb
+    );
+
+  box-shadow:
+    0 8px 20px
+    rgba(37,99,235,.20);
+
+}
+
+
+.menu-sale h3{
+
+  margin:
+    0 0 5px;
+
+  font-size:.82rem;
+
+  opacity:.85;
+
+}
+
+
+#menuSaleAmount{
+
+  font-size:1.7rem;
+
+  font-weight:850;
+
+}
+
+
+#menuSaleBreakdown{
+
+  margin-top:6px;
+
+  color:
+    rgba(255,255,255,.76);
+
+  font-size:.68rem;
+
+  line-height:1.5;
+
+}
+
+
+/* =========================================================
+   MENU TESTING
+========================================================= */
+
+.menu-testing{
+
+  padding:13px;
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius:12px;
+
+  background:#fff;
+
+}
+
+
+.menu-testing label{
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  font-size:.82rem;
+
+  font-weight:750;
+
+}
+
+
+.menu-testing input{
+
+  width:18px;
+
+  height:18px;
+
+  accent-color:
+    var(--primary);
+
+}
+
+
+/* =========================================================
+   HIDDEN
+========================================================= */
+
+.hidden{
+
+  display:none !important;
+
+}
+
+
+/* =========================================================
+   STATES
+========================================================= */
+
+.difference-result:has(+ *)
+{
+  transition:
+    all .15s ease;
+}
+
+
+/* =========================================================
+   SCROLLBAR
+========================================================= */
+
+::-webkit-scrollbar{
+
+  width:7px;
+  height:7px;
+
+}
+
+
+::-webkit-scrollbar-track{
+
+  background:
+    transparent;
+
+}
+
+
+::-webkit-scrollbar-thumb{
+
+  background:
+    #cbd5e1;
+
+  border-radius:10px;
+
+}
+
+
+::-webkit-scrollbar-thumb:hover{
+
+  background:
+    #94a3b8;
+
+}
+
+
+/* =========================================================
+   ANIMATIONS
+========================================================= */
+
+@keyframes fadeIn{
+
+  from{
+    opacity:0;
+  }
+
+  to{
+    opacity:1;
+  }
+
+}
+
+
+@keyframes slideIn{
+
+  from{
+    transform:
+      translateX(100%);
+  }
+
+  to{
+    transform:
+      translateX(0);
+  }
+
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media(
+  max-width:760px
+){
+
+  .app{
+
+    width:
+      min(
+        700px,
+        calc(100% - 22px)
+      );
+
+    padding-top:13px;
+
+  }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media(
+  max-width:600px
+){
+
+  .app{
+
+    width:
+      calc(100% - 16px);
+
+    padding:
+      8px
+      0
+      35px;
+
+  }
+
+
+  .app-header{
+
+    padding:
+      14px;
+
+    border-radius:
+      15px;
+
+  }
+
+
+  .app-header h1{
+
+    font-size:1.25rem;
+
+  }
+
+
+  #menuButton{
+
+    width:44px;
+
+    height:44px;
+
+    border-radius:11px;
+
+  }
+
+
+  .floating-controls{
+
+    top:67px;
+
+    right:10px;
+
+  }
+
+
+  #testingFloatingButton{
+
+    width:43px;
+
+    height:43px;
+
+  }
+
+
+  .difference-badge{
+
+    min-width:104px;
+
+    min-height:35px;
+
+    font-size:.74rem;
+
+  }
+
+
+  .main-summary{
+
+    padding:18px;
+
+    border-radius:16px;
+
+  }
+
+
+  .sale-amount{
+
+    font-size:2.05rem;
+
+  }
+
+
+  .section{
+
+    padding:13px;
+
+    border-radius:15px;
+
+  }
+
+
+  .quick-grid{
+
+    gap:8px;
+
+  }
+
+
+  .quick-card > header{
+
+    padding:9px;
+
+    min-height:62px;
+
+  }
+
+
+  .quick-body{
+
+    padding:9px;
+
+  }
+
+
+  .quick-icon{
+
+    width:34px;
+
+    height:34px;
+
+    font-size:18px;
+
+  }
+
+
+  .quick-card h3{
+
+    font-size:.81rem;
+
+  }
+
+
+  .quick-card header small{
+
+    font-size:.62rem;
+
+  }
+
+
+  .quick-input-row{
+
+    gap:5px;
+
+  }
+
+
+  .quick-input-row input{
+
+    padding:9px 7px;
+
+    font-size:.8rem;
+
+  }
+
+
+  .quick-input-row button{
+
+    padding:
+      9px 8px;
+
+    font-size:.69rem;
+
+  }
+
+
+  .cash-note-grid{
+
+    grid-template-columns:
+      repeat(3,1fr);
+
+  }
+
+
+  .physical-cash-card{
+
+    grid-column:
+      1 / -1;
+
+  }
+
+
+  .oil-grid{
+
+    gap:7px;
+
+  }
+
+
+  .oil-card{
+
+    padding:11px;
+
+  }
+
+
+  .oil-card label{
+
+    font-size:.76rem;
+
+  }
+
+
+  .oil-card input{
+
+    padding:9px 7px;
+
+    font-size:.8rem;
+
+  }
+
+
+  .side-menu{
+
+    width:
+      min(
+        390px,
+        94vw
+      );
+
+  }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media(
+  max-width:390px
+){
+
+  .app{
+
+    width:
+      calc(100% - 10px);
+
+  }
+
+
+  .quick-grid{
+
+    grid-template-columns:
+      1fr 1fr;
+
+    gap:6px;
+
+  }
+
+
+  .quick-card > header{
+
+    gap:6px;
+
+  }
+
+
+  .quick-icon{
+
+    width:30px;
+
+    height:30px;
+
+    font-size:16px;
+
+    border-radius:8px;
+
+  }
+
+
+  .quick-card h3{
+
+    font-size:.74rem;
+
+  }
+
+
+  .quick-card header small{
+
+    font-size:.57rem;
+
+  }
+
+
+  .history-button{
+
+    width:29px;
+
+    height:29px;
+
+    font-size:14px;
+
+  }
+
+
+  .quick-body{
+
+    padding:7px;
+
+  }
+
+
+  .quick-input-row{
+
+    display:grid;
+
+    grid-template-columns:
+      1fr;
+
+  }
+
+
+  .quick-input-row button{
+
+    width:100%;
+
+  }
+
+
+  .quick-total{
+
+    font-size:.69rem;
+
+  }
+
+
+  .cash-note-grid{
+
+    gap:5px;
+
+  }
+
+
+  .cash-note{
+
+    padding:
+      7px 3px;
+
+  }
+
+
+  .cash-note label{
+
+    font-size:.68rem;
+
+  }
+
+
+  .cash-note input{
+
+    padding:7px 2px;
+
+    font-size:.75rem;
+
+  }
+
+
+  .cash-note small{
+
+    font-size:.52rem;
+
+  }
+
+
+  .coin-row{
+
+    flex-wrap:wrap;
+
+  }
+
+
+  .coin-row input{
+
+    width:
+      calc(100% - 40px);
+
+    flex-basis:
+      calc(100% - 40px);
+
+  }
+
+
+  .physical-total{
+
+    padding:
+      10px;
+
+  }
+
+
+  .physical-total span{
+
+    font-size:.7rem;
+
+  }
+
+
+  .physical-total strong{
+
+    font-size:.9rem;
+
+  }
+
+
+  .oil-grid{
+
+    grid-template-columns:
+      1fr;
+
+  }
+
+
+  .app-header p{
+
+    font-size:.7rem;
+
+  }
+
+}
+
+
+/* =========================================================
+   VERY SMALL DEVICES
+========================================================= */
+
+@media(
+  max-width:330px
+){
+
+  .quick-grid{
+
+    grid-template-columns:
+      1fr;
+
+  }
+
+
+  .physical-cash-card{
+
+    grid-column:
+      auto;
+
+  }
+
+
+  .cash-note-grid{
+
+    grid-template-columns:
+      repeat(2,1fr);
+
+  }
+
+
+  .floating-controls{
+
+    right:7px;
+
+  }
+
+
+  .difference-badge{
+
+    min-width:94px;
+
+  }
+
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media(
+  prefers-reduced-motion:reduce
+){
+
+  *{
+
+    scroll-behavior:auto !important;
+
+    animation-duration:
+      .01ms !important;
+
+    animation-iteration-count:
+      1 !important;
+
+    transition-duration:
+      .01ms !important;
+
+  }
+
+}
+
+
+/* =========================================================
+   PRINT
+========================================================= */
+
+@media print{
+
+  body{
+
+    background:#fff;
+
+  }
+
+
+  .floating-controls,
+  #menuButton,
+  .side-menu,
+  .menu-overlay,
+  #addEntryButton,
+  #clearDataButton,
+  button{
+
+    display:none !important;
+
+  }
+
+
+  .app{
+
+    width:100%;
+
+    max-width:none;
+
+  }
+
+
+  .section,
+  .main-summary,
+  .totals-section{
+
+    box-shadow:none;
+
+    border:
+      1px solid
+      #ddd;
+
+  }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+<main class="app">
+
+  <!-- =====================================================
+       HEADER
+  ====================================================== -->
+
+  <header class="app-header">
+
+    <div>
+      <h1>RAHUL KUMAR PURI : KPM FUELS</h1></h1>
+      <p id="todayLabel"></p>
+    </div>
+
+    <button
+      type="button"
+      id="menuButton"
+      aria-label="Open menu"
+    >
+      ☰
+    </button>
+
+  </header>
+
+
+  <!-- =====================================================
+       FLOATING STATUS
+  ====================================================== -->
+
+  <div class="floating-controls">
+
+    <button
+      type="button"
+      id="testingFloatingButton"
+      title="Testing"
+    >
+      📴
+    </button>
+
+    <div
+      id="floatingDifference"
+      class="difference-badge"
+    >
+      ₹ 0.00
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+       MAIN SALE
+  ====================================================== -->
+
+  <section class="main-summary">
+
+    <h2>Today's Sale</h2>
+
+    <div class="sale-amount">
+      ₹ <span id="saleAmount">0.00</span>
+    </div>
+
+    <div id="saleBreakdown">
+      Enter and save Opening and Closing readings.
+    </div>
+
+  </section>
+
+
+  <!-- =====================================================
+       OIL SALES
+  ====================================================== -->
+
+  <section class="section oil-section">
+
+    <h2>Oil Sale</h2>
+
+    <div class="oil-grid">
+
+      <div class="oil-card">
+
+        <label for="oilMl">
+          Total Oil Sale
+        </label>
+
+        <input
+          type="number"
+          id="oilMl"
+          min="0"
+          step="1"
+          placeholder="0"
+        >
+
+        <div>
+          Rate: ₹400 / liter
+        </div>
+
+        <div>
+          Amount:
+          ₹ <span id="oilAmount">0.00</span>
+        </div>
+
+      </div>
+
+
+      <div class="oil-card">
+
+        <label for="discountOilMl">
+          Discount Oil Sale
+        </label>
+
+        <input
+          type="number"
+          id="discountOilMl"
+          min="0"
+          step="1"
+          placeholder="0"
+        >
+
+        <div>
+          Rate: ₹300 / liter
+        </div>
+
+        <div>
+          Amount:
+          ₹ <span id="discountOilAmount">0.00</span>
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =====================================================
+       QUICK COLLECTIONS
+  ====================================================== -->
+
+  <section class="section">
+
+    <div class="section-heading">
+
+      <div>
+        <h2>Collections</h2>
+        <p>Quick Collections</p>
+      </div>
+
+      <span>
+        Fast entry
+      </span>
+
+    </div>
+
+
+    <div class="quick-grid">
+
+
+      <!-- =================================================
+           CARDS
+      ================================================== -->
+
+      <article class="quick-card">
+
+        <header>
+
+          <span class="quick-icon">
+            💳
+          </span>
+
+          <div>
+
+            <h3>Cards</h3>
+
+            <small>
+              Multiple entries
+            </small>
+
+          </div>
+
+          <button
+            type="button"
+            class="history-button"
+            data-history="cards"
+            title="Cards history"
+          >
+            📋
+          </button>
+
+        </header>
+
+
+        <div class="quick-body">
+
+          <div class="quick-input-row">
+
+            <input
+              type="number"
+              id="cardsAmount"
+              step="0.01"
+              min="0"
+              placeholder="Amount"
+            >
+
+            <button
+              type="button"
+              id="cardsAddButton"
+            >
+              + Add
+            </button>
+
+          </div>
+
+
+          <div class="quick-total">
+            Total:
+            ₹ <strong id="cardsTotal">0.00</strong>
+          </div>
+
+
+          <div
+            id="cardsHistory"
+            class="quick-history hidden"
+          ></div>
+
+        </div>
+
+      </article>
+
+
+      <!-- =================================================
+           DEPOSITED CASH
+      ================================================== -->
+
+      <article class="quick-card">
+
+        <header>
+
+          <span class="quick-icon">
+            💵
+          </span>
+
+          <div>
+
+            <h3>Deposited Cash</h3>
+
+            <small>
+              Multiple entries
+            </small>
+
+          </div>
+
+          <button
+            type="button"
+            class="history-button"
+            data-history="deposited"
+            title="Deposited Cash history"
+          >
+            📋
+          </button>
+
+        </header>
+
+
+        <div class="quick-body">
+
+          <div class="quick-input-row">
+
+            <input
+              type="number"
+              id="depositedAmount"
+              step="0.01"
+              min="0"
+              placeholder="Amount"
+            >
+
+            <button
+              type="button"
+              id="depositedAddButton"
+            >
+              + Add
+            </button>
+
+          </div>
+
+
+          <div class="quick-total">
+            Total:
+            ₹ <strong id="depositedTotal">0.00</strong>
+          </div>
+
+
+          <div
+            id="depositedHistory"
+            class="quick-history hidden"
+          ></div>
+
+        </div>
+
+      </article>
+
+
+      <!-- =================================================
+           CREDIT VEHICLES
+      ================================================== -->
+
+      <article class="quick-card">
+
+        <header>
+
+          <span class="quick-icon">
+            🚗
+          </span>
+
+          <div>
+
+            <h3>Credit Vehicles</h3>
+
+            <small>
+              Multiple entries
+            </small>
+
+          </div>
+
+          <button
+            type="button"
+            class="history-button"
+            data-history="credit"
+            title="Credit Vehicles history"
+          >
+            📋
+          </button>
+
+        </header>
+
+
+        <div class="quick-body">
+
+          <div class="quick-input-row">
+
+            <input
+              type="number"
+              id="creditAmount"
+              step="0.01"
+              min="0"
+              placeholder="Amount"
+            >
+
+            <button
+              type="button"
+              id="creditAddButton"
+            >
+              + Add
+            </button>
+
+          </div>
+
+
+          <div class="quick-total">
+            Total:
+            ₹ <strong id="creditTotal">0.00</strong>
+          </div>
+
+
+          <div
+            id="creditHistory"
+            class="quick-history hidden"
+          ></div>
+
+        </div>
+
+      </article>
+
+
+      <!-- =================================================
+           UPI
+      ================================================== -->
+
+      <article class="quick-card">
+
+        <header>
+
+          <span class="quick-icon">
+            📱
+          </span>
+
+          <div>
+
+            <h3>UPI Payment</h3>
+
+            <small>
+              One fixed entry
+            </small>
+
+          </div>
+
+        </header>
+
+
+        <div class="quick-body">
+
+          <div class="quick-input-row">
+
+            <input
+              type="number"
+              id="upiAmount"
+              step="0.01"
+              min="0"
+              placeholder="Amount"
+            >
+
+            <button
+              type="button"
+              id="upiSaveButton"
+            >
+              Save
+            </button>
+
+          </div>
+
+
+          <div class="quick-fixed-value">
+            ₹ <span id="upiValue">0.00</span>
+          </div>
+
+        </div>
+
+      </article>
+
+
+      <!-- =================================================
+           PHYSICAL CASH
+      ================================================== -->
+
+      <article class="quick-card physical-cash-card">
+
+        <header>
+
+          <span class="quick-icon">
+            💰
+          </span>
+
+          <div>
+
+            <h3>Physical CASH</h3>
+
+            <small>
+              Notes + Coin
+            </small>
+
+          </div>
+
+        </header>
+
+
+        <div class="quick-body">
+
+
+          <div class="cash-note-grid">
+
+
+            <div class="cash-note">
+
+              <label>
+                ₹500
+              </label>
+
+              <input
+                type="number"
+                id="cash500"
+                min="0"
+                step="1"
+                placeholder="0"
+              >
+
+              <small id="cash500Value">
+                ₹0.00
+              </small>
+
+            </div>
+
+
+            <div class="cash-note">
+
+              <label>
+                ₹200
+              </label>
+
+              <input
+                type="number"
+                id="cash200"
+                min="0"
+                step="1"
+                placeholder="0"
+              >
+
+              <small id="cash200Value">
+                ₹0.00
+              </small>
+
+            </div>
+
+
+            <div class="cash-note">
+
+              <label>
+                ₹100
+              </label>
+
+              <input
+                type="number"
+                id="cash100"
+                min="0"
+                step="1"
+                placeholder="0"
+              >
+
+              <small id="cash100Value">
+                ₹0.00
+              </small>
+
+            </div>
+
+
+            <div class="cash-note">
+
+              <label>
+                ₹50
+              </label>
+
+              <input
+                type="number"
+                id="cash50"
+                min="0"
+                step="1"
+                placeholder="0"
+              >
+
+              <small id="cash50Value">
+                ₹0.00
+              </small>
+
+            </div>
+
+
+            <div class="cash-note">
+
+              <label>
+                ₹20
+              </label>
+
+              <input
+                type="number"
+                id="cash20"
+                min="0"
+                step="1"
+                placeholder="0"
+              >
+
+              <small id="cash20Value">
+                ₹0.00
+              </small>
+
+            </div>
+
+
+            <div class="cash-note">
+
+              <label>
+                ₹10
+              </label>
+
+              <input
+                type="number"
+                id="cash10"
+                min="0"
+                step="1"
+                placeholder="0"
+              >
+
+              <small id="cash10Value">
+                ₹0.00
+              </small>
+
+            </div>
+
+
+          </div>
+
+
+          <div class="coin-row">
+
+            <span class="coin-icon">
+              🪙
+            </span>
+
+            <label for="coinAmount">
+              Coin
+            </label>
+
+            <input
+              type="number"
+              id="coinAmount"
+              min="0"
+              step="0.01"
+              placeholder="Coin amount"
+            >
+
+          </div>
+
+
+
+        
+
+
+          <div class="physical-total">
+
+            <span>
+              Total Physical Cash
+            </span>
+
+            <strong>
+              ₹ <span id="physicalCashTotal">
+                0.00
+              </span>
+            </strong>
+
+          </div>
+
+
+        </div>
+
+      </article>
+
+    </div>
+
+
+    <!-- ===================================================
+         NORMAL MANUAL COLLECTION
+    ==================================================== -->
+
+    <div class="manual-collections">
+
+      <button
+        type="button"
+        id="addEntryButton"
+      >
+        + Add Entry
+      </button>
+
+
+      <div
+        id="manualAddForm"
+        class="hidden"
+      >
+
+        <label for="manualAmount">
+          Amount
+        </label>
+
+        <input
+          type="number"
+          id="manualAmount"
+          step="0.01"
+          min="0"
+          placeholder="0.00"
+        >
+
+
+        <label for="manualTag">
+          Tag
+        </label>
+
+        <input
+          type="text"
+          id="manualTag"
+          autocomplete="off"
+          placeholder="Type a tag..."
+        >
+
+
+        <div
+          id="manualTagSuggestions"
+          class="tag-suggestions hidden"
+        ></div>
+
+
+        <button
+          type="button"
+          id="manualSaveButton"
+        >
+          Add Entry
+        </button>
+
+      </div>
+
+
+      <div id="manualCollections"></div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =====================================================
+       TOTALS
+  ====================================================== -->
+
+  <section class="totals-section">
+
+    <div class="total-card">
+
+      <span>
+        Collected
+      </span>
+
+      <strong>
+        ₹ <span id="collectedAmount">
+          0.00
+        </span>
+      </strong>
+
+    </div>
+
+
+    <div id="testingNote"></div>
+
+
+    <div
+      id="mainDifference"
+      class="difference-result"
+    >
+      Difference: ₹0.00
+    </div>
+
+
+    <button
+      type="button"
+      id="clearDataButton"
+    >
+      Clear Today's Data
+    </button>
+
+  </section>
+
+
+</main>
+
+
+<!-- =======================================================
+     SIDE MENU
+======================================================== -->
+
+<aside
+  id="sideMenu"
+  class="side-menu hidden"
+>
+
+  <div class="side-menu-header">
+
+    <strong>
+      Petrol Pump Menu
+    </strong>
+
+    <button
+      type="button"
+      id="closeMenuButton"
+    >
+      ❌
+    </button>
+
+  </div>
+
+
+  <div class="side-menu-content">
+
+
+    <!-- OPENING -->
+
+    <section class="menu-section">
+
+      <button
+        type="button"
+        class="menu-section-header"
+        data-menu-section="opening"
+      >
+        <span>
+          ⛽ Opening CumVolume
+        </span>
+
+        <span>
+          ▸
+        </span>
+
+      </button>
+
+
+      <div
+        id="openingMenuContent"
+        class="menu-section-content hidden"
+      ></div>
+
+    </section>
+
+
+    <!-- CLOSING -->
+
+    <section class="menu-section">
+
+      <button
+        type="button"
+        class="menu-section-header"
+        data-menu-section="closing"
+      >
+        <span>
+          ⛽ Closing CumVolume
+        </span>
+
+        <span>
+          ▸
+        </span>
+
+      </button>
+
+
+      <div
+        id="closingMenuContent"
+        class="menu-section-content hidden"
+      ></div>
+
+    </section>
+
+
+    <!-- SALE -->
+
+    <section class="menu-sale">
+
+      <h3>
+        💰 Today's Sale
+      </h3>
+
+      <div>
+        ₹ <span id="menuSaleAmount">
+          0.00
+        </span>
+      </div>
+
+      <div id="menuSaleBreakdown"></div>
+
+    </section>
+
+
+    <!-- TESTING -->
+
+    <section class="menu-testing">
+
+      <label>
+        <span>
+          🧪 Testing
+        </span>
+
+        <input
+          type="checkbox"
+          id="testingToggle"
+        >
+
+      </label>
+
+    </section>
+
+
+  </div>
+
+</aside>
+
+
+<div
+  id="menuOverlay"
+  class="menu-overlay hidden"
+></div>
+
+
+<script>
+
+/* =========================================================
+   PETROL PUMP MANAGER
+   FINAL CLEAN JAVASCRIPT
+========================================================= */
+
+
+/* =========================================================
+   CONSTANTS
+========================================================= */
+
+const RATES = [
+  114.28,
+  103.19,
+  114.28,
+  103.19
+];
+
+const FUEL = [
+  "Petrol",
+  "Diesel",
+  "Petrol",
+  "Diesel"
+];
+
+const DEFAULT_TAGS = [
+  "Card",
+  "Credit Vehicles",
+  "Test",
+  "Deposited Cash",
+  "Phonepe",
+  "Cash",
+  "Coin",
+  "UPI Payment",
+  "Physical CASH"
+];
+
+const OIL_RATE =
+  400;
+
+const DISCOUNT_OIL_RATE =
+  300;
+
+const TESTING_AMOUNT =
+  2174.70;
+
+const PHYSICAL_CASH_KEY =
+  "pumpPhysicalCash";
+
+const QUICK_COLLECTIONS_KEY =
+  "pumpQuickCollectionsFinal";
+
+const todayStr =
+  new Date()
+    .toISOString()
+    .slice(0,10);
+
+
+/* =========================================================
+   STORAGE
+========================================================= */
+
+function getJSON(
+  key,
+  fallback
+){
+
+  try{
+
+    const value =
+      localStorage.getItem(key);
+
+    return value
+      ? JSON.parse(value)
+      : fallback;
+
+  }catch(error){
+
+    return fallback;
+
+  }
+
+}
+
+
+function setJSON(
+  key,
+  value
+){
+
+  localStorage.setItem(
+    key,
+    JSON.stringify(value)
+  );
+
+}
+
+
+/* =========================================================
+   DAILY INITIALIZATION
+========================================================= */
+
+function ensureDay(){
+
+  const storedDay =
+    localStorage.getItem(
+      "pumpDay"
+    );
+
+
+  if(
+    storedDay !== todayStr
+  ){
+
+    localStorage.removeItem(
+      "pumpOpening"
+    );
+
+    localStorage.removeItem(
+      "pumpClosing"
+    );
+
+    localStorage.removeItem(
+      "pumpCollections"
+    );
+
+    localStorage.removeItem(
+      "pumpOilMl"
+    );
+
+    localStorage.removeItem(
+      "pumpDiscountOilMl"
+    );
+
+    localStorage.removeItem(
+      PHYSICAL_CASH_KEY
+    );
+
+    localStorage.removeItem(
+      QUICK_COLLECTIONS_KEY
+    );
+
+    localStorage.setItem(
+      "pumpDay",
+      todayStr
+    );
+
+  }
+
+
+  if(
+    !localStorage.getItem(
+      "pumpTags"
+    )
+  ){
+
+    setJSON(
+      "pumpTags",
+      DEFAULT_TAGS
+    );
+
+  }
+
+}
+
+
+ensureDay();
+
+
+/* =========================================================
+   BASIC STORAGE GETTERS
+========================================================= */
+
+function getOpening(){
+
+  return getJSON(
+    "pumpOpening",
+    {
+      saved:false,
+      values:[
+        null,
+        null,
+        null,
+        null
+      ]
+    }
+  );
+
+}
+
+
+function setOpening(data){
+
+  setJSON(
+    "pumpOpening",
+    data
+  );
+
+}
+
+
+function getClosing(){
+
+  return getJSON(
+    "pumpClosing",
+    {
+      saved:false,
+      values:[
+        null,
+        null,
+        null,
+        null
+      ]
+    }
+  );
+
+}
+
+
+function setClosing(data){
+
+  setJSON(
+    "pumpClosing",
+    data
+  );
+
+}
+
+
+function getCollections(){
+
+  return getJSON(
+    "pumpCollections",
+    []
+  );
+
+}
+
+
+function setCollections(
+  collections
+){
+
+  setJSON(
+    "pumpCollections",
+    collections
+  );
+
+}
+
+
+function getTags(){
+
+  return getJSON(
+    "pumpTags",
+    DEFAULT_TAGS.slice()
+  );
+
+}
+
+
+function setTags(tags){
+
+  setJSON(
+    "pumpTags",
+    tags
+  );
+
+}
+
+
+function getOilMl(){
+
+  return getJSON(
+    "pumpOilMl",
+    0
+  );
+
+}
+
+
+function setOilMl(value){
+
+  setJSON(
+    "pumpOilMl",
+    value
+  );
+
+}
+
+
+function getDiscountOilMl(){
+
+  return getJSON(
+    "pumpDiscountOilMl",
+    0
+  );
+
+}
+
+
+function setDiscountOilMl(
+  value
+){
+
+  setJSON(
+    "pumpDiscountOilMl",
+    value
+  );
+
+}
+
+
+function getTesting(){
+
+  return getJSON(
+    "pumpTestingOn",
+    false
+  );
+
+}
+
+
+function setTesting(value){
+
+  setJSON(
+    "pumpTestingOn",
+    value
+  );
+
+}
+
+
+/* =========================================================
+   QUICK COLLECTION STORAGE
+========================================================= */
+
+function defaultQuickData(){
+
+  return {
+
+    cards:[],
+
+    deposited:[],
+
+    credit:[],
+
+    upi:0
+
+  };
+
+}
+
+
+function getQuickData(){
+
+  return getJSON(
+    QUICK_COLLECTIONS_KEY,
+    defaultQuickData()
+  );
+
+}
+
+
+function setQuickData(
+  data
+){
+
+  setJSON(
+    QUICK_COLLECTIONS_KEY,
+    data
+  );
+
+}
+
+
+/* =========================================================
+   PHYSICAL CASH STORAGE
+========================================================= */
+
+function defaultPhysicalCash(){
+
+  return {
+
+    500:0,
+
+    200:0,
+
+    100:0,
+
+    50:0,
+
+    20:0,
+
+    10:0,
+
+    coin:0
+
+  };
+
+}
+
+
+function getPhysicalCash(){
+
+  return getJSON(
+    PHYSICAL_CASH_KEY,
+    defaultPhysicalCash()
+  );
+
+}
+
+
+function setPhysicalCash(
+  data
+){
+
+  setJSON(
+    PHYSICAL_CASH_KEY,
+    data
+  );
+
+}
+
+
+/* =========================================================
+   FORMAT HELPERS
+========================================================= */
+
+function num(value){
+
+  const n =
+    parseFloat(value);
+
+  return Number.isFinite(n)
+    ? n
+    : 0;
+
+}
+
+
+function fmt(value){
+
+  return num(value)
+    .toLocaleString(
+      "en-IN",
+      {
+        minimumFractionDigits:2,
+        maximumFractionDigits:2
+      }
+    );
+
+}
+
+
+function timeText(
+  iso
+){
+
+  return new Date(iso)
+    .toLocaleString(
+      "en-IN",
+      {
+        day:"2-digit",
+        month:"short",
+        year:"numeric",
+        hour:"2-digit",
+        minute:"2-digit",
+        second:"2-digit"
+      }
+    );
+
+}
+
+
+function makeId(){
+
+  return (
+    Date.now() +
+    "_" +
+    Math.random()
+      .toString(36)
+      .slice(2,8)
+  );
+
+}
+
+
+/* =========================================================
+   UI STATE
+========================================================= */
+
+let openingExpanded =
+  false;
+
+let closingExpanded =
+  false;
+
+const historyOpen = {
+
+  cards:false,
+
+  deposited:false,
+
+  credit:false
+
+};
+
+
+/* =========================================================
+   OPENING / CLOSING RENDER
+========================================================= */
+
+function renderMeterSection(
+  type
+){
+
+  const data =
+    type === "opening"
+      ? getOpening()
+      : getClosing();
+
+
+  const container =
+    type === "opening"
+      ? document.getElementById(
+          "openingMenuContent"
+        )
+      : document.getElementById(
+          "closingMenuContent"
+        );
+
+
+  const expanded =
+    type === "opening"
+      ? openingExpanded
+      : closingExpanded;
+
+
+  const label =
+    type === "opening"
+      ? "Opening CumVolume"
+      : "Closing CumVolume";
+
+
+  if(!data.saved){
+
+    let html = "";
+
+
+    for(
+      let i = 0;
+      i < 4;
+      i++
+    ){
+
+      const value =
+        data.values[i] ??
+        "";
+
+
+      html += `
+
+        <div class="nozzle-input">
+
+          <label>
+            Nozzle ${i+1}
+            (${FUEL[i]})
+          </label>
+
+          <input
+            type="number"
+            step="0.001"
+            id="${type}_${i}"
+            value="${value}"
+          >
+
+        </div>
+
+      `;
+
+    }
+
+
+    container.innerHTML = `
+
+      <h3>
+        ${label}
+      </h3>
+
+      <div class="meter-grid">
+
+        ${html}
+
+      </div>
+
+      <button
+        type="button"
+        data-save-meter="${type}"
+      >
+        Save ${label}
+      </button>
+
+    `;
+
+
+  }else{
+
+    let html = "";
+
+
+    for(
+      let i = 0;
+      i < 4;
+      i++
+    ){
+
+      html += `
+
+        <div class="nozzle-input">
+
+          <label>
+            Nozzle ${i+1}
+            (${FUEL[i]})
+          </label>
+
+          <input
+            type="number"
+            step="0.001"
+            id="${type}_${i}"
+            value="${data.values[i]}"
+          >
+
+        </div>
+
+      `;
+
+    }
+
+
+    container.innerHTML = `
+
+      <div class="saved-meter-header">
+
+        <strong>
+          ${label}
+        </strong>
+
+        <button
+          type="button"
+          data-toggle-meter="${type}"
+        >
+          ${expanded
+            ? "▲"
+            : "▼"}
+        </button>
+
+      </div>
+
+
+      <div
+        class="${
+          expanded
+            ? ""
+            : "hidden"
+        }"
+      >
+
+        <div class="meter-grid">
+
+          ${html}
+
+        </div>
+
+        <button
+          type="button"
+          data-update-meter="${type}"
+        >
+          Update ${label}
+        </button>
+
+      </div>
+
+    `;
+
+  }
+
+}
+
+
+/* =========================================================
+   READ METER
+========================================================= */
+
+function readMeter(
+  type
+){
+
+  const values = [];
+
+
+  for(
+    let i = 0;
+    i < 4;
+    i++
+  ){
+
+    const input =
+      document.getElementById(
+        `${type}_${i}`
+      );
+
+
+    values.push(
+      num(
+        input
+          ? input.value
+          : 0
+      )
+    );
+
+  }
+
+
+  return values;
+
+}
+
+
+/* =========================================================
+   SAVE / UPDATE METER
+========================================================= */
+
+function saveMeter(
+  type
+){
+
+  const values =
+    readMeter(type);
+
+
+  const data = {
+
+    saved:true,
+
+    values:values
+
+  };
+
+
+  if(
+    type === "opening"
+  ){
+
+    setOpening(data);
+
+    openingExpanded =
+      false;
+
+  }else{
+
+    setClosing(data);
+
+    closingExpanded =
+      false;
+
+  }
+
+
+  renderAll();
+
+}
+
+
+/* =========================================================
+   SALE CALCULATION
+========================================================= */
+
+function calculateSale(){
+
+  const opening =
+    getOpening();
+
+  const closing =
+    getClosing();
+
+
+  const ready =
+    opening.saved &&
+    closing.saved;
+
+
+  let petrol =
+    0;
+
+  let diesel =
+    0;
+
+
+  if(ready){
+
+    for(
+      let i = 0;
+      i < 4;
+      i++
+    ){
+
+      let volume =
+        num(
+          closing.values[i]
+        ) -
+        num(
+          opening.values[i]
+        );
+
+
+      if(volume < 0){
+
+        volume = 0;
+
+      }
+
+
+      const amount =
+        volume *
+        RATES[i];
+
+
+      if(
+        FUEL[i] ===
+        "Petrol"
+      ){
+
+        petrol +=
+          amount;
+
+      }else{
+
+        diesel +=
+          amount;
+
+      }
+
+    }
+
+  }
+
+
+  const oilMl =
+    num(
+      getOilMl()
+    );
+
+
+  const discountMl =
+    num(
+      getDiscountOilMl()
+    );
+
+
+  const oilAmount =
+    (
+      oilMl / 1000
+    ) *
+    OIL_RATE;
+
+
+  const discountOilAmount =
+    (
+      discountMl / 1000
+    ) *
+    DISCOUNT_OIL_RATE;
+
+
+  const sale =
+    petrol +
+    diesel +
+    oilAmount +
+    discountOilAmount;
+
+
+  return {
+
+    ready,
+
+    petrol,
+
+    diesel,
+
+    oilAmount,
+
+    discountOilAmount,
+
+    sale
+
+  };
+
+}
+
+
+/* =========================================================
+   QUICK COLLECTION TOTALS
+========================================================= */
+
+function arrayTotal(
+  list
+){
+
+  return list.reduce(
+    (
+      total,
+      entry
+    ) =>
+      total +
+      num(entry.amount),
+    0
+  );
+
+}
+
+
+function physicalCashTotal(){
+
+  const cash =
+    getPhysicalCash();
+
+
+  return (
+
+    num(cash[500]) * 500 +
+
+    num(cash[200]) * 200 +
+
+    num(cash[100]) * 100 +
+
+    num(cash[50]) * 50 +
+
+    num(cash[20]) * 20 +
+
+    num(cash[10]) * 10 +
+
+    num(cash.coin)
+
+  );
+
+}
+
+
+function quickCollectionTotal(){
+
+  const quick =
+    getQuickData();
+
+
+  return (
+
+    arrayTotal(
+      quick.cards
+    ) +
+
+    arrayTotal(
+      quick.deposited
+    ) +
+
+    arrayTotal(
+      quick.credit
+    ) +
+
+    num(quick.upi) +
+
+    physicalCashTotal()
+
+  );
+
+}
+
+
+/* =========================================================
+   TOTAL COLLECTION CALCULATION
+========================================================= */
+
+function calculateCollected(){
+
+  const normal =
+    getCollections();
+
+
+  const normalTotal =
+    normal.reduce(
+      (
+        total,
+        entry
+      ) =>
+        total +
+        num(entry.amount),
+      0
+    );
+
+
+  const testing =
+    getTesting()
+      ? TESTING_AMOUNT
+      : 0;
+
+
+  const quick =
+    quickCollectionTotal();
+
+
+  return (
+    normalTotal +
+    testing +
+    quick
+  );
+
+}
+
+
+/* =========================================================
+   SALE UI
+========================================================= */
+
+function renderSale(){
+
+  const sale =
+    calculateSale();
+
+
+  document.getElementById(
+    "saleAmount"
+  ).textContent =
+    fmt(sale.sale);
+
+
+  document.getElementById(
+    "oilAmount"
+  ).textContent =
+    fmt(
+      sale.oilAmount
+    );
+
+
+  document.getElementById(
+    "discountOilAmount"
+  ).textContent =
+    fmt(
+      sale.discountOilAmount
+    );
+
+
+  const parts = [];
+
+
+  if(sale.ready){
+
+    parts.push(
+      `Petrol: ₹ ${fmt(sale.petrol)}`
+    );
+
+    parts.push(
+      `Diesel: ₹ ${fmt(sale.diesel)}`
+    );
+
+  }
+
+
+  if(
+    sale.oilAmount > 0
+  ){
+
+    parts.push(
+      `Oil: ₹ ${fmt(sale.oilAmount)}`
+    );
+
+  }
+
+
+  if(
+    sale.discountOilAmount > 0
+  ){
+
+    parts.push(
+      `Discount Oil: ₹ ${fmt(
+        sale.discountOilAmount
+      )}`
+    );
+
+  }
+
+
+  document.getElementById(
+    "saleBreakdown"
+  ).textContent =
+    parts.length
+      ? parts.join(" | ")
+      : "Enter and save Opening and Closing readings.";
+
+
+  document.getElementById(
+    "menuSaleAmount"
+  ).textContent =
+    fmt(sale.sale);
+
+
+  document.getElementById(
+    "menuSaleBreakdown"
+  ).textContent =
+    parts.length
+      ? parts.join(" | ")
+      : "Enter and save Opening and Closing readings.";
+
+}
+
+
+/* =========================================================
+   TOTAL / SHORT / EXCESS
+========================================================= */
+
+function renderTotals(){
+
+  const collected =
+    calculateCollected();
+
+
+  const sale =
+    calculateSale();
+
+
+  const difference =
+    collected -
+    sale.sale;
+
+
+  document.getElementById(
+    "collectedAmount"
+  ).textContent =
+    fmt(collected);
+
+
+  const testingNote =
+    document.getElementById(
+      "testingNote"
+    );
+
+
+  testingNote.textContent =
+    getTesting()
+      ? `(includes Testing: ₹ ${fmt(
+          TESTING_AMOUNT
+        )})`
+      : "";
+
+
+  const mainDifference =
+    document.getElementById(
+      "mainDifference"
+    );
+
+
+  const floatingDifference =
+    document.getElementById(
+      "floatingDifference"
+    );
+
+
+  if(
+    difference > 0
+  ){
+
+    mainDifference.textContent =
+      `🟢 Excess: ₹ ${fmt(
+        difference
+      )}`;
+
+
+    floatingDifference.textContent =
+      `+ ₹ ${fmt(
+        difference
+      )}`;
+
+  }
+
+  else if(
+    difference < 0
+  ){
+
+    mainDifference.textContent =
+      `🔴 Short: ₹ ${fmt(
+        Math.abs(difference)
+      )}`;
+
+
+    floatingDifference.textContent =
+      `− ₹ ${fmt(
+        Math.abs(difference)
+      )}`;
+
+  }
+
+  else{
+
+    mainDifference.textContent =
+      "✅ Perfect Balance";
+
+
+    floatingDifference.textContent =
+      "₹ 0.00";
+
+  }
+
+}
+
+
+/* =========================================================
+   OIL INPUTS
+========================================================= */
+
+function initOilInputs(){
+
+  const oil =
+    document.getElementById(
+      "oilMl"
+    );
+
+
+  const discountOil =
+    document.getElementById(
+      "discountOilMl"
+    );
+
+
+  oil.value =
+    getOilMl() || "";
+
+
+  discountOil.value =
+    getDiscountOilMl() || "";
+
+
+  oil.addEventListener(
+    "input",
+    function(){
+
+      setOilMl(
+        Math.max(
+          0,
+          num(this.value)
+        )
+      );
+
+
+      renderAll();
+
+    }
+  );
+
+
+  discountOil.addEventListener(
+    "input",
+    function(){
+
+      setDiscountOilMl(
+        Math.max(
+          0,
+          num(this.value)
+        )
+      );
+
+
+      renderAll();
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   TESTING
+========================================================= */
+
+function renderTesting(){
+
+  const enabled =
+    getTesting();
+
+
+  document.getElementById(
+    "testingToggle"
+  ).checked =
+    enabled;
+
+
+  document.getElementById(
+    "testingFloatingButton"
+  ).textContent =
+    enabled
+      ? "🧪"
+      : "📴";
+
+}
+
+
+function toggleTesting(){
+
+  setTesting(
+    !getTesting()
+  );
+
+
+  renderAll();
+
+}
+
+
+/* =========================================================
+   QUICK ENTRY ADD
+========================================================= */
+
+function addQuickEntry(
+  type,
+  inputId
+){
+
+  const input =
+    document.getElementById(
+      inputId
+    );
+
+
+  const amount =
+    num(
+      input.value
+    );
+
+
+  if(amount <= 0){
+
+    alert(
+      "Please enter a valid amount."
+    );
+
+    return;
+
+  }
+
+
+  const quick =
+    getQuickData();
+
+
+  quick[type].push({
+
+    id:makeId(),
+
+    amount:amount,
+
+    time:new Date()
+      .toISOString()
+
+  });
+
+
+  setQuickData(
+    quick
+  );
+
+
+  input.value =
+    "";
+
+
+  renderAll();
+
+}
+
+
+/* =========================================================
+   QUICK HISTORY
+========================================================= */
+
+function renderHistory(
+  type,
+  elementId
+){
+
+  const quick =
+    getQuickData();
+
+
+  const list =
+    quick[type];
+
+
+  const container =
+    document.getElementById(
+      elementId
+    );
+
+
+  if(
+    !historyOpen[type]
+  ){
+
+    container.classList.add(
+      "hidden"
+    );
+
+    container.innerHTML =
+      "";
+
+    return;
+
+  }
+
+
+  container.classList.remove(
+    "hidden"
+  );
+
+
+  if(!list.length){
+
+    container.innerHTML =
+      "<p>No entries yet.</p>";
+
+    return;
+
+  }
+
+
+  let html =
+    "<h4>📋 Full History</h4>";
+
+
+  list
+    .slice()
+    .reverse()
+    .forEach(
+      entry => {
+
+        html += `
+
+          <div class="history-entry">
+
+            <div>
+
+              <strong>
+                ₹ ${fmt(
+                  entry.amount
+                )}
+              </strong>
+
+              <small>
+                ${timeText(
+                  entry.time
+                )}
+              </small>
+
+            </div>
+
+            <button
+              type="button"
+              data-delete-quick="${type}"
+              data-id="${entry.id}"
+            >
+              🗑️
+            </button>
+
+          </div>
+
+        `;
+
+      }
+    );
+
+
+  container.innerHTML =
+    html;
+
+}
+
+
+function toggleHistory(
+  type
+){
+
+  historyOpen[type] =
+    !historyOpen[type];
+
+
+  renderAll();
+
+}
+
+
+function deleteQuickEntry(
+  type,
+  id
+){
+
+  if(
+    !confirm(
+      "Delete this entry?"
+    )
+  ){
+
+    return;
+
+  }
+
+
+  const quick =
+    getQuickData();
+
+
+  quick[type] =
+    quick[type].filter(
+      entry =>
+        entry.id !== id
+    );
+
+
+  setQuickData(
+    quick
+  );
+
+
+  renderAll();
+
+}
+
+
+/* =========================================================
+   UPI
+========================================================= */
+
+function saveUPI(){
+
+  const amount =
+    Math.max(
+      0,
+      num(
+        document.getElementById(
+          "upiAmount"
+        ).value
+      )
+    );
+
+
+  const quick =
+    getQuickData();
+
+
+  quick.upi =
+    amount;
+
+
+  setQuickData(
+    quick
+  );
+
+
+  renderAll();
+
+}
+
+
+/* =========================================================
+   PHYSICAL CASH
+   ---------------------------------------------------------
+   IMPORTANT:
+   There is NO SAVE BUTTON.
+
+   Every input change is immediately saved.
+========================================================= */
+
+function readPhysicalCashInputs(){
+
+  return {
+
+    500:
+      Math.max(
+        0,
+        Math.floor(
+          num(
+            document.getElementById(
+              "cash500"
+            ).value
+          )
+        )
+      ),
+
+    200:
+      Math.max(
+        0,
+        Math.floor(
+          num(
+            document.getElementById(
+              "cash200"
+            ).value
+          )
+        )
+      ),
+
+    100:
+      Math.max(
+        0,
+        Math.floor(
+          num(
+            document.getElementById(
+              "cash100"
+            ).value
+          )
+        )
+      ),
+
+    50:
+      Math.max(
+        0,
+        Math.floor(
+          num(
+            document.getElementById(
+              "cash50"
+            ).value
+          )
+        )
+      ),
+
+    20:
+      Math.max(
+        0,
+        Math.floor(
+          num(
+            document.getElementById(
+              "cash20"
+            ).value
+          )
+        )
+      ),
+
+    10:
+      Math.max(
+        0,
+        Math.floor(
+          num(
+            document.getElementById(
+              "cash10"
+            ).value
+          )
+        )
+      ),
+
+    coin:
+      Math.max(
+        0,
+        num(
+          document.getElementById(
+            "coinAmount"
+          ).value
+        )
+      )
+
+  };
+
+}
+
+
+function updatePhysicalCash(){
+
+  const cash =
+    readPhysicalCashInputs();
+
+
+  /*
+    AUTO SAVE IMMEDIATELY
+  */
+
+  setPhysicalCash(
+    cash
+  );
+
+
+  /*
+    LIVE NOTE VALUES
+  */
+
+  document.getElementById(
+    "cash500Value"
+  ).textContent =
+    "₹ " +
+    fmt(
+      cash[500] * 500
+    );
+
+
+  document.getElementById(
+    "cash200Value"
+  ).textContent =
+    "₹ " +
+    fmt(
+      cash[200] * 200
+    );
+
+
+  document.getElementById(
+    "cash100Value"
+  ).textContent =
+    "₹ " +
+    fmt(
+      cash[100] * 100
+    );
+
+
+  document.getElementById(
+    "cash50Value"
+  ).textContent =
+    "₹ " +
+    fmt(
+      cash[50] * 50
+    );
+
+
+  document.getElementById(
+    "cash20Value"
+  ).textContent =
+    "₹ " +
+    fmt(
+      cash[20] * 20
+    );
+
+
+  document.getElementById(
+    "cash10Value"
+  ).textContent =
+    "₹ " +
+    fmt(
+      cash[10] * 10
+    );
+
+
+  const total =
+    physicalCashTotal();
+
+
+  document.getElementById(
+    "physicalCashTotal"
+  ).textContent =
+    fmt(total);
+
+
+  /*
+    Immediately update:
+    Collected
+    Short / Excess
+  */
+
+  renderTotals();
+
+}
+
+
+/* =========================================================
+   LOAD PHYSICAL CASH
+========================================================= */
+
+function loadPhysicalCashInputs(){
+
+  const cash =
+    getPhysicalCash();
+
+
+  document.getElementById(
+    "cash500"
+  ).value =
+    cash[500] || "";
+
+
+  document.getElementById(
+    "cash200"
+  ).value =
+    cash[200] || "";
+
+
+  document.getElementById(
+    "cash100"
+  ).value =
+    cash[100] || "";
+
+
+  document.getElementById(
+    "cash50"
+  ).value =
+    cash[50] || "";
+
+
+  document.getElementById(
+    "cash20"
+  ).value =
+    cash[20] || "";
+
+
+  document.getElementById(
+    "cash10"
+  ).value =
+    cash[10] || "";
+
+
+  document.getElementById(
+    "coinAmount"
+  ).value =
+    cash.coin || "";
+
+  document.getElementById(
+    "changeAmount"
+  ).value =
+    cash.change || "";
+
+
+  updatePhysicalCash();
+
+}
+
+
+/* =========================================================
+   MANUAL NORMAL COLLECTION
+========================================================= */
+
+function addManualEntry(){
+
+  const amount =
+    num(
+      document.getElementById(
+        "manualAmount"
+      ).value
+    );
+
+
+  const rawTag =
+    document.getElementById(
+      "manualTag"
+    ).value
+      .trim();
+
+
+  if(
+    amount <= 0 ||
+    !rawTag
+  ){
+
+    alert(
+      "Please enter a valid amount and tag."
+    );
+
+    return;
+
+  }
+
+
+  const tags =
+    getTags();
+
+
+  const existing =
+    tags.find(
+      tag =>
+        tag.toLowerCase() ===
+        rawTag.toLowerCase()
+    );
+
+
+  const finalTag =
+    existing ||
+    rawTag;
+
+
+  if(!existing){
+
+    tags.push(
+      finalTag
+    );
+
+    setTags(
+      tags
+    );
+
+  }
+
+
+  const collections =
+    getCollections();
+
+
+  collections.push({
+
+    id:makeId(),
+
+    amount:amount,
+
+    tag:finalTag,
+
+    time:new Date()
+      .toISOString()
+
+  });
+
+
+  setCollections(
+    collections
+  );
+
+
+  document.getElementById(
+    "manualAmount"
+  ).value =
+    "";
+
+
+  document.getElementById(
+    "manualTag"
+  ).value =
+    "";
+
+
+  document.getElementById(
+    "manualAddForm"
+  ).classList.add(
+    "hidden"
+  );
+
+
+  renderAll();
+
+}
+
+
+/* =========================================================
+   MANUAL COLLECTION RENDER
+========================================================= */
+
+function renderManualCollections(){
+
+  const collections =
+    getCollections();
+
+
+  const container =
+    document.getElementById(
+      "manualCollections"
+    );
+
+
+  if(!collections.length){
+
+    container.innerHTML =
+      "<p>No manual entries yet.</p>";
+
+    return;
+
+  }
+
+
+  const grouped = {};
+
+
+  collections.forEach(
+    entry => {
+
+      if(
+        !grouped[entry.tag]
+      ){
+
+        grouped[entry.tag] =
+          [];
+
+      }
+
+
+      grouped[entry.tag]
+        .push(entry);
+
+    }
+  );
+
+
+  let html = "";
+
+
+  Object.keys(grouped)
+    .forEach(
+      tag => {
+
+        const entries =
+          grouped[tag];
+
+
+        const total =
+          arrayTotal(
+            entries
+          );
+
+
+        html += `
+
+          <details class="manual-tag">
+
+            <summary>
+
+              ${tag}
+              ₹ ${fmt(total)}
+
+            </summary>
+
+
+            <div>
+
+              ${entries
+                .map(
+                  entry => `
+
+                    <div
+                      class="manual-entry"
+                    >
+
+                      <div>
+
+                        <strong>
+                          ₹ ${fmt(
+                            entry.amount
+                          )}
+                        </strong>
+
+                        <small>
+                          ${timeText(
+                            entry.time
+                          )}
+                        </small>
+
+                      </div>
+
+
+                      <div>
+
+                        <button
+                          type="button"
+                          data-edit-manual="${entry.id}"
+                        >
+                          ✏️
+                        </button>
+
+                        <button
+                          type="button"
+                          data-delete-manual="${entry.id}"
+                        >
+                          🗑️
+                        </button>
+
+                      </div>
+
+                    </div>
+
+                  `
+                )
+                .join("")}
+
+            </div>
+
+          </details>
+
+        `;
+
+      }
+    );
+
+
+  container.innerHTML =
+    html;
+
+}
+
+
+/* =========================================================
+   MANUAL EDIT
+========================================================= */
+
+function editManualEntry(
+  id
+){
+
+  const collections =
+    getCollections();
+
+
+  const entry =
+    collections.find(
+      item =>
+        item.id === id
+    );
+
+
+  if(!entry)
+    return;
+
+
+  const amount =
+    prompt(
+      "Enter amount:",
+      entry.amount
+    );
+
+
+  if(amount === null)
+    return;
+
+
+  const tag =
+    prompt(
+      "Enter tag:",
+      entry.tag
+    );
+
+
+  if(tag === null)
+    return;
+
+
+  const newAmount =
+    num(amount);
+
+
+  const newTag =
+    tag.trim();
+
+
+  if(
+    newAmount <= 0 ||
+    !newTag
+  ){
+
+    alert(
+      "Invalid amount or tag."
+    );
+
+    return;
+
+  }
+
+
+  entry.amount =
+    newAmount;
+
+  entry.tag =
+    newTag;
+
+  entry.time =
+    new Date()
+      .toISOString();
+
+
+  setCollections(
+    collections
+  );
+
+
+  renderAll();
+
+}
+
+
+/* =========================================================
+   MANUAL DELETE
+========================================================= */
+
+function deleteManualEntry(
+  id
+){
+
+  if(
+    !confirm(
+      "Delete this entry?"
+    )
+  ){
+
+    return;
+
+  }
+
+
+  const collections =
+    getCollections()
+      .filter(
+        entry =>
+          entry.id !== id
+      );
+
+
+  setCollections(
+    collections
+  );
+
+
+  renderAll();
+
+}
+
+
+/* =========================================================
+   TAG SUGGESTIONS
+========================================================= */
+
+function renderTagSuggestions(){
+
+  const input =
+    document.getElementById(
+      "manualTag"
+    );
+
+
+  const box =
+    document.getElementById(
+      "manualTagSuggestions"
+    );
+
+
+  const value =
+    input.value
+      .trim()
+      .toLowerCase();
+
+
+  if(!value){
+
+    box.classList.add(
+      "hidden"
+    );
+
+    box.innerHTML =
+      "";
+
+    return;
+
+  }
+
+
+  const matches =
+    getTags()
+      .filter(
+        tag =>
+          tag.toLowerCase()
+            .includes(value)
+      );
+
+
+  if(!matches.length){
+
+    box.classList.add(
+      "hidden"
+    );
+
+    box.innerHTML =
+      "";
+
+    return;
+
+  }
+
+
+  box.innerHTML =
+    matches
+      .map(
+        tag => `
+
+          <button
+            type="button"
+            data-select-tag="${tag}"
+          >
+            ${tag}
+          </button>
+
+        `
+      )
+      .join("");
+
+
+  box.classList.remove(
+    "hidden"
+  );
+
+}
+
+
+/* =========================================================
+   OPENING / CLOSING MENU
+========================================================= */
+
+function renderMenuMeters(){
+
+  renderMeterSection(
+    "opening"
+  );
+
+  renderMeterSection(
+    "closing"
+  );
+
+}
+
+
+/* =========================================================
+   MASTER RENDER
+========================================================= */
+
+function renderAll(){
+
+  renderMenuMeters();
+
+  renderSale();
+
+  renderTotals();
+
+  renderTesting();
+
+  renderQuickUI();
+
+  renderManualCollections();
+
+}
+
+
+/* =========================================================
+   QUICK UI
+========================================================= */
+
+function renderQuickUI(){
+
+  const quick =
+    getQuickData();
+
+
+  document.getElementById(
+    "cardsTotal"
+  ).textContent =
+    fmt(
+      arrayTotal(
+        quick.cards
+      )
+    );
+
+
+  document.getElementById(
+    "depositedTotal"
+  ).textContent =
+    fmt(
+      arrayTotal(
+        quick.deposited
+      )
+    );
+
+
+  document.getElementById(
+    "creditTotal"
+  ).textContent =
+    fmt(
+      arrayTotal(
+        quick.credit
+      )
+    );
+
+
+  document.getElementById(
+    "upiAmount"
+  ).value =
+    quick.upi || "";
+
+
+  document.getElementById(
+    "upiValue"
+  ).textContent =
+    fmt(
+      quick.upi
+    );
+
+
+  renderHistory(
+    "cards",
+    "cardsHistory"
+  );
+
+
+  renderHistory(
+    "deposited",
+    "depositedHistory"
+  );
+
+
+  renderHistory(
+    "credit",
+    "creditHistory"
+  );
+
+
+  loadPhysicalCashInputs();
+
+}
+
+
+/* =========================================================
+   MENU OPEN / CLOSE
+========================================================= */
+
+function openMenu(){
+
+  document.getElementById(
+    "sideMenu"
+  ).classList.remove(
+    "hidden"
+  );
+
+
+  document.getElementById(
+    "menuOverlay"
+  ).classList.remove(
+    "hidden"
+  );
+
+}
+
+
+function closeMenu(){
+
+  document.getElementById(
+    "sideMenu"
+  ).classList.add(
+    "hidden"
+  );
+
+
+  document.getElementById(
+    "menuOverlay"
+  ).classList.add(
+    "hidden"
+  );
+
+}
+
+
+/* =========================================================
+   EVENT LISTENERS
+========================================================= */
+
+document.addEventListener(
+  "click",
+  function(event){
+
+
+    /* -----------------------------------------------
+       MENU
+    ------------------------------------------------ */
+
+    if(
+      event.target.closest(
+        "#menuButton"
+      )
+    ){
+
+      openMenu();
+
+      return;
+
+    }
+
+
+    if(
+      event.target.closest(
+        "#closeMenuButton"
+      )
+    ){
+
+      closeMenu();
+
+      return;
+
+    }
+
+
+    if(
+      event.target.closest(
+        "#menuOverlay"
+      )
+    ){
+
+      closeMenu();
+
+      return;
+
+    }
+
+
+    /* -----------------------------------------------
+       METER SAVE
+    ------------------------------------------------ */
+
+    const saveMeterButton =
+      event.target.closest(
+        "[data-save-meter]"
+      );
+
+
+    if(saveMeterButton){
+
+      saveMeter(
+        saveMeterButton
+          .dataset
+          .saveMeter
+      );
+
+      return;
+
+    }
+
+
+    /* -----------------------------------------------
+       METER UPDATE
+    ------------------------------------------------ */
+
+    const updateMeterButton =
+      event.target.closest(
+        "[data-update-meter]"
+      );
+
+
+    if(updateMeterButton){
+
+      saveMeter(
+        updateMeterButton
+          .dataset
+          .updateMeter
+      );
+
+      return;
+
+    }
+
+
+    /* -----------------------------------------------
+       METER EXPAND
+    ------------------------------------------------ */
+
+    const toggleMeterButton =
+      event.target.closest(
+        "[data-toggle-meter]"
+      );
+
+
+    if(toggleMeterButton){
+
+      const type =
+        toggleMeterButton
+          .dataset
+          .toggleMeter;
+
+
+      if(
+        type === "opening"
+      ){
+
+        openingExpanded =
+          !openingExpanded;
+
+      }else{
+
+        closingExpanded =
+          !closingExpanded;
+
+      }
+
+
+      renderMenuMeters();
+
+      return;
+
+    }
+
+
+    /* -----------------------------------------------
+       HISTORY
+    ------------------------------------------------ */
+
+    const historyButton =
+      event.target.closest(
+        "[data-history]"
+      );
+
+
+    if(historyButton){
+
+      toggleHistory(
+        historyButton
+          .dataset
+          .history
+      );
+
+      return;
+
+    }
+
+
+    /* -----------------------------------------------
+       QUICK DELETE
+    ------------------------------------------------ */
+
+    const quickDelete =
+      event.target.closest(
+        "[data-delete-quick]"
+      );
+
+
+    if(quickDelete){
+
+      deleteQuickEntry(
+
+        quickDelete
+          .dataset
+          .deleteQuick,
+
+        quickDelete
+          .dataset
+          .id
+
+      );
+
+      return;
+
+    }
+
+
+    /* -----------------------------------------------
+       MANUAL DELETE
+    ------------------------------------------------ */
+
+    const manualDelete =
+      event.target.closest(
+        "[data-delete-manual]"
+      );
+
+
+    if(manualDelete){
+
+      deleteManualEntry(
+        manualDelete
+          .dataset
+          .deleteManual
+      );
+
+      return;
+
+    }
+
+
+    /* -----------------------------------------------
+       MANUAL EDIT
+    ------------------------------------------------ */
+
+    const manualEdit =
+      event.target.closest(
+        "[data-edit-manual]"
+      );
+
+
+    if(manualEdit){
+
+      editManualEntry(
+        manualEdit
+          .dataset
+          .editManual
+      );
+
+      return;
+
+    }
+
+
+    /* -----------------------------------------------
+       TAG SELECT
+    ------------------------------------------------ */
+
+    const tagButton =
+      event.target.closest(
+        "[data-select-tag]"
+      );
+
+
+    if(tagButton){
+
+      document.getElementById(
+        "manualTag"
+      ).value =
+        tagButton
+          .dataset
+          .selectTag;
+
+
+      document.getElementById(
+        "manualTagSuggestions"
+      ).classList.add(
+        "hidden"
+      );
+
+      return;
+
+    }
+
+
+    /* -----------------------------------------------
+       TESTING FLOATING
+    ------------------------------------------------ */
+
+    if(
+      event.target.closest(
+        "#testingFloatingButton"
+      )
+    ){
+
+      toggleTesting();
+
+      return;
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   NORMAL BUTTONS
+========================================================= */
+
+document.getElementById(
+  "cardsAddButton"
+).addEventListener(
+  "click",
+  function(){
+
+    addQuickEntry(
+      "cards",
+      "cardsAmount"
+    );
+
+  }
+);
+
+
+document.getElementById(
+  "depositedAddButton"
+).addEventListener(
+  "click",
+  function(){
+
+    addQuickEntry(
+      "deposited",
+      "depositedAmount"
+    );
+
+  }
+);
+
+
+document.getElementById(
+  "creditAddButton"
+).addEventListener(
+  "click",
+  function(){
+
+    addQuickEntry(
+      "credit",
+      "creditAmount"
+    );
+
+  }
+);
+
+
+document.getElementById(
+  "upiSaveButton"
+).addEventListener(
+  "click",
+  saveUPI
+);
+
+
+/* =========================================================
+   PHYSICAL CASH AUTO-SAVE
+========================================================= */
+
+[
+  "cash500",
+  "cash200",
+  "cash100",
+  "cash50",
+  "cash20",
+  "cash10",
+  "coinAmount"
+].forEach(
+  id => {
+
+    document.getElementById(
+      id
+    ).addEventListener(
+      "input",
+      updatePhysicalCash
+    );
+
+  }
+);
+
+
+/* =========================================================
+   MANUAL ADD FORM
+========================================================= */
+
+document.getElementById(
+  "addEntryButton"
+).addEventListener(
+  "click",
+  function(){
+
+    document.getElementById(
+      "manualAddForm"
+    ).classList.toggle(
+      "hidden"
+    );
+
+  }
+);
+
+
+document.getElementById(
+  "manualSaveButton"
+).addEventListener(
+  "click",
+  addManualEntry
+);
+
+
+document.getElementById(
+  "manualTag"
+).addEventListener(
+  "input",
+  renderTagSuggestions
+);
+
+
+/* =========================================================
+   TESTING CHECKBOX
+========================================================= */
+
+document.getElementById(
+  "testingToggle"
+).addEventListener(
+  "change",
+  function(){
+
+    setTesting(
+      this.checked
+    );
+
+
+    renderAll();
+
+  }
+);
+
+
+/* =========================================================
+   CLEAR TODAY
+========================================================= */
+
+document.getElementById(
+  "clearDataButton"
+).addEventListener(
+  "click",
+  function(){
+
+    if(
+      !confirm(
+        "Clear today's data?\n\nTags will be kept."
+      )
+    ){
+
+      return;
+
+    }
+
+
+    localStorage.removeItem(
+      "pumpOpening"
+    );
+
+    localStorage.removeItem(
+      "pumpClosing"
+    );
+
+    localStorage.removeItem(
+      "pumpCollections"
+    );
+
+    localStorage.removeItem(
+      "pumpOilMl"
+    );
+
+    localStorage.removeItem(
+      "pumpDiscountOilMl"
+    );
+
+    localStorage.removeItem(
+      "pumpTestingOn"
+    );
+
+    localStorage.removeItem(
+      PHYSICAL_CASH_KEY
+    );
+
+    localStorage.removeItem(
+      QUICK_COLLECTIONS_KEY
+    );
+
+
+    openingExpanded =
+      false;
+
+    closingExpanded =
+      false;
+
+
+    historyOpen.cards =
+      false;
+
+    historyOpen.deposited =
+      false;
+
+    historyOpen.credit =
+      false;
+
+
+    document.getElementById(
+      "oilMl"
+    ).value =
+      "";
+
+    document.getElementById(
+      "discountOilMl"
+    ).value =
+      "";
+
+
+    renderAll();
+
+  }
+);
+
+
+/* =========================================================
+   TODAY LABEL
+========================================================= */
+
+document.getElementById(
+  "todayLabel"
+).textContent =
+  new Date()
+    .toLocaleDateString(
+      "en-IN",
+      {
+        weekday:"long",
+        day:"numeric",
+        month:"long",
+        year:"numeric"
+      }
+    );
+
+
+/* =========================================================
+   INITIALIZATION
+========================================================= */
+
+initOilInputs();
+
+renderAll();
+
+</script>
+
+
+
+  <script>
+
+/* =========================================================
+   FINAL UI INTERACTION REPAIR
+   Fixes Opening / Closing CumVolume + future menu accordions
+========================================================= */
+
+(function(){
+
+  "use strict";
+
+
+  /* -------------------------------------------------------
+     1. Find the actual content belonging to a menu header
+  ------------------------------------------------------- */
+
+  function findContent(header){
+
+    if(!header) return null;
+
+    /* Normal final-layout structure */
+
+    const section =
+      header.closest(".menu-section");
+
+    if(section){
+
+      const content =
+        section.querySelector(".menu-section-content");
+
+      if(content) return content;
+
+    }
+
+
+    /* Fallback: next sibling */
+
+    let next =
+      header.nextElementSibling;
+
+    if(next){
+
+      if(
+        next.classList.contains(
+          "menu-section-content"
+        )
+      ){
+
+        return next;
+
+      }
+
+      if(
+        next.classList.contains("section-content") ||
+        next.classList.contains("accordion-content")
+      ){
+
+        return next;
+
+      }
+
+    }
+
+
+    /* Generic fallback */
+
+    const parent =
+      header.parentElement;
+
+    if(parent){
+
+      const candidates =
+        parent.children;
+
+      for(let i=0;i<candidates.length;i++){
+
+        const el =
+          candidates[i];
+
+        if(
+          el !== header &&
+          (
+            el.classList.contains(
+              "menu-section-content"
+            ) ||
+            el.classList.contains(
+              "accordion-content"
+            ) ||
+            el.classList.contains(
+              "section-content"
+            )
+          )
+        ){
+
+          return el;
+
+        }
+
+      }
+
+    }
+
+    return null;
+
+  }
+
+
+  /* -------------------------------------------------------
+     2. Toggle any menu section
+  ------------------------------------------------------- */
+
+  function toggleSection(header){
+
+    const content =
+      findContent(header);
+
+    if(!content) return;
+
+
+    const currentlyHidden =
+      content.classList.contains("hidden") ||
+      getComputedStyle(content).display === "none";
+
+
+    if(currentlyHidden){
+
+      content.classList.remove("hidden");
+
+      content.style.display = "";
+
+
+      /*
+        If normal CSS still hides it,
+        force it visible.
+      */
+
+      if(
+        getComputedStyle(content).display === "none"
+      ){
+
+        content.style.display =
+          "block";
+
+      }
+
+    }else{
+
+      content.classList.add("hidden");
+
+      content.style.display =
+        "none";
+
+    }
+
+
+    /* ---------------------------------------------------
+       Rotate arrow when available
+    --------------------------------------------------- */
+
+    const arrow =
+      header.querySelector(
+        ".arrow, .menu-arrow, [data-arrow]"
+      );
+
+    if(arrow){
+
+      const isOpen =
+        !content.classList.contains("hidden") &&
+        getComputedStyle(content).display !== "none";
+
+      arrow.style.transform =
+        isOpen
+          ? "rotate(90deg)"
+          : "rotate(0deg)";
+
+    }
+
+
+    header.setAttribute(
+      "aria-expanded",
+      currentlyHidden
+        ? "true"
+        : "false"
+    );
+
+  }
+
+
+  /* -------------------------------------------------------
+     3. Universal menu click protection
+  ------------------------------------------------------- */
+
+  document.addEventListener(
+    "click",
+    function(e){
+
+      /*
+        Only handle menu section headers.
+
+        This deliberately does NOT touch:
+        - Save buttons
+        - Update buttons
+        - Inputs
+        - Testing
+        - Add Entry
+        - History
+        - Delete
+        - Hamburger
+      */
+
+      const header =
+        e.target.closest(
+          ".menu-section-header"
+        );
+
+      if(!header) return;
+
+
+      /*
+        If the header contains a real button/input
+        that was clicked, don't interfere.
+      */
+
+      if(
+        e.target.closest(
+          "button,input,select,textarea"
+        ) &&
+        e.target !== header
+      ){
+
+        return;
+
+      }
+
+
+      /*
+        Take control of accordion behavior.
+
+        This prevents another old handler from
+        toggling it twice and making it appear frozen.
+      */
+
+      e.preventDefault();
+      e.stopImmediatePropagation();
+
+      toggleSection(header);
+
+    },
+    true
+  );
+
+
+  /* -------------------------------------------------------
+     4. Keyboard support
+        Enter / Space also opens sections
+  ------------------------------------------------------- */
+
+  document.addEventListener(
+    "keydown",
+    function(e){
+
+      const header =
+        e.target.closest(
+          ".menu-section-header"
+        );
+
+      if(!header) return;
+
+      if(
+        e.key !== "Enter" &&
+        e.key !== " "
+      ){
+
+        return;
+
+      }
+
+      e.preventDefault();
+
+      toggleSection(header);
+
+    },
+    true
+  );
+
+
+  /* -------------------------------------------------------
+     5. Make headers properly interactive
+  ------------------------------------------------------- */
+
+  function prepareHeaders(){
+
+    document
+      .querySelectorAll(
+        ".menu-section-header"
+      )
+      .forEach(function(header){
+
+        header.style.cursor =
+          "pointer";
+
+        header.setAttribute(
+          "role",
+          "button"
+        );
+
+        if(
+          !header.hasAttribute(
+            "tabindex"
+          )
+        ){
+
+          header.setAttribute(
+            "tabindex",
+            "0"
+          );
+
+        }
+
+        if(
+          !header.hasAttribute(
+            "aria-expanded"
+          )
+        ){
+
+          header.setAttribute(
+            "aria-expanded",
+            "false"
+          );
+
+        }
+
+      });
+
+  }
+
+
+  /* -------------------------------------------------------
+     6. Automatically repair dynamically
+        generated menu sections
+  ------------------------------------------------------- */
+
+  const observer =
+    new MutationObserver(
+      function(){
+
+        prepareHeaders();
+
+      }
+    );
+
+
+  observer.observe(
+    document.body,
+    {
+      childList:true,
+      subtree:true
+    }
+  );
+
+
+  /* -------------------------------------------------------
+     7. Initial repair
+  ------------------------------------------------------- */
+
+  prepareHeaders();
+
+
+  /* -------------------------------------------------------
+     8. Specific safety check for
+        Opening / Closing CumVolume
+  ------------------------------------------------------- */
+
+  function repairCumVolume(){
+
+    const headers =
+      document.querySelectorAll(
+        ".menu-section-header"
+      );
+
+
+    headers.forEach(function(header){
+
+      const text =
+        (header.textContent || "")
+          .trim()
+          .toLowerCase();
+
+
+      if(
+        text.includes(
+          "opening cumvolume"
+        ) ||
+        text.includes(
+          "closing cumvolume"
+        )
+      ){
+
+        header.style.pointerEvents =
+          "auto";
+
+        header.style.userSelect =
+          "none";
+
+        header.style.cursor =
+          "pointer";
+
+      }
+
+    });
+
+  }
+
+
+  repairCumVolume();
+
+
+  /* -------------------------------------------------------
+     9. Safety: don't allow invisible overlay
+        to block menu interaction
+  ------------------------------------------------------- */
+
+  function repairMenuLayer(){
+
+    const menu =
+      document.querySelector(
+        ".side-menu"
+      );
+
+    const overlay =
+      document.querySelector(
+        ".menu-overlay"
+      );
+
+
+    if(menu){
+
+      menu.style.pointerEvents =
+        "auto";
+
+      menu.style.zIndex =
+        "1001";
+
+    }
+
+
+    /*
+      Overlay stays behind the menu.
+    */
+
+    if(overlay){
+
+      overlay.style.zIndex =
+        "1000";
+
+    }
+
+  }
+
+
+  repairMenuLayer();
+
+
+  /* -------------------------------------------------------
+     10. Re-check after menu opens
+  ------------------------------------------------------- */
+
+  const menuButton =
+    document.querySelector(
+      "#menuButton"
+    );
+
+
+  if(menuButton){
+
+    menuButton.addEventListener(
+      "click",
+      function(){
+
+        setTimeout(function(){
+
+          repairMenuLayer();
+          prepareHeaders();
+          repairCumVolume();
+
+        },30);
+
+      },
+      true
+    );
+
+  }
+
+
+})();
+
+</script>
+
+
+
+<script>
+
+/* =========================================================
+   FINAL INDEPENDENT LIVE SHORT / EXCESS BAR
+   ---------------------------------------------------------
+   This bar is completely independent from Testing control.
+
+   It will:
+   ✓ Stay fixed to viewport
+   ✓ Stay visible while scrolling
+   ✓ Stay visible when keyboard opens
+   ✓ Stay visible while entering Physical Cash
+   ✓ Update live on every input
+   ✓ Survive DOM re-renders
+   ✓ Survive menu opening/closing
+========================================================= */
+
+(function(){
+
+  "use strict";
+
+
+  /* =======================================================
+     1. FIND EXISTING DIFFERENCE BAR
+  ======================================================= */
+
+  let differenceBar =
+    document.querySelector(
+      "#floatingDifferenceBox"
+    ) ||
+    document.querySelector(
+      ".difference-badge"
+    );
+
+
+  /* =======================================================
+     2. IF IT DOESN'T EXIST, CREATE IT
+  ======================================================= */
+
+  if(!differenceBar){
+
+    differenceBar =
+      document.createElement("div");
+
+    differenceBar.id =
+      "floatingDifferenceBox";
+
+  }
+
+
+  /* =======================================================
+     3. MOVE IT DIRECTLY INTO BODY
+     
+     VERY IMPORTANT:
+     It must NOT remain inside:
+       .floating-controls
+       .app
+       .section
+       .side-menu
+     
+     This prevents scrolling / transform / keyboard
+     positioning problems.
+  ======================================================= */
+
+  document.body.appendChild(
+    differenceBar
+  );
+
+
+  /* =======================================================
+     4. FORCE COMPLETELY INDEPENDENT POSITION
+  ======================================================= */
+
+  function lockPosition(){
+
+    differenceBar.style.setProperty(
+      "position",
+      "fixed",
+      "important"
+    );
+
+    differenceBar.style.setProperty(
+      "left",
+      "auto",
+      "important"
+    );
+
+    differenceBar.style.setProperty(
+      "top",
+      "auto",
+      "important"
+    );
+
+    differenceBar.style.setProperty(
+      "right",
+      "14px",
+      "important"
+    );
+
+    differenceBar.style.setProperty(
+      "z-index",
+      "2147483647",
+      "important"
+    );
+
+    differenceBar.style.setProperty(
+      "display",
+      "flex",
+      "important"
+    );
+
+    differenceBar.style.setProperty(
+      "visibility",
+      "visible",
+      "important"
+    );
+
+    differenceBar.style.setProperty(
+      "opacity",
+      "1",
+      "important"
+    );
+
+    differenceBar.style.setProperty(
+      "pointer-events",
+      "none",
+      "important"
+    );
+
+  }
+
+
+  /* =======================================================
+     5. KEYBOARD-SAFE BOTTOM POSITION
+     
+     Android Chrome changes visualViewport when
+     keyboard opens.
+
+     We calculate the visible bottom area so the
+     Short/Excess badge stays above the keyboard.
+  ======================================================= */
+
+  function updateViewportPosition(){
+
+    lockPosition();
+
+
+    let bottomSpace =
+      14;
+
+
+    if(
+      window.visualViewport
+    ){
+
+      const viewport =
+        window.visualViewport;
+
+
+      /*
+        Amount of viewport hidden by keyboard.
+      */
+
+      const keyboardHeight =
+        Math.max(
+          0,
+          window.innerHeight -
+          viewport.height -
+          viewport.offsetTop
+        );
+
+
+      /*
+        Keep badge above keyboard.
+      */
+
+      if(
+        keyboardHeight > 80
+      ){
+
+        bottomSpace =
+          keyboardHeight + 10;
+
+      }
+
+    }
+
+
+    differenceBar.style.setProperty(
+      "bottom",
+      bottomSpace + "px",
+      "important"
+    );
+
+  }
+
+
+  /* =======================================================
+     6. STYLE THE INDEPENDENT BAR
+  ======================================================= */
+
+  const style =
+    document.createElement("style");
+
+
+  style.textContent = `
+
+    #floatingDifferenceBox{
+
+      position:fixed !important;
+
+      top:auto !important;
+
+      left:auto !important;
+
+      right:14px !important;
+
+      bottom:14px !important;
+
+      z-index:2147483647 !important;
+
+      min-width:120px;
+
+      min-height:40px;
+
+      padding:0 13px;
+
+      border-radius:12px;
+
+      background:
+        rgba(255,255,255,.97);
+
+      border:
+        1px solid
+        rgba(203,213,225,.95);
+
+      box-shadow:
+        0 8px 24px
+        rgba(15,23,42,.20);
+
+      display:flex !important;
+
+      align-items:center;
+
+      justify-content:center;
+
+      box-sizing:border-box;
+
+      font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+
+      font-size:.84rem;
+
+      font-weight:850;
+
+      white-space:nowrap;
+
+      pointer-events:none !important;
+
+      visibility:visible !important;
+
+      opacity:1 !important;
+
+      transform:none !important;
+
+      transition:
+        color .15s ease,
+        background .15s ease,
+        border-color .15s ease,
+        box-shadow .15s ease;
+
+    }
+
+
+    #floatingDifferenceBox.excess{
+
+      color:#047857;
+
+      background:#ecfdf5;
+
+      border-color:#a7f3d0;
+
+    }
+
+
+    #floatingDifferenceBox.short{
+
+      color:#b91c1c;
+
+      background:#fef2f2;
+
+      border-color:#fecaca;
+
+    }
+
+
+    #floatingDifferenceBox.balance{
+
+      color:#374151;
+
+      background:#f8fafc;
+
+      border-color:#e5e7eb;
+
+    }
+
+
+    @media(max-width:600px){
+
+      #floatingDifferenceBox{
+
+        right:10px !important;
+
+        min-width:112px;
+
+        min-height:38px;
+
+        padding:0 11px;
+
+        border-radius:11px;
+
+        font-size:.76rem;
+
+      }
+
+    }
+
+
+    @media(max-width:380px){
+
+      #floatingDifferenceBox{
+
+        right:8px !important;
+
+        min-width:104px;
+
+        min-height:36px;
+
+        font-size:.71rem;
+
+      }
+
+    }
+
+  `;
+
+
+  document.head.appendChild(
+    style
+  );
+
+
+  /* =======================================================
+     7. LIVE CALCULATION
+  ======================================================= */
+
+  function updateLiveDifference(){
+
+    try{
+
+      /*
+        Use the website's existing calculation.
+      */
+
+      if(
+        typeof calcSale !==
+        "function"
+      ){
+
+        return;
+
+      }
+
+
+      const saleData =
+        calcSale();
+
+
+      const collections =
+        typeof getCollections ===
+        "function"
+          ? getCollections()
+          : [];
+
+
+      let collected =
+        collections.reduce(
+          function(sum,e){
+
+            return sum +
+              Number(e.amount || 0);
+
+          },
+          0
+        );
+
+
+      /*
+        Testing amount.
+      */
+
+      if(
+        typeof getTesting ===
+        "function" &&
+        getTesting()
+      ){
+
+        collected +=
+          Number(
+            typeof TESTING_AMOUNT !==
+            "undefined"
+              ? TESTING_AMOUNT
+              : 0
+          );
+
+      }
+
+
+      /*
+        Final difference.
+      */
+
+      const difference =
+        collected -
+        Number(
+          saleData.sale || 0
+        );
+
+
+      /*
+        Remove previous state.
+      */
+
+      differenceBar.classList.remove(
+        "short",
+        "excess",
+        "balance"
+      );
+
+
+      /* ---------------------------------------------------
+         EXCESS
+      --------------------------------------------------- */
+
+      if(
+        difference > 0.000001
+      ){
+
+        differenceBar.classList.add(
+          "excess"
+        );
+
+        differenceBar.textContent =
+          "+ ₹ " +
+          formatMoney(
+            difference
+          );
+
+        differenceBar.title =
+          "Excess";
+
+      }
+
+
+      /* ---------------------------------------------------
+         SHORT
+      --------------------------------------------------- */
+
+      else if(
+        difference < -0.000001
+      ){
+
+        differenceBar.classList.add(
+          "short"
+        );
+
+        differenceBar.textContent =
+          "− ₹ " +
+          formatMoney(
+            Math.abs(difference)
+          );
+
+        differenceBar.title =
+          "Short";
+
+      }
+
+
+      /* ---------------------------------------------------
+         PERFECT BALANCE
+      --------------------------------------------------- */
+
+      else{
+
+        differenceBar.classList.add(
+          "balance"
+        );
+
+        differenceBar.textContent =
+          "₹ 0.00";
+
+        differenceBar.title =
+          "Perfect Balance";
+
+      }
+
+
+      lockPosition();
+
+    }
+    catch(error){
+
+      /*
+        Never allow calculation errors
+        to break the floating bar.
+      */
+
+      console.warn(
+        "Live Short/Excess update:",
+        error
+      );
+
+    }
+
+  }
+
+
+  /* =======================================================
+     8. MONEY FORMATTER
+  ======================================================= */
+
+  function formatMoney(value){
+
+    const n =
+      Number(value || 0);
+
+
+    if(
+      typeof fmt ===
+      "function"
+    ){
+
+      return fmt(n);
+
+    }
+
+
+    return n.toLocaleString(
+      "en-IN",
+      {
+        minimumFractionDigits:2,
+        maximumFractionDigits:2
+      }
+    );
+
+  }
+
+
+  /* =======================================================
+     9. UPDATE ON EVERY INPUT
+     
+     This is particularly important for:
+
+       ₹500
+       ₹200
+       ₹100
+       ₹50
+       ₹20
+       ₹10
+       Coin
+
+     As soon as the number changes,
+     Short/Excess updates.
+  ======================================================= */
+
+  document.addEventListener(
+    "input",
+    function(){
+
+      /*
+        Small delay lets existing
+        input handlers save their value first.
+      */
+
+      requestAnimationFrame(
+        function(){
+
+          updateLiveDifference();
+          updateViewportPosition();
+
+        }
+      );
+
+    },
+    true
+  );
+
+
+  /* =======================================================
+     10. CHANGE EVENT
+  ======================================================= */
+
+  document.addEventListener(
+    "change",
+    function(){
+
+      requestAnimationFrame(
+        function(){
+
+          updateLiveDifference();
+
+        }
+      );
+
+    },
+    true
+  );
+
+
+  /* =======================================================
+     11. SCROLL PROTECTION
+     
+     Scrolling MUST NOT move the badge.
+  ======================================================= */
+
+  window.addEventListener(
+    "scroll",
+    function(){
+
+      updateViewportPosition();
+
+    },
+    {
+      passive:true
+    }
+  );
+
+
+  document.addEventListener(
+    "scroll",
+    function(){
+
+      updateViewportPosition();
+
+    },
+    {
+      passive:true,
+      capture:true
+    }
+  );
+
+
+  /* =======================================================
+     12. WINDOW RESIZE
+  ======================================================= */
+
+  window.addEventListener(
+    "resize",
+    function(){
+
+      updateViewportPosition();
+
+    },
+    {
+      passive:true
+    }
+  );
+
+
+  /* =======================================================
+     13. ANDROID KEYBOARD / VISUAL VIEWPORT
+  ======================================================= */
+
+  if(
+    window.visualViewport
+  ){
+
+    window.visualViewport.addEventListener(
+      "resize",
+      function(){
+
+        updateViewportPosition();
+
+      },
+      {
+        passive:true
+      }
+    );
+
+
+    window.visualViewport.addEventListener(
+      "scroll",
+      function(){
+
+        updateViewportPosition();
+
+      },
+      {
+        passive:true
+      }
+    );
+
+  }
+
+
+  /* =======================================================
+     14. ORIENTATION CHANGE
+  ======================================================= */
+
+  window.addEventListener(
+    "orientationchange",
+    function(){
+
+      setTimeout(
+        function(){
+
+          updateViewportPosition();
+
+        },
+        100
+      );
+
+    }
+  );
+
+
+  /* =======================================================
+     15. PROTECT AGAINST OTHER JS MOVING THE BAR
+     
+     If another part of the website accidentally
+     appends/reparents the difference element,
+     immediately move it back to body.
+  ======================================================= */
+
+  const observer =
+    new MutationObserver(
+      function(){
+
+        if(
+          differenceBar.parentElement !==
+          document.body
+        ){
+
+          document.body.appendChild(
+            differenceBar
+          );
+
+        }
+
+
+        lockPosition();
+
+      }
+    );
+
+
+  observer.observe(
+    document.body,
+    {
+      childList:true,
+      subtree:true
+    }
+  );
+
+
+  /* =======================================================
+     16. PERIODIC SAFETY CHECK
+     
+     Very cheap watchdog.
+     
+     If some future code messes with position,
+     this restores it.
+  ======================================================= */
+
+  setInterval(
+    function(){
+
+      if(
+        differenceBar.parentElement !==
+        document.body
+      ){
+
+        document.body.appendChild(
+          differenceBar
+        );
+
+      }
+
+      updateViewportPosition();
+
+    },
+    1000
+  );
+
+
+  /* =======================================================
+     17. INITIALIZE
+  ======================================================= */
+
+  updateLiveDifference();
+
+  updateViewportPosition();
+
+
+  /* =======================================================
+     18. EXTRA INITIAL REFRESH
+     
+     Allows existing page scripts to finish rendering.
+  ======================================================= */
+
+  setTimeout(
+    function(){
+
+      updateLiveDifference();
+      updateViewportPosition();
+
+    },
+    100
+  );
+
+
+  setTimeout(
+    function(){
+
+      updateLiveDifference();
+      updateViewportPosition();
+
+    },
+    500
+  );
+
+
+})();
+
+</script>
+
+
+
+  <script>
+
+/* =========================================================
+   🛡️ SHIFTGUARD
+   Duty & Incident Time Log
+   ---------------------------------------------------------
+   Standalone module.
+   No HTML modification required.
+   No existing application logic is modified.
+========================================================= */
+
+(function(){
+
+  "use strict";
+
+
+  /* =======================================================
+     CONFIG
+  ======================================================= */
+
+  const SG = {
+
+    storageKey:
+      "shiftGuardEvents",
+
+    dayKey:
+      "shiftGuardDay",
+
+    uiId:
+      "shiftGuardUI",
+
+    menuItemId:
+      "shiftGuardMenuItem"
+
+  };
+
+
+  /* =======================================================
+     DATE / TIME HELPERS
+  ======================================================= */
+
+  function getTodayKey(){
+
+    const d =
+      new Date();
+
+    const y =
+      d.getFullYear();
+
+    const m =
+      String(
+        d.getMonth() + 1
+      ).padStart(2,"0");
+
+    const day =
+      String(
+        d.getDate()
+      ).padStart(2,"0");
+
+    return `${y}-${m}-${day}`;
+
+  }
+
+
+  function getDateTime(){
+
+    const d =
+      new Date();
+
+
+    const day =
+      String(
+        d.getDate()
+      ).padStart(2,"0");
+
+
+    const month =
+      String(
+        d.getMonth() + 1
+      ).padStart(2,"0");
+
+
+    const year =
+      d.getFullYear();
+
+
+    let hours =
+      d.getHours();
+
+
+    const minutes =
+      String(
+        d.getMinutes()
+      ).padStart(2,"0");
+
+
+    const seconds =
+      String(
+        d.getSeconds()
+      ).padStart(2,"0");
+
+
+    const ampm =
+      hours >= 12
+        ? "PM"
+        : "AM";
+
+
+    hours =
+      hours % 12 ||
+      12;
+
+
+    const hourText =
+      String(hours)
+        .padStart(2,"0");
+
+
+    return {
+
+      date:
+        `${day}/${month}/${year}`,
+
+      time:
+        `${hourText}:${minutes}:${seconds} ${ampm}`,
+
+      timestamp:
+        d.getTime(),
+
+      iso:
+        d.toISOString()
+
+    };
+
+  }
+
+
+  /* =======================================================
+     STORAGE
+  ======================================================= */
+
+  function getEvents(){
+
+    try{
+
+      const data =
+        localStorage.getItem(
+          SG.storageKey
+        );
+
+      if(!data)
+        return [];
+
+      const parsed =
+        JSON.parse(data);
+
+      return Array.isArray(parsed)
+        ? parsed
+        : [];
+
+    }
+    catch(e){
+
+      return [];
+
+    }
+
+  }
+
+
+  function saveEvents(events){
+
+    localStorage.setItem(
+      SG.storageKey,
+      JSON.stringify(events)
+    );
+
+  }
+
+
+  /* =======================================================
+     DAILY STORAGE PROTECTION
+  ======================================================= */
+
+  function ensureToday(){
+
+    const today =
+      getTodayKey();
+
+
+    const stored =
+      localStorage.getItem(
+        SG.dayKey
+      );
+
+
+    if(stored !== today){
+
+      /*
+        ShiftGuard intentionally starts
+        a fresh timeline every day.
+      */
+
+      localStorage.removeItem(
+        SG.storageKey
+      );
+
+      localStorage.setItem(
+        SG.dayKey,
+        today
+      );
+
+    }
+
+  }
+
+
+  ensureToday();
+
+
+  /* =======================================================
+     ESCAPE HTML
+  ======================================================= */
+
+  function escapeHTML(value){
+
+    return String(value || "")
+      .replace(/&/g,"&amp;")
+      .replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;")
+      .replace(/'/g,"&#039;");
+
+  }
+
+
+  /* =======================================================
+     CREATE EVENT
+  ======================================================= */
+
+  function createEvent(type, heading){
+
+    const dt =
+      getDateTime();
+
+
+    const event = {
+
+      id:
+        "sg_" +
+        Date.now() +
+        "_" +
+        Math.random()
+          .toString(36)
+          .slice(2,8),
+
+      type:
+        type,
+
+      heading:
+        heading,
+
+      date:
+        dt.date,
+
+      time:
+        dt.time,
+
+      timestamp:
+        dt.timestamp,
+
+      iso:
+        dt.iso
+
+    };
+
+
+    const events =
+      getEvents();
+
+
+    events.unshift(
+      event
+    );
+
+
+    saveEvents(
+      events
+    );
+
+
+    renderTimeline();
+
+
+    showToast(
+      type === "bathroom"
+        ? "🚻 Bathroom time saved"
+        : "📌 Incident saved"
+    );
+
+
+    return event;
+
+  }
+
+
+  /* =======================================================
+     BATHROOM MODE
+  ======================================================= */
+
+  function addBathroom(){
+
+    /*
+      NO heading input.
+      One tap = automatic save.
+    */
+
+    createEvent(
+      "bathroom",
+      "Bathroom"
+    );
+
+  }
+
+
+  /* =======================================================
+     ADD INCIDENT
+  ======================================================= */
+
+  function addIncident(){
+
+    const input =
+      document.getElementById(
+        "sgIncidentInput"
+      );
+
+
+    if(!input)
+      return;
+
+
+    const heading =
+      input.value.trim();
+
+
+    if(!heading){
+
+      input.focus();
+
+      showToast(
+        "Please enter an incident heading"
+      );
+
+      return;
+
+    }
+
+
+    createEvent(
+      "incident",
+      heading
+    );
+
+
+    input.value =
+      "";
+
+
+    input.focus();
+
+  }
+
+
+  /* =======================================================
+     EDIT EVENT HEADING
+  ======================================================= */
+
+  function editEvent(id){
+
+    const events =
+      getEvents();
+
+
+    const event =
+      events.find(
+        e => e.id === id
+      );
+
+
+    if(!event)
+      return;
+
+
+    const newHeading =
+      prompt(
+        "Edit Heading",
+        event.heading
+      );
+
+
+    if(
+      newHeading === null
+    )
+      return;
+
+
+    const clean =
+      newHeading.trim();
+
+
+    if(!clean){
+
+      showToast(
+        "Heading cannot be empty"
+      );
+
+      return;
+
+    }
+
+
+    event.heading =
+      clean;
+
+
+    /*
+      Keep Bathroom event type as Bathroom,
+      but allow heading editing as requested.
+    */
+
+    saveEvents(
+      events
+    );
+
+
+    renderTimeline();
+
+
+    showToast(
+      "✏️ Heading updated"
+    );
+
+  }
+
+
+  /* =======================================================
+     DELETE EVENT
+  ======================================================= */
+
+  function deleteEvent(id){
+
+    const events =
+      getEvents();
+
+
+    const event =
+      events.find(
+        e => e.id === id
+      );
+
+
+    if(!event)
+      return;
+
+
+    const ok =
+      confirm(
+        `Delete this event?\n\n${event.heading}\n${event.date} ${event.time}`
+      );
+
+
+    if(!ok)
+      return;
+
+
+    const remaining =
+      events.filter(
+        e => e.id !== id
+      );
+
+
+    saveEvents(
+      remaining
+    );
+
+
+    renderTimeline();
+
+
+    showToast(
+      "🗑️ Event deleted"
+    );
+
+  }
+
+
+  /* =======================================================
+     EVENT ICON
+  ======================================================= */
+
+  function getEventIcon(event){
+
+    if(
+      event.type === "bathroom"
+    ){
+
+      return "🚻";
+
+    }
+
+
+    return "⚠️";
+
+  }
+
+
+  /* =======================================================
+     EVENT LABEL
+  ======================================================= */
+
+  function getEventLabel(event){
+
+    if(
+      event.type === "bathroom"
+    ){
+
+      return "Bathroom Mode";
+
+    }
+
+
+    return "Incident";
+
+  }
+
+
+  /* =======================================================
+     RENDER TIMELINE
+  ======================================================= */
+
+  function renderTimeline(){
+
+    const container =
+      document.getElementById(
+        "sgTimeline"
+      );
+
+
+    if(!container)
+      return;
+
+
+    const events =
+      getEvents();
+
+
+    const count =
+      events.length;
+
+
+    const countElement =
+      document.getElementById(
+        "sgEventCount"
+      );
+
+
+    if(countElement){
+
+      countElement.textContent =
+        count === 1
+          ? "1 Event"
+          : `${count} Events`;
+
+    }
+
+
+    if(!events.length){
+
+      container.innerHTML = `
+
+        <div class="sg-empty">
+
+          <div class="sg-empty-icon">
+            📋
+          </div>
+
+          <div class="sg-empty-title">
+            No events yet
+          </div>
+
+          <div class="sg-empty-text">
+            Your ShiftGuard timeline
+            will appear here.
+          </div>
+
+        </div>
+
+      `;
+
+      return;
+
+    }
+
+
+    container.innerHTML =
+      events.map(
+        function(event){
+
+          return `
+
+            <div
+              class="sg-event"
+              data-event-id="${escapeHTML(event.id)}"
+            >
+
+              <div class="sg-event-icon">
+                ${getEventIcon(event)}
+              </div>
+
+
+              <div class="sg-event-main">
+
+                <div class="sg-event-heading">
+                  ${escapeHTML(event.heading)}
+                </div>
+
+                <div class="sg-event-meta">
+
+                  <span>
+                    🕒 ${escapeHTML(event.time)}
+                  </span>
+
+                  <span>
+                    📅 ${escapeHTML(event.date)}
+                  </span>
+
+                </div>
+
+
+                <div class="sg-event-type">
+                  ${escapeHTML(getEventLabel(event))}
+                </div>
+
+              </div>
+
+
+              <div class="sg-event-actions">
+
+                <button
+                  class="sg-action-edit"
+                  data-sg-edit="${escapeHTML(event.id)}"
+                  title="Edit Heading"
+                >
+                  ✏️
+                </button>
+
+
+                <button
+                  class="sg-action-delete"
+                  data-sg-delete="${escapeHTML(event.id)}"
+                  title="Delete"
+                >
+                  🗑️
+                </button>
+
+              </div>
+
+            </div>
+
+          `;
+
+        }
+      ).join("");
+
+  }
+
+
+  /* =======================================================
+     TOAST
+  ======================================================= */
+
+  let toastTimer =
+    null;
+
+
+  function showToast(message){
+
+    let toast =
+      document.getElementById(
+        "sgToast"
+      );
+
+
+    if(!toast){
+
+      toast =
+        document.createElement(
+          "div"
+        );
+
+      toast.id =
+        "sgToast";
+
+
+      document.body.appendChild(
+        toast
+      );
+
+    }
+
+
+    toast.textContent =
+      message;
+
+
+    toast.classList.add(
+      "sg-toast-show"
+    );
+
+
+    clearTimeout(
+      toastTimer
+    );
+
+
+    toastTimer =
+      setTimeout(
+        function(){
+
+          toast.classList.remove(
+            "sg-toast-show"
+          );
+
+        },
+        2200
+      );
+
+  }
+
+
+  /* =======================================================
+     UI CSS
+  ======================================================= */
+
+  function injectCSS(){
+
+    if(
+      document.getElementById(
+        "shiftGuardCSS"
+      )
+    )
+      return;
+
+
+    const style =
+      document.createElement(
+        "style"
+      );
+
+
+    style.id =
+      "shiftGuardCSS";
+
+
+    style.textContent = `
+
+      /* =================================================
+         SHIFTGUARD OVERLAY
+      ================================================= */
+
+      #shiftGuardUI{
+
+        position:fixed;
+
+        inset:0;
+
+        z-index:2147483000;
+
+        display:none;
+
+        background:
+          rgba(15,23,42,.48);
+
+        backdrop-filter:
+          blur(5px);
+
+        -webkit-backdrop-filter:
+          blur(5px);
+
+      }
+
+
+      #shiftGuardUI.sg-open{
+
+        display:flex;
+
+        align-items:flex-start;
+
+        justify-content:center;
+
+        padding:
+          max(14px, env(safe-area-inset-top))
+          14px
+          max(14px, env(safe-area-inset-bottom));
+
+        box-sizing:border-box;
+
+        overflow-y:auto;
+
+      }
+
+
+      /* =================================================
+         MAIN PANEL
+      ================================================= */
+
+      .sg-panel{
+
+        width:
+          min(680px, 100%);
+
+        margin-top:12px;
+
+        margin-bottom:12px;
+
+        border-radius:24px;
+
+        overflow:hidden;
+
+        background:
+          #ffffff;
+
+        box-shadow:
+          0 24px 70px
+          rgba(15,23,42,.28);
+
+        animation:
+          sgPanelIn .2s ease;
+
+      }
+
+
+      @keyframes sgPanelIn{
+
+        from{
+
+          opacity:0;
+
+          transform:
+            translateY(15px)
+            scale(.98);
+
+        }
+
+        to{
+
+          opacity:1;
+
+          transform:
+            translateY(0)
+            scale(1);
+
+        }
+
+      }
+
+
+      /* =================================================
+         HEADER
+      ================================================= */
+
+      .sg-header{
+
+        padding:
+          20px 20px 18px;
+
+        background:
+          linear-gradient(
+            135deg,
+            #111827,
+            #1e3a8a
+          );
+
+        color:#fff;
+
+        position:relative;
+
+      }
+
+
+      .sg-header-top{
+
+        display:flex;
+
+        justify-content:
+          space-between;
+
+        align-items:
+          flex-start;
+
+        gap:12px;
+
+      }
+
+
+      .sg-title-wrap{
+
+        display:flex;
+
+        gap:12px;
+
+        align-items:center;
+
+      }
+
+
+      .sg-title-icon{
+
+        width:48px;
+
+        height:48px;
+
+        border-radius:15px;
+
+        display:flex;
+
+        align-items:center;
+
+        justify-content:center;
+
+        background:
+          rgba(255,255,255,.13);
+
+        font-size:26px;
+
+      }
+
+
+      .sg-title{
+
+        font-size:1.28rem;
+
+        font-weight:850;
+
+        letter-spacing:-.3px;
+
+      }
+
+
+      .sg-subtitle{
+
+        margin-top:3px;
+
+        font-size:.78rem;
+
+        color:
+          rgba(255,255,255,.68);
+
+      }
+
+
+      .sg-close{
+
+        width:38px;
+
+        height:38px;
+
+        border:0;
+
+        border-radius:12px;
+
+        background:
+          rgba(255,255,255,.12);
+
+        color:#fff;
+
+        font-size:18px;
+
+        cursor:pointer;
+
+      }
+
+
+      .sg-close:active{
+
+        transform:scale(.94);
+
+      }
+
+
+      /* =================================================
+         HEADER STATS
+      ================================================= */
+
+      .sg-header-stats{
+
+        display:flex;
+
+        gap:8px;
+
+        margin-top:17px;
+
+      }
+
+
+      .sg-stat{
+
+        flex:1;
+
+        padding:10px 12px;
+
+        border-radius:13px;
+
+        background:
+          rgba(255,255,255,.10);
+
+        border:
+          1px solid
+          rgba(255,255,255,.08);
+
+      }
+
+
+      .sg-stat-label{
+
+        display:block;
+
+        font-size:.7rem;
+
+        color:
+          rgba(255,255,255,.60);
+
+      }
+
+
+      .sg-stat-value{
+
+        display:block;
+
+        margin-top:2px;
+
+        font-size:.92rem;
+
+        font-weight:800;
+
+      }
+
+
+      /* =================================================
+         BODY
+      ================================================= */
+
+      .sg-body{
+
+        padding:18px;
+
+        background:
+          #f8fafc;
+
+      }
+
+
+      /* =================================================
+         QUICK ACTIONS
+      ================================================= */
+
+      .sg-section-title{
+
+        font-size:.84rem;
+
+        font-weight:850;
+
+        color:#334155;
+
+        margin-bottom:9px;
+
+        text-transform:
+          uppercase;
+
+        letter-spacing:.55px;
+
+      }
+
+
+      .sg-actions-grid{
+
+        display:grid;
+
+        grid-template-columns:
+          1fr 1fr;
+
+        gap:10px;
+
+      }
+
+
+      .sg-main-action{
+
+        border:0;
+
+        min-height:74px;
+
+        padding:12px;
+
+        border-radius:17px;
+
+        cursor:pointer;
+
+        text-align:left;
+
+        display:flex;
+
+        align-items:center;
+
+        gap:11px;
+
+        transition:
+          transform .12s,
+          box-shadow .12s;
+
+      }
+
+
+      .sg-main-action:active{
+
+        transform:
+          scale(.97);
+
+      }
+
+
+      .sg-bathroom{
+
+        background:
+          linear-gradient(
+            135deg,
+            #dbeafe,
+            #eff6ff
+          );
+
+        color:#1e3a8a;
+
+        box-shadow:
+          0 5px 16px
+          rgba(37,99,235,.10);
+
+      }
+
+
+      .sg-add-incident{
+
+        background:
+          linear-gradient(
+            135deg,
+            #fef3c7,
+            #fffbeb
+          );
+
+        color:#92400e;
+
+        box-shadow:
+          0 5px 16px
+          rgba(245,158,11,.10);
+
+      }
+
+
+      .sg-action-icon{
+
+        width:43px;
+
+        height:43px;
+
+        flex-shrink:0;
+
+        border-radius:13px;
+
+        display:flex;
+
+        align-items:center;
+
+        justify-content:center;
+
+        background:
+          rgba(255,255,255,.78);
+
+        font-size:22px;
+
+      }
+
+
+      .sg-action-title{
+
+        display:block;
+
+        font-size:.92rem;
+
+        font-weight:850;
+
+      }
+
+
+      .sg-action-sub{
+
+        display:block;
+
+        margin-top:2px;
+
+        font-size:.7rem;
+
+        opacity:.68;
+
+      }
+
+
+      /* =================================================
+         ADD INCIDENT FORM
+      ================================================= */
+
+      .sg-add-form{
+
+        display:none;
+
+        margin-top:10px;
+
+        padding:12px;
+
+        border-radius:16px;
+
+        background:#fff;
+
+        border:
+          1px solid #e2e8f0;
+
+      }
+
+
+      .sg-add-form.sg-show{
+
+        display:block;
+
+      }
+
+
+      .sg-input-row{
+
+        display:flex;
+
+        gap:8px;
+
+      }
+
+
+      #sgIncidentInput{
+
+        flex:1;
+
+        min-width:0;
+
+        height:45px;
+
+        padding:
+          0 13px;
+
+        box-sizing:border-box;
+
+        border:
+          1px solid #cbd5e1;
+
+        border-radius:12px;
+
+        outline:none;
+
+        font-size:.9rem;
+
+        background:#fff;
+
+      }
+
+
+      #sgIncidentInput:focus{
+
+        border-color:#2563eb;
+
+        box-shadow:
+          0 0 0 3px
+          rgba(37,99,235,.10);
+
+      }
+
+
+      .sg-save-incident{
+
+        border:0;
+
+        border-radius:12px;
+
+        padding:
+          0 15px;
+
+        background:
+          #2563eb;
+
+        color:#fff;
+
+        font-weight:800;
+
+        cursor:pointer;
+
+      }
+
+
+      /* =================================================
+         TIMELINE
+      ================================================= */
+
+      .sg-timeline-head{
+
+        display:flex;
+
+        justify-content:
+          space-between;
+
+        align-items:center;
+
+        margin-top:22px;
+
+        margin-bottom:9px;
+
+      }
+
+
+      .sg-event-count{
+
+        font-size:.72rem;
+
+        color:#64748b;
+
+        font-weight:700;
+
+      }
+
+
+      .sg-timeline{
+
+        display:flex;
+
+        flex-direction:column;
+
+        gap:8px;
+
+      }
+
+
+      .sg-event{
+
+        display:flex;
+
+        align-items:center;
+
+        gap:11px;
+
+        padding:12px;
+
+        border-radius:16px;
+
+        background:#fff;
+
+        border:
+          1px solid #e2e8f0;
+
+        box-shadow:
+          0 3px 10px
+          rgba(15,23,42,.04);
+
+      }
+
+
+      .sg-event-icon{
+
+        width:42px;
+
+        height:42px;
+
+        flex-shrink:0;
+
+        display:flex;
+
+        align-items:center;
+
+        justify-content:center;
+
+        border-radius:13px;
+
+        background:#eff6ff;
+
+        font-size:21px;
+
+      }
+
+
+      .sg-event-main{
+
+        min-width:0;
+
+        flex:1;
+
+      }
+
+
+      .sg-event-heading{
+
+        font-weight:850;
+
+        color:#172033;
+
+        font-size:.9rem;
+
+        word-break:break-word;
+
+      }
+
+
+      .sg-event-meta{
+
+        display:flex;
+
+        flex-wrap:wrap;
+
+        gap:8px;
+
+        margin-top:4px;
+
+        color:#64748b;
+
+        font-size:.7rem;
+
+      }
+
+
+      .sg-event-type{
+
+        display:inline-block;
+
+        margin-top:5px;
+
+        padding:
+          3px 7px;
+
+        border-radius:7px;
+
+        background:#f1f5f9;
+
+        color:#64748b;
+
+        font-size:.62rem;
+
+        font-weight:750;
+
+      }
+
+
+      .sg-event-actions{
+
+        display:flex;
+
+        gap:4px;
+
+        flex-shrink:0;
+
+      }
+
+
+      .sg-event-actions button{
+
+        width:34px;
+
+        height:34px;
+
+        border:0;
+
+        border-radius:10px;
+
+        cursor:pointer;
+
+        font-size:15px;
+
+        background:#f8fafc;
+
+      }
+
+
+      .sg-action-edit:active,
+      .sg-action-delete:active{
+
+        transform:
+          scale(.91);
+
+      }
+
+
+      .sg-action-delete{
+
+        background:#fff1f2 !important;
+
+      }
+
+
+      /* =================================================
+         EMPTY
+      ================================================= */
+
+      .sg-empty{
+
+        padding:28px 15px;
+
+        text-align:center;
+
+        background:#fff;
+
+        border:
+          1px dashed #cbd5e1;
+
+        border-radius:17px;
+
+      }
+
+
+      .sg-empty-icon{
+
+        font-size:30px;
+
+      }
+
+
+      .sg-empty-title{
+
+        margin-top:7px;
+
+        font-weight:850;
+
+        color:#334155;
+
+      }
+
+
+      .sg-empty-text{
+
+        margin-top:4px;
+
+        color:#94a3b8;
+
+        font-size:.76rem;
+
+      }
+
+
+      /* =================================================
+         FOOTER
+      ================================================= */
+
+      .sg-footer{
+
+        padding:
+          11px 18px 15px;
+
+        color:#94a3b8;
+
+        font-size:.66rem;
+
+        text-align:center;
+
+        background:#f8fafc;
+
+      }
+
+
+      /* =================================================
+         TOAST
+      ================================================= */
+
+      #sgToast{
+
+        position:fixed;
+
+        left:50%;
+
+        bottom:
+          calc(
+            20px +
+            env(safe-area-inset-bottom)
+          );
+
+        transform:
+          translate(-50%,20px);
+
+        z-index:2147483647;
+
+        max-width:
+          calc(100vw - 30px);
+
+        padding:
+          11px 16px;
+
+        border-radius:13px;
+
+        background:
+          rgba(15,23,42,.94);
+
+        color:#fff;
+
+        font-size:.8rem;
+
+        font-weight:750;
+
+        box-shadow:
+          0 10px 30px
+          rgba(0,0,0,.22);
+
+        opacity:0;
+
+        pointer-events:none;
+
+        transition:
+          opacity .2s,
+          transform .2s;
+
+        text-align:center;
+
+      }
+
+
+      #sgToast.sg-toast-show{
+
+        opacity:1;
+
+        transform:
+          translate(-50%,0);
+
+      }
+
+
+      /* =================================================
+         MOBILE
+      ================================================= */
+
+      @media(max-width:520px){
+
+        #shiftGuardUI.sg-open{
+
+          padding:
+            max(7px, env(safe-area-inset-top))
+            7px
+            max(7px, env(safe-area-inset-bottom));
+
+        }
+
+
+        .sg-panel{
+
+          margin-top:4px;
+
+          margin-bottom:4px;
+
+          border-radius:21px;
+
+        }
+
+
+        .sg-header{
+
+          padding:17px;
+
+        }
+
+
+        .sg-body{
+
+          padding:14px;
+
+        }
+
+      }
+
+
+      @media(max-width:380px){
+
+        .sg-actions-grid{
+
+          grid-template-columns:1fr;
+
+        }
+
+
+        .sg-event{
+
+          padding:10px;
+
+        }
+
+      }
+
+    `;
+
+
+    document.head.appendChild(
+      style
+    );
+
+  }
+
+
+  /* =======================================================
+     CREATE MAIN UI
+  ======================================================= */
+
+  function createUI(){
+
+    if(
+      document.getElementById(
+        SG.uiId
+      )
+    )
+      return;
+
+
+    const ui =
+      document.createElement(
+        "div"
+      );
+
+
+    ui.id =
+      SG.uiId;
+
+
+    ui.innerHTML = `
+
+      <div class="sg-panel">
+
+
+        <!-- HEADER -->
+
+        <div class="sg-header">
+
+          <div class="sg-header-top">
+
+            <div class="sg-title-wrap">
+
+              <div class="sg-title-icon">
+                🛡️
+              </div>
+
+              <div>
+
+                <div class="sg-title">
+                  ShiftGuard
+                </div>
+
+                <div class="sg-subtitle">
+                  Duty & Incident Timeline
+                </div>
+
+              </div>
+
+            </div>
+
+
+            <button
+              class="sg-close"
+              id="sgClose"
+              title="Close"
+            >
+              ✕
+            </button>
+
+          </div>
+
+
+          <div class="sg-header-stats">
+
+            <div class="sg-stat">
+
+              <span class="sg-stat-label">
+                TODAY
+              </span>
+
+              <span
+                class="sg-stat-value"
+                id="sgToday"
+              >
+                —
+              </span>
+
+            </div>
+
+
+            <div class="sg-stat">
+
+              <span class="sg-stat-label">
+                EVENTS
+              </span>
+
+              <span
+                class="sg-stat-value"
+                id="sgEventCount"
+              >
+                0 Events
+              </span>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- BODY -->
+
+        <div class="sg-body">
+
+
+          <!-- QUICK ACTIONS -->
+
+          <div class="sg-section-title">
+            Quick Log
+          </div>
+
+
+          <div class="sg-actions-grid">
+
+
+            <!-- BATHROOM -->
+
+            <button
+              class="sg-main-action sg-bathroom"
+              id="sgBathroomBtn"
+            >
+
+              <span class="sg-action-icon">
+                🚻
+              </span>
+
+              <span>
+
+                <span class="sg-action-title">
+                  Bathroom
+                </span>
+
+                <span class="sg-action-sub">
+                  Tap to save time
+                </span>
+
+              </span>
+
+            </button>
+
+
+            <!-- ADD INCIDENT -->
+
+            <button
+              class="sg-main-action sg-add-incident"
+              id="sgAddIncidentBtn"
+            >
+
+              <span class="sg-action-icon">
+                ➕
+              </span>
+
+              <span>
+
+                <span class="sg-action-title">
+                  Add Incident
+                </span>
+
+                <span class="sg-action-sub">
+                  Create custom log
+                </span>
+
+              </span>
+
+            </button>
+
+          </div>
+
+
+          <!-- INCIDENT INPUT -->
+
+          <div
+            class="sg-add-form"
+            id="sgAddForm"
+          >
+
+            <div class="sg-input-row">
+
+              <input
+                type="text"
+                id="sgIncidentInput"
+                maxlength="150"
+                autocomplete="off"
+                placeholder="Enter incident heading..."
+              >
+
+              <button
+                class="sg-save-incident"
+                id="sgSaveIncident"
+              >
+                Save
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <!-- TIMELINE -->
+
+          <div class="sg-timeline-head">
+
+            <div class="sg-section-title"
+                 style="margin:0">
+              Today's Timeline
+            </div>
+
+          </div>
+
+
+          <div
+            class="sg-timeline"
+            id="sgTimeline"
+          ></div>
+
+
+        </div>
+
+
+        <div class="sg-footer">
+          Timestamps are captured automatically from this device.
+        </div>
+
+
+      </div>
+
+    `;
+
+
+    document.body.appendChild(
+      ui
+    );
+
+
+    /* ---------------------------------------------------
+       TODAY
+    --------------------------------------------------- */
+
+    const today =
+      getDateTime();
+
+
+    const todayElement =
+      document.getElementById(
+        "sgToday"
+      );
+
+
+    if(todayElement){
+
+      todayElement.textContent =
+        today.date;
+
+    }
+
+
+    /* ---------------------------------------------------
+       CLOSE
+    --------------------------------------------------- */
+
+    document
+      .getElementById(
+        "sgClose"
+      )
+      .onclick =
+      closeShiftGuard;
+
+
+    /* ---------------------------------------------------
+       BATHROOM
+    --------------------------------------------------- */
+
+    document
+      .getElementById(
+        "sgBathroomBtn"
+      )
+      .onclick =
+      addBathroom;
+
+
+    /* ---------------------------------------------------
+       ADD INCIDENT FORM
+    --------------------------------------------------- */
+
+    document
+      .getElementById(
+        "sgAddIncidentBtn"
+      )
+      .onclick =
+      function(){
+
+        const form =
+          document.getElementById(
+            "sgAddForm"
+          );
+
+
+        form.classList.toggle(
+          "sg-show"
+        );
+
+
+        if(
+          form.classList.contains(
+            "sg-show"
+          )
+        ){
+
+          setTimeout(
+            function(){
+
+              document
+                .getElementById(
+                  "sgIncidentInput"
+                )
+                .focus();
+
+            },
+            50
+          );
+
+        }
+
+      };
+
+
+    /* ---------------------------------------------------
+       SAVE INCIDENT
+    --------------------------------------------------- */
+
+    document
+      .getElementById(
+        "sgSaveIncident"
+      )
+      .onclick =
+      addIncident;
+
+
+    /* ---------------------------------------------------
+       ENTER KEY
+    --------------------------------------------------- */
+
+    document
+      .getElementById(
+        "sgIncidentInput"
+      )
+      .addEventListener(
+        "keydown",
+        function(e){
+
+          if(
+            e.key === "Enter"
+          ){
+
+            e.preventDefault();
+
+            addIncident();
+
+          }
+
+        }
+      );
+
+
+    /* ---------------------------------------------------
+       EVENT ACTIONS
+    --------------------------------------------------- */
+
+    document
+      .getElementById(
+        "sgTimeline"
+      )
+      .addEventListener(
+        "click",
+        function(e){
+
+          const editButton =
+            e.target.closest(
+              "[data-sg-edit]"
+            );
+
+
+          if(editButton){
+
+            editEvent(
+              editButton
+                .getAttribute(
+                  "data-sg-edit"
+                )
+            );
+
+            return;
+
+          }
+
+
+          const deleteButton =
+            e.target.closest(
+              "[data-sg-delete]"
+            );
+
+
+          if(deleteButton){
+
+            deleteEvent(
+              deleteButton
+                .getAttribute(
+                  "data-sg-delete"
+                )
+            );
+
+          }
+
+        }
+      );
+
+
+    renderTimeline();
+
+  }
+
+
+  /* =======================================================
+     OPEN SHIFTGUARD
+  ======================================================= */
+
+  function openShiftGuard(){
+
+    createUI();
+
+
+    const ui =
+      document.getElementById(
+        SG.uiId
+      );
+
+
+    if(!ui)
+      return;
+
+
+    ui.classList.add(
+      "sg-open"
+    );
+
+
+    document.body.style.overflow =
+      "hidden";
+
+
+    renderTimeline();
+
+
+    /*
+      Update today's date every time it opens.
+    */
+
+    const today =
+      document.getElementById(
+        "sgToday"
+      );
+
+
+    if(today){
+
+      today.textContent =
+        getDateTime().date;
+
+    }
+
+  }
+
+
+  /* =======================================================
+     CLOSE SHIFTGUARD
+  ======================================================= */
+
+  function closeShiftGuard(){
+
+    const ui =
+      document.getElementById(
+        SG.uiId
+      );
+
+
+    if(ui){
+
+      ui.classList.remove(
+        "sg-open"
+      );
+
+    }
+
+
+    document.body.style.overflow =
+      "";
+
+  }
+
+
+  /* =======================================================
+     ADD SHIFTGUARD TO EXISTING MENU
+  ======================================================= */
+
+  function addToExistingMenu(){
+
+    if(
+      document.getElementById(
+        SG.menuItemId
+      )
+    )
+      return;
+
+
+    /*
+      Find likely hamburger/menu containers.
+      This intentionally supports several
+      possible layouts.
+    */
+
+    const menu =
+      document.querySelector(
+        "#pumpMenu, " +
+        ".side-menu, " +
+        ".menu-panel, " +
+        ".mobile-menu, " +
+        ".hamburger-menu, " +
+        "[data-menu]"
+      );
+
+
+    if(!menu)
+      return;
+
+
+    /*
+      Don't put it inside ShiftGuard itself.
+    */
+
+    if(
+      menu.contains(
+        document.getElementById(
+          SG.uiId
+        )
+      )
+    )
+      return;
+
+
+    const item =
+      document.createElement(
+        "button"
+      );
+
+
+    item.id =
+      SG.menuItemId;
+
+
+    item.type =
+      "button";
+
+
+    item.innerHTML = `
+
+      <span style="
+        font-size:1.15em;
+        margin-right:8px;
+      ">
+        🛡️
+      </span>
+
+      <span>
+        ShiftGuard
+      </span>
+
+    `;
+
+
+    /*
+      Make it visually compatible with
+      almost any existing menu.
+    */
+
+    item.style.cssText = `
+
+      width:100%;
+
+      box-sizing:border-box;
+
+      border:0;
+
+      padding:12px 14px;
+
+      margin:8px 0;
+
+      border-radius:12px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #eff6ff,
+          #dbeafe
+        );
+
+      color:#1e3a8a;
+
+      font-size:.95rem;
+
+      font-weight:800;
+
+      text-align:left;
+
+      cursor:pointer;
+
+      display:flex;
+
+      align-items:center;
+
+      box-shadow:
+        0 3px 10px
+        rgba(37,99,235,.08);
+
+    `;
+
+
+    item.onclick =
+      function(e){
+
+        e.preventDefault();
+
+        e.stopPropagation();
+
+        openShiftGuard();
+
+      };
+
+
+    /*
+      Put near beginning of menu.
+    */
+
+    const firstChild =
+      menu.firstElementChild;
+
+
+    if(firstChild){
+
+      menu.insertBefore(
+        item,
+        firstChild
+      );
+
+    }else{
+
+      menu.appendChild(
+        item
+      );
+
+    }
+
+  }
+
+
+  /* =======================================================
+     FALLBACK FLOATING BUTTON
+     
+     If the existing hamburger menu cannot be detected,
+     provide a small independent ShiftGuard button.
+     
+     It will automatically disappear once the menu
+     is detected.
+  ======================================================= */
+
+  function createFallbackButton(){
+
+    if(
+      document.getElementById(
+        "sgFallbackButton"
+      )
+    )
+      return;
+
+
+    const button =
+      document.createElement(
+        "button"
+      );
+
+
+    button.id =
+      "sgFallbackButton";
+
+
+    button.textContent =
+      "🛡️";
+
+
+    button.title =
+      "ShiftGuard";
+
+
+    button.onclick =
+      openShiftGuard;
+
+
+    button.style.cssText = `
+
+      position:fixed;
+
+      right:14px;
+
+      bottom:82px;
+
+      width:48px;
+
+      height:48px;
+
+      border:0;
+
+      border-radius:15px;
+
+      background:#2563eb;
+
+      color:#fff;
+
+      font-size:23px;
+
+      cursor:pointer;
+
+      z-index:9990;
+
+      box-shadow:
+        0 5px 18px
+        rgba(37,99,235,.25);
+
+    `;
+
+
+    document.body.appendChild(
+      button
+    );
+
+  }
+
+
+  function removeFallbackButton(){
+
+    const button =
+      document.getElementById(
+        "sgFallbackButton"
+      );
+
+
+    if(button){
+
+      button.remove();
+
+    }
+
+  }
+
+
+  /* =======================================================
+     FIND MENU REPEATEDLY
+     
+     Your existing hamburger code can dynamically
+     recreate the menu. Therefore we keep checking.
+  ======================================================= */
+
+  function connectMenu(){
+
+    addToExistingMenu();
+
+
+    const menuItem =
+      document.getElementById(
+        SG.menuItemId
+      );
+
+
+    if(menuItem){
+
+      removeFallbackButton();
+
+    }else{
+
+      createFallbackButton();
+
+    }
+
+  }
+
+
+  /* =======================================================
+     MUTATION OBSERVER
+     
+     If existing website JS rebuilds its menu,
+     ShiftGuard reconnects automatically.
+  ======================================================= */
+
+  const observer =
+    new MutationObserver(
+      function(){
+
+        connectMenu();
+
+      }
+    );
+
+
+  observer.observe(
+    document.body,
+    {
+      childList:true,
+      subtree:true
+    }
+  );
+
+
+  /* =======================================================
+     INITIAL CSS
+  ======================================================= */
+
+  injectCSS();
+
+
+  /* =======================================================
+     INITIAL UI CONNECTION
+  ======================================================= */
+
+  createUI();
+
+  connectMenu();
+
+
+  /* =======================================================
+     PERIODIC SAFETY CHECK
+  ======================================================= */
+
+  setInterval(
+    function(){
+
+      ensureToday();
+
+      connectMenu();
+
+    },
+    1500
+  );
+
+
+  /* =======================================================
+     ESCAPE KEY
+  ======================================================= */
+
+  document.addEventListener(
+    "keydown",
+    function(e){
+
+      if(
+        e.key === "Escape"
+      ){
+
+        closeShiftGuard();
+
+      }
+
+    }
+  );
+
+
+})();
+
+</script>
+</body>
+
+</html>
