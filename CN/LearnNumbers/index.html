@@ -1,0 +1,174 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b0e14"><title>Hanzi — Character Trainer</title>
+<style>
+:root{--bg:#0b0e14;--panel:#141a27;--panel2:#1b2333;--line:#30394d;--text:#f3f5fb;--muted:#9ba7bd;--accent:#aaa7ff;--green:#75e0b1;--gold:#f4d18b}*{box-sizing:border-box}body{margin:0;background:radial-gradient(850px 450px at 75% -10%,#2a2b55,transparent 65%),var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,sans-serif}.app{max-width:1100px;margin:auto;padding:18px 16px 40px}button,input,select{font:inherit}button{cursor:pointer;border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:13px;padding:11px 14px;transition:.15s}button:hover{border-color:var(--accent)}button:disabled{opacity:.4;cursor:not-allowed}.primary{background:var(--accent);color:#121321;border-color:transparent;font-weight:800}.tiny{font-size:12px;padding:7px 10px}.header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:20px}.brand{display:flex;align-items:center;gap:12px}.logo{width:46px;height:46px;border-radius:15px;background:linear-gradient(135deg,#d6d3ff,#8581f7);color:#111322;display:grid;place-items:center;font-size:26px;font-weight:900}.brand h1{font-size:18px;margin:0}.brand p{font-size:12px;color:var(--muted);margin:2px 0 0}.header button{white-space:nowrap}.layout{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:15px;align-items:start}.card,.side{border:1px solid var(--line);border-radius:22px;background:linear-gradient(145deg,#171e2c,#101520);padding:20px}.headrow{display:flex;justify-content:space-between;align-items:center;gap:10px}.eyebrow{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#d1cfff;font-weight:850}.muted{color:var(--muted)}.counter{font-size:12px;color:var(--muted)}.stage{margin:15px 0 13px;min-height:340px;border:1px solid #343b58;border-radius:18px;background:radial-gradient(circle at 50% 35%,#292c4b,#171d2c 70%);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:20px;position:relative}.stage:after{content:"";position:absolute;inset:12px;border:1px solid #ffffff0a;border-radius:12px;pointer-events:none}.hanzi{font-family:"Noto Serif CJK SC","Songti SC","SimSun",serif;font-size:clamp(110px,20vw,180px);line-height:1.2;font-weight:500;user-select:none}.charcat{font-size:10px;letter-spacing:.15em;color:#7f8ca5;text-transform:uppercase;margin-top:8px}.answers{display:none;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-top:15px}.answers.show{display:grid}.answer{padding:13px;border:1px solid var(--line);background:#101521;border-radius:14px;min-width:0}.answer small{display:block;color:var(--muted);font-size:10px;margin-bottom:4px}.answer strong{font-size:19px;overflow-wrap:anywhere}.answer div{font-size:12px;color:var(--muted);margin-top:4px}.buttons{display:flex;gap:9px;flex-wrap:wrap}.buttons>button{flex:1;min-width:110px}.nav{display:grid;grid-template-columns:1fr 1.25fr 1fr;gap:8px;margin-top:10px}.nav button{padding:12px 6px}.sidebar{display:grid;gap:12px}.side{padding:16px}.side h3{font-size:14px;margin:0 0 4px}.side p{font-size:12px;color:var(--muted);margin:0 0 12px}.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}.stat{background:#0d121d;border:1px solid var(--line);border-radius:13px;padding:11px}.stat b{font-size:24px;display:block}.stat span{font-size:11px;color:var(--muted)}.progress{height:5px;background:#2b3448;border-radius:8px;overflow:hidden;margin:12px 0 5px}.progress i{display:block;height:100%;background:var(--green);width:0}.tools{display:grid;gap:7px}.tools button{text-align:left}.tools span{display:inline-block;width:28px}.selectrow{display:flex;align-items:center;gap:8px}.selectrow select,.search input,.search select{background:#0e131d;border:1px solid var(--line);color:var(--text);border-radius:11px;padding:9px;min-width:0}.selectrow select{flex:1}.writing{display:none;margin-top:16px}.writing.open{display:block}.writinghead{display:flex;justify-content:space-between;align-items:start;gap:10px}.writinghead h3{margin:0;font-size:17px}.writinghead p,.tip{font-size:12px;color:var(--muted);margin:4px 0 10px}.paper{background:#faf9f2;border:1px solid #d8d7d0;border-radius:15px;overflow:hidden;touch-action:none}.paper canvas{width:100%;height:310px;display:block;touch-action:none;cursor:crosshair}.paperbuttons{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}.paperbuttons button{font-size:12px}.feedback{padding:11px 13px;border:1px solid var(--line);border-radius:12px;background:#171f2d;color:var(--muted);font-size:12px;margin-top:10px}.feedback.warn{border-color:#705b37;color:var(--gold)}.modalbg{display:none;position:fixed;inset:0;background:#05070be8;z-index:5;align-items:center;justify-content:center;padding:15px}.modalbg.show{display:flex}.modal{width:min(600px,100%);max-height:85vh;overflow:auto;border:1px solid var(--line);border-radius:20px;background:#121824;padding:18px}.modalhead{display:flex;justify-content:space-between;align-items:center}.modal h2{margin:0;font-size:20px}.search{display:flex;gap:8px;margin:13px 0}.search input{flex:1;width:100%}.wordgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}.wordgrid button{font-size:23px;padding:10px 2px}.wordgrid button.current{border-color:var(--accent);background:#292949}.toast{position:fixed;top:12px;left:50%;transform:translateX(-50%);background:#eae9ff;color:#111322;border-radius:99px;padding:10px 15px;z-index:8;font-weight:800;font-size:13px}.hidden{display:none!important}.foot{text-align:center;color:#65728a;font-size:11px;margin-top:15px}
+@media(max-width:800px){.layout{grid-template-columns:1fr}.sidebar{grid-template-columns:1fr 1fr}.stage{min-height:285px}.hanzi{font-size:clamp(108px,25vw,155px)}}@media(max-width:520px){.app{padding:12px 10px 30px}.brand h1{font-size:15px}.brand p{max-width:180px}.card{padding:13px}.stage{min-height:250px}.hanzi{font-size:clamp(100px,31vw,145px)}.sidebar{grid-template-columns:1fr}.side{padding:14px}.nav button{font-size:12px}.paper canvas{height:280px}.wordgrid{grid-template-columns:repeat(4,1fr)}.answers{gap:7px}.answer{padding:10px}.answer strong{font-size:16px}}
+</style></head><body><div class="app">
+<header class="header"><div class="brand"><div class="logo">汉</div><div><h1>HANZI / Character Trainer</h1><p>Look. Recall. Listen. Write. Repeat.</p></div></div><button class="tiny" onclick="openLibrary()">☷ Character library</button></header>
+<div class="layout"><main class="card">
+<div class="headrow"><span class="eyebrow">One character at a time</span><span class="counter" id="counter">1 in session</span></div>
+<div class="stage"><div class="hanzi" id="hanzi">万</div><div class="charcat" id="charcat">NUMBER UNITS</div><div class="answers" id="answers"><div class="answer"><small>PRONUNCIATION · PINYIN</small><strong id="pinyin">wàn</strong><div>Try saying it out loud</div></div><div class="answer"><small>MEANING</small><strong id="meaning">ten thousand</strong><div id="category">Number Units</div></div></div></div>
+<div class="buttons"><button class="primary" id="guess" onclick="toggleGuess()">◉ &nbsp; Guess</button><button onclick="listen()">🔊 &nbsp; Listen</button><button onclick="toggleWriting()">✍️ Practice writing</button></div>
+<div class="nav"><button id="back" onclick="back()" disabled>← Back</button><button class="primary" onclick="forward()">Random next ↗</button><button onclick="forward()">Skip →</button></div>
+<section class="writing" id="writing"><div class="writinghead"><div><h3>✍️ Writing studio</h3><p>Draw the character with your finger or mouse.</p></div><button class="tiny" onclick="toggleWriting()">Close ✕</button></div><div class="paper"><canvas id="canvas" aria-label="Chinese character writing canvas"></canvas></div><div class="paperbuttons"><button onclick="undo()">↶ Undo</button><button onclick="clearPaper()">Clear paper</button><button onclick="guide()">Show guide</button><button class="primary" onclick="checkWriting()">Check my writing</button></div><div class="feedback" id="feedback">Ready when you are. Draw the character below.</div><p class="tip">Writing feedback counts your strokes but cannot reliably grade Hanzi correctness or stroke order without a dedicated handwriting-recognition engine. Use the guide to compare shapes.</p></section>
+<div class="foot">Study history is saved locally in this browser.</div>
+</main><aside class="sidebar">
+<section class="side"><h3>Your practice</h3><p>Small daily reps build long-term memory.</p><div class="stats"><div class="stat"><b id="seen">0</b><span>Cards seen</span></div><div class="stat"><b id="reveals">0</b><span>Answers revealed</span></div></div><div class="progress"><i id="bar"></i></div><p id="progressText">Explore your first character.</p></section>
+<section class="side"><h3>Quick tools</h3><p>Stay in the learning flow.</p><div class="tools"><button onclick="toggleGuess()"><span>🧠</span> Reveal answer</button><button onclick="listen()"><span>🔉</span> Hear pronunciation</button><button onclick="openLibrary()"><span>▦</span> Browse all characters</button></div></section>
+<section class="side"><h3>Study settings</h3><p>Choose which words appear randomly.</p><div class="selectrow"><label for="catSelect">Category</label><select id="catSelect" onchange="changeCategory()"><option value="ALL">All categories</option></select></div><div style="margin-top:9px"><button class="tiny" onclick="resetDeck()">↻ Reset deck</button></div></section>
+</aside></div></div>
+<div class="modalbg" id="modal" onclick="if(event.target===this)closeLibrary()"><div class="modal"><div class="modalhead"><div><h2>Character library</h2><p class="tip">Choose a character to study directly.</p></div><button class="tiny" onclick="closeLibrary()">✕</button></div><div class="search"><input id="q" placeholder="Search Hanzi, pinyin, meaning…" oninput="renderLibrary()"><select id="libCat" onchange="renderLibrary()"><option value="ALL">All categories</option></select></div><div class="wordgrid" id="wordgrid"></div></div></div><div class="toast hidden" id="toast"></div>
+<script type="application/json" id="character-data">
+[
+{"hanzi":"零","pinyin":"líng","meaning":"zero","category":"Basic Numbers"},
+{"hanzi":"一","pinyin":"yī","meaning":"one","category":"Basic Numbers"},
+{"hanzi":"二","pinyin":"èr","meaning":"two","category":"Basic Numbers"},
+{"hanzi":"两","pinyin":"liǎng","meaning":"two / a pair","category":"Number Words"},
+{"hanzi":"三","pinyin":"sān","meaning":"three","category":"Basic Numbers"},
+{"hanzi":"四","pinyin":"sì","meaning":"four","category":"Basic Numbers"},
+{"hanzi":"五","pinyin":"wǔ","meaning":"five","category":"Basic Numbers"},
+{"hanzi":"六","pinyin":"liù","meaning":"six","category":"Basic Numbers"},
+{"hanzi":"七","pinyin":"qī","meaning":"seven","category":"Basic Numbers"},
+{"hanzi":"八","pinyin":"bā","meaning":"eight","category":"Basic Numbers"},
+{"hanzi":"九","pinyin":"jiǔ","meaning":"nine","category":"Basic Numbers"},
+{"hanzi":"十","pinyin":"shí","meaning":"ten","category":"Number Units"},
+{"hanzi":"百","pinyin":"bǎi","meaning":"hundred","category":"Number Units"},
+{"hanzi":"千","pinyin":"qiān","meaning":"thousand","category":"Number Units"},
+{"hanzi":"万","pinyin":"wàn","meaning":"ten thousand","category":"Number Units"},
+{"hanzi":"十万","pinyin":"shí wàn","meaning":"one hundred thousand","category":"Number Units"},
+{"hanzi":"百万","pinyin":"bǎi wàn","meaning":"one million","category":"Number Units"},
+{"hanzi":"千万","pinyin":"qiān wàn","meaning":"ten million","category":"Number Units"},
+{"hanzi":"亿","pinyin":"yì","meaning":"one hundred million","category":"Number Units"},
+{"hanzi":"十亿","pinyin":"shí yì","meaning":"one billion","category":"Number Units"},
+{"hanzi":"百亿","pinyin":"bǎi yì","meaning":"ten billion","category":"Number Units"},
+{"hanzi":"千亿","pinyin":"qiān yì","meaning":"one hundred billion","category":"Number Units"},
+{"hanzi":"万亿","pinyin":"wàn yì","meaning":"one trillion","category":"Number Units"},
+{"hanzi":"点","pinyin":"diǎn","meaning":"decimal point; o'clock","category":"Number Words"},
+{"hanzi":"百分之","pinyin":"bǎi fēn zhī","meaning":"percent marker","category":"Number Words"},
+{"hanzi":"分之","pinyin":"fēn zhī","meaning":"fraction marker","category":"Number Words"},
+{"hanzi":"第","pinyin":"dì","meaning":"ordinal marker","category":"Number Words"},
+{"hanzi":"几","pinyin":"jǐ","meaning":"how many; several","category":"Number Words"},
+{"hanzi":"多","pinyin":"duō","meaning":"many; more than / about","category":"Number Words"},
+{"hanzi":"左右","pinyin":"zuǒyòu","meaning":"around; approximately","category":"Number Words"},
+{"hanzi":"大约","pinyin":"dàyuē","meaning":"approximately","category":"Number Words"},
+{"hanzi":"到","pinyin":"dào","meaning":"to; until","category":"Number Words"},
+{"hanzi":"比","pinyin":"bǐ","meaning":"compared with; ratio","category":"Number Words"},
+{"hanzi":"倍","pinyin":"bèi","meaning":"times; multiple","category":"Number Words"},
+{"hanzi":"次","pinyin":"cì","meaning":"number of times","category":"Number Words"},
+{"hanzi":"正","pinyin":"zhèng","meaning":"positive","category":"Number Words"},
+{"hanzi":"负","pinyin":"fù","meaning":"negative","category":"Number Words"},
+{"hanzi":"幺","pinyin":"yāo","meaning":"one; used in some phone/radio contexts","category":"Number Words"},
+{"hanzi":"年","pinyin":"nián","meaning":"year","category":"Calendar"},
+{"hanzi":"月","pinyin":"yuè","meaning":"month","category":"Calendar"},
+{"hanzi":"日","pinyin":"rì","meaning":"day; date","category":"Calendar"},
+{"hanzi":"号","pinyin":"hào","meaning":"day/date in spoken dates","category":"Calendar"},
+{"hanzi":"周","pinyin":"zhōu","meaning":"week","category":"Calendar"},
+{"hanzi":"星期","pinyin":"xīngqī","meaning":"week","category":"Calendar"},
+{"hanzi":"周一","pinyin":"zhōu yī","meaning":"Monday","category":"Calendar"},
+{"hanzi":"周二","pinyin":"zhōu èr","meaning":"Tuesday","category":"Calendar"},
+{"hanzi":"周三","pinyin":"zhōu sān","meaning":"Wednesday","category":"Calendar"},
+{"hanzi":"周四","pinyin":"zhōu sì","meaning":"Thursday","category":"Calendar"},
+{"hanzi":"周五","pinyin":"zhōu wǔ","meaning":"Friday","category":"Calendar"},
+{"hanzi":"周六","pinyin":"zhōu liù","meaning":"Saturday","category":"Calendar"},
+{"hanzi":"周日","pinyin":"zhōu rì","meaning":"Sunday","category":"Calendar"},
+{"hanzi":"星期天","pinyin":"xīngqī tiān","meaning":"Sunday","category":"Calendar"},
+{"hanzi":"一月","pinyin":"yī yuè","meaning":"January","category":"Months"},
+{"hanzi":"二月","pinyin":"èr yuè","meaning":"February","category":"Months"},
+{"hanzi":"三月","pinyin":"sān yuè","meaning":"March","category":"Months"},
+{"hanzi":"四月","pinyin":"sì yuè","meaning":"April","category":"Months"},
+{"hanzi":"五月","pinyin":"wǔ yuè","meaning":"May","category":"Months"},
+{"hanzi":"六月","pinyin":"liù yuè","meaning":"June","category":"Months"},
+{"hanzi":"七月","pinyin":"qī yuè","meaning":"July","category":"Months"},
+{"hanzi":"八月","pinyin":"bā yuè","meaning":"August","category":"Months"},
+{"hanzi":"九月","pinyin":"jiǔ yuè","meaning":"September","category":"Months"},
+{"hanzi":"十月","pinyin":"shí yuè","meaning":"October","category":"Months"},
+{"hanzi":"十一月","pinyin":"shí yī yuè","meaning":"November","category":"Months"},
+{"hanzi":"十二月","pinyin":"shí èr yuè","meaning":"December","category":"Months"},
+{"hanzi":"小时","pinyin":"xiǎoshí","meaning":"hour","category":"Time"},
+{"hanzi":"分钟","pinyin":"fēnzhōng","meaning":"minute","category":"Time"},
+{"hanzi":"秒","pinyin":"miǎo","meaning":"second","category":"Time"},
+{"hanzi":"分","pinyin":"fēn","meaning":"minute; one hundredth of a yuan","category":"Time & Money"},
+{"hanzi":"半","pinyin":"bàn","meaning":"half","category":"Time"},
+{"hanzi":"天","pinyin":"tiān","meaning":"day","category":"Time"},
+{"hanzi":"后","pinyin":"hòu","meaning":"after; later","category":"Time"},
+{"hanzi":"以后","pinyin":"yǐhòu","meaning":"afterwards; in the future","category":"Time"},
+{"hanzi":"达到","pinyin":"dádào","meaning":"to reach; attain","category":"Time & Number Words"},
+{"hanzi":"元","pinyin":"yuán","meaning":"yuan; formal currency unit","category":"Money"},
+{"hanzi":"块","pinyin":"kuài","meaning":"yuan in everyday speech","category":"Money"},
+{"hanzi":"角","pinyin":"jiǎo","meaning":"one tenth of a yuan","category":"Money"},
+{"hanzi":"毛","pinyin":"máo","meaning":"one tenth of a yuan in speech","category":"Money"},
+{"hanzi":"个","pinyin":"gè","meaning":"general classifier","category":"Classifiers"},
+{"hanzi":"本","pinyin":"běn","meaning":"classifier for books","category":"Classifiers"},
+{"hanzi":"杯","pinyin":"bēi","meaning":"classifier for cups/glasses","category":"Classifiers"},
+{"hanzi":"辆","pinyin":"liàng","meaning":"classifier for vehicles","category":"Classifiers"},
+{"hanzi":"加","pinyin":"jiā","meaning":"plus; add","category":"Math"},
+{"hanzi":"减","pinyin":"jiǎn","meaning":"minus; subtract","category":"Math"},
+{"hanzi":"乘","pinyin":"chéng","meaning":"multiply","category":"Math"},
+{"hanzi":"除","pinyin":"chú","meaning":"divide","category":"Math"},
+{"hanzi":"等于","pinyin":"děngyú","meaning":"equals","category":"Math"},
+{"hanzi":"大于","pinyin":"dà yú","meaning":"greater than","category":"Math"},
+{"hanzi":"小于","pinyin":"xiǎo yú","meaning":"less than","category":"Math"},
+{"hanzi":"指纹","pinyin":"zhǐwén","meaning":"fingerprint","category":"Phone & UI"},
+{"hanzi":"解锁","pinyin":"jiěsuǒ","meaning":"unlock","category":"Phone & UI"},
+{"hanzi":"指纹解锁","pinyin":"zhǐwén jiěsuǒ","meaning":"fingerprint unlock","category":"Phone & UI"},
+{"hanzi":"重试","pinyin":"chóngshì","meaning":"retry","category":"Phone & UI"},
+{"hanzi":"壹","pinyin":"yī","meaning":"one (formal financial numeral)","category":"Formal Numerals"},
+{"hanzi":"贰","pinyin":"èr","meaning":"two (formal financial numeral)","category":"Formal Numerals"},
+{"hanzi":"叁","pinyin":"sān","meaning":"three (formal financial numeral)","category":"Formal Numerals"},
+{"hanzi":"肆","pinyin":"sì","meaning":"four (formal financial numeral)","category":"Formal Numerals"},
+{"hanzi":"伍","pinyin":"wǔ","meaning":"five (formal financial numeral)","category":"Formal Numerals"},
+{"hanzi":"陆","pinyin":"liù","meaning":"six (formal financial numeral)","category":"Formal Numerals"},
+{"hanzi":"柒","pinyin":"qī","meaning":"seven (formal financial numeral)","category":"Formal Numerals"},
+{"hanzi":"捌","pinyin":"bā","meaning":"eight (formal financial numeral)","category":"Formal Numerals"},
+{"hanzi":"玖","pinyin":"jiǔ","meaning":"nine (formal financial numeral)","category":"Formal Numerals"},
+{"hanzi":"拾","pinyin":"shí","meaning":"ten (formal financial numeral)","category":"Formal Numerals"},
+{"hanzi":"佰","pinyin":"bǎi","meaning":"hundred (formal financial numeral)","category":"Formal Numerals"},
+{"hanzi":"仟","pinyin":"qiān","meaning":"thousand (formal financial numeral)","category":"Formal Numerals"},
+{"hanzi":"520","pinyin":"wǔ èr líng","meaning":"internet slang for “I love you”","category":"Number Culture"},
+{"hanzi":"521","pinyin":"wǔ èr yī","meaning":"number slang associated with “I love you”","category":"Number Culture"},
+{"hanzi":"1314","pinyin":"yī sān yī sì","meaning":"forever; for a lifetime","category":"Number Culture"},
+{"hanzi":"666","pinyin":"liù liù liù","meaning":"awesome; impressive","category":"Number Culture"},
+{"hanzi":"888","pinyin":"bā bā bā","meaning":"luck and prosperity","category":"Number Culture"},
+{"hanzi":"233","pinyin":"èr sān sān","meaning":"LOL; laughter online","category":"Number Culture"},
+{"hanzi":"555","pinyin":"wǔ wǔ wǔ","meaning":"crying / sobbing online","category":"Number Culture"}
+]
+</script>
+<script>
+"use strict";
+const DATA=JSON.parse(document.getElementById("character-data").textContent),KEY="hanziTrainerV1";
+let prefs=load(),pool=DATA.slice(),history=[],pos=-1,revealed=false,strokes=[],activeStroke=null,ctx=null,guideOn=false,canvasReady=false;
+function load(){try{return {...{seen:[],reveals:0,category:"ALL"},...JSON.parse(localStorage.getItem(KEY)||"{}")}}catch(e){return {seen:[],reveals:0,category:"ALL"}}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(prefs))}catch(e){}stats()}
+function current(){return DATA.find(x=>x.hanzi===history[pos])||DATA[0]}
+function toast(s){let e=document.getElementById("toast");e.textContent=s;e.classList.remove("hidden");clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.add("hidden"),1900)}
+function init(){let cats=[...new Set(DATA.map(x=>x.category))].sort();for(let id of ["catSelect","libCat"])for(let c of cats){let o=document.createElement("option");o.value=c;o.textContent=c;document.getElementById(id).append(o)}document.getElementById("catSelect").value=prefs.category||"ALL";pool=makePool();history=[random(null)];pos=0;render();initCanvas()}
+function makePool(){let c=document.getElementById("catSelect").value;return c==="ALL"?DATA.slice():DATA.filter(x=>x.category===c)}
+function random(exclude){let p=pool.length?pool:DATA;if(p.length>1&&exclude)p=p.filter(x=>x.hanzi!==exclude);return p[Math.floor(Math.random()*p.length)].hanzi}
+function render(){let x=current();document.getElementById("hanzi").textContent=x.hanzi;document.getElementById("charcat").textContent=x.category.toUpperCase();document.getElementById("pinyin").textContent=x.pinyin;document.getElementById("meaning").textContent=x.meaning;document.getElementById("category").textContent=x.category;document.getElementById("answers").classList.toggle("show",revealed);document.getElementById("guess").textContent=revealed?"↺ Hide answer":"◉  Guess";document.getElementById("counter").textContent=`${pos+1} in history · ${pool.length} in deck`;document.getElementById("back").disabled=pos<=0;if(!prefs.seen.includes(x.hanzi)){prefs.seen.push(x.hanzi);save()}else stats();clearPaper(false);document.getElementById("feedback").className="feedback";document.getElementById("feedback").textContent="Ready when you are. Draw the character below."}
+function toggleGuess(){revealed=!revealed;if(revealed){prefs.reveals=(prefs.reveals||0)+1;save()}document.getElementById("answers").classList.toggle("show",revealed);document.getElementById("guess").textContent=revealed?"↺ Hide answer":"◉  Guess"}
+function forward(){let n=random(current().hanzi);if(pos<history.length-1)history=history.slice(0,pos+1);history.push(n);pos++;revealed=false;render()}
+function back(){if(pos<=0)return;pos--;revealed=false;render()}
+function changeCategory(){prefs.category=document.getElementById("catSelect").value;save();pool=makePool();history=[random(null)];pos=0;revealed=false;render()}
+function resetDeck(){pool=makePool();history=[random(null)];pos=0;revealed=false;render();toast("Deck reshuffled")}
+function listen(){let x=current();if(!("speechSynthesis"in window)){toast("Text-to-speech is not supported in this browser.");return}speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(x.hanzi);u.lang="zh-CN";u.rate=.78;let vs=speechSynthesis.getVoices(),v=vs.find(v=>/^zh(-|_)?CN/i.test(v.lang))||vs.find(v=>/^zh/i.test(v.lang));if(v)u.voice=v;u.onerror=()=>toast("No Mandarin voice found. Check your browser speech settings.");speechSynthesis.speak(u)}
+function toggleWriting(){let e=document.getElementById("writing");e.classList.toggle("open");if(e.classList.contains("open")){resizeCanvas();setTimeout(()=>e.scrollIntoView({behavior:"smooth",block:"nearest"}),50)}}
+function initCanvas(){let c=document.getElementById("canvas");ctx=c.getContext("2d");c.addEventListener("pointerdown",startStroke);c.addEventListener("pointermove",moveStroke);window.addEventListener("pointerup",endStroke);window.addEventListener("pointercancel",endStroke);window.addEventListener("resize",()=>{if(document.getElementById("writing").classList.contains("open"))resizeCanvas()});resizeCanvas();canvasReady=true}
+function paper(){let c=document.getElementById("canvas"),w=c.clientWidth,h=c.clientHeight;ctx.clearRect(0,0,w,h);ctx.fillStyle="#faf9f2";ctx.fillRect(0,0,w,h);ctx.strokeStyle="#e7e4dc";ctx.lineWidth=1;for(let y=28;y<h;y+=28){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke()}ctx.strokeStyle="#d8bfc4";ctx.beginPath();ctx.moveTo(28,0);ctx.lineTo(28,h);ctx.stroke();ctx.strokeStyle="#c9c7bf";ctx.setLineDash([5,6]);ctx.beginPath();ctx.moveTo(w/2,12);ctx.lineTo(w/2,h-12);ctx.moveTo(38,h/2);ctx.lineTo(w-12,h/2);ctx.stroke();ctx.setLineDash([])}
+function resizeCanvas(){let c=document.getElementById("canvas");if(!c||!ctx)return;let old=strokes,rect=c.getBoundingClientRect(),d=Math.max(1,devicePixelRatio||1);c.width=Math.round(rect.width*d);c.height=Math.round(rect.height*d);ctx.setTransform(d,0,0,d,0,0);paper();strokes=old;redraw();if(guideOn)drawGuide()}
+function drawGuide(){let c=document.getElementById("canvas");ctx.save();ctx.fillStyle="#9ca3af";ctx.globalAlpha=.42;ctx.textAlign="center";ctx.textBaseline="middle";ctx.font=`${Math.min(c.clientHeight*.66,c.clientWidth*.48)}px "Noto Serif CJK SC","Songti SC","SimSun",serif`;ctx.fillText(current().hanzi,c.clientWidth/2,c.clientHeight/2);ctx.restore()}
+function drawStroke(s){if(!s||!s.points.length)return;ctx.save();ctx.strokeStyle="#242a39";ctx.lineWidth=5;ctx.lineCap="round";ctx.lineJoin="round";ctx.beginPath();ctx.moveTo(s.points[0].x,s.points[0].y);for(let p of s.points.slice(1))ctx.lineTo(p.x,p.y);if(s.points.length===1)ctx.lineTo(s.points[0].x+.1,s.points[0].y+.1);ctx.stroke();ctx.restore()}
+function redraw(){strokes.forEach(drawStroke)}
+function point(e){let r=document.getElementById("canvas").getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}}
+function startStroke(e){if(!document.getElementById("writing").classList.contains("open"))return;e.preventDefault();activeStroke={points:[point(e)]};drawStroke(activeStroke)}
+function moveStroke(e){if(!activeStroke)return;e.preventDefault();activeStroke.points.push(point(e));paper();if(guideOn)drawGuide();redraw();drawStroke(activeStroke)}
+function endStroke(){if(!activeStroke)return;strokes.push(activeStroke);activeStroke=null;feedback()}
+function clearPaper(show=true){strokes=[];activeStroke=null;if(ctx&&canvasReady){paper();if(guideOn)drawGuide()}if(show){let f=document.getElementById("feedback");f.className="feedback";f.textContent="Paper cleared. Try again."}}
+function undo(){if(strokes.length){strokes.pop();paper();if(guideOn)drawGuide();redraw();feedback()}}
+function guide(){guideOn=!guideOn;paper();if(guideOn)drawGuide();redraw();toast(guideOn?"Faint character guide shown":"Guide hidden")}
+function feedback(){let f=document.getElementById("feedback");f.className="feedback";f.textContent=strokes.length?`You've drawn ${strokes.length} stroke${strokes.length===1?"":"s"}. Compare shape and stroke direction with the character above.`:"Draw to begin."}
+function checkWriting(){let f=document.getElementById("feedback");f.className="feedback warn";if(!strokes.length){f.textContent="No strokes detected yet. Draw on the paper first.";return}let n=strokes.reduce((a,s)=>a+s.points.length,0);f.textContent=`Practice recorded: ${strokes.length} strokes and ${n} drawing points. This single-file version cannot reliably grade Hanzi correctness. Compare with ${current().hanzi}; use Show guide for a faint overlay.`}
+function stats(){document.getElementById("seen").textContent=(prefs.seen||[]).length;document.getElementById("reveals").textContent=prefs.reveals||0;document.getElementById("bar").style.width=(prefs.seen||[]).length/DATA.length*100+"%";document.getElementById("progressText").textContent=`${(prefs.seen||[]).length} of ${DATA.length} entries seen at least once.`}
+function openLibrary(){renderLibrary();document.getElementById("modal").classList.add("show")}function closeLibrary(){document.getElementById("modal").classList.remove("show")}
+function renderLibrary(){let q=(document.getElementById("q").value||"").toLowerCase(),cat=document.getElementById("libCat").value,list=DATA.filter(x=>(cat==="ALL"||x.category===cat)&&[x.hanzi,x.pinyin,x.meaning,x.category].join(" ").toLowerCase().includes(q)),g=document.getElementById("wordgrid");g.innerHTML="";list.forEach(x=>{let b=document.createElement("button");b.textContent=x.hanzi;b.title=x.pinyin+" — "+x.meaning;if(x.hanzi===current().hanzi)b.classList.add("current");b.onclick=()=>{if(pos<history.length-1)history=history.slice(0,pos+1);history.push(x.hanzi);pos++;pool=makePool();revealed=false;render();closeLibrary()};g.append(b)});if(!list.length)g.textContent="No matching characters."}
+document.addEventListener("keydown",e=>{if(e.key==="ArrowLeft"&&!document.getElementById("modal").classList.contains("show"))back();if(e.key==="ArrowRight"&&!document.getElementById("modal").classList.contains("show"))forward();if(e.key==="Escape")closeLibrary()});
+init();
+</script></body></html>
