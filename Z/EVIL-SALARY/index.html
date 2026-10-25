@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#100b10">
+  <title>Infernal Ledger | The Crimson Reckoning</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand-lockup">
+        <div class="sigil" aria-hidden="true"><span>✠</span></div>
+        <div>
+          <p class="eyebrow">THE PRIVATE ARCHIVES · VOL. XI</p>
+          <h1>INFERNAL <span>LEDGER</span></h1>
+          <p class="tagline">Your fortune. Your dominion. Your reckoning.</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-ghost" id="printBtn"><span>♜</span> Summon Infernal Scroll</button>
+        <button class="btn btn-danger-outline" id="resetBtn"><span>☠</span> Purge the Ledger</button>
+      </div>
+    </header>
+
+    <section class="hero-grid">
+      <div class="hero-copy">
+        <div class="status-line"><span class="live-dot"></span><span>SOUL HARVEST: LIVE</span><span class="status-divider">/</span><span id="periodLabel">NOVEMBER 2026</span></div>
+        <h2>The <em>Crimson</em><br>Reckoning.</h2>
+        <p class="hero-subtitle">Every hour leaves a mark. Every rupee answers to the ledger.</p>
+        <div class="hero-meta">
+          <div><span class="meta-label">RECKONING PERIOD</span><strong>01 — 25 NOV 2026</strong></div>
+          <div><span class="meta-label">THE COVENANT</span><strong>25 DAYS · ₹600 / DAY</strong></div>
+        </div>
+      </div>
+      <div class="live-card panel">
+        <div class="live-card-top"><span class="eyebrow">TODAY'S TRIBUTE</span><span class="live-pill"><i></i> LIVE</span></div>
+        <div class="live-amount" id="liveEarning">₹0.00</div>
+        <div class="live-caption">Your offering grows with every passing second.</div>
+        <div class="live-divider"></div>
+        <div class="live-foot"><span>Duty · 07:00–19:00</span><strong id="liveClock">--:--:--</strong></div>
+      </div>
+    </section>
+
+    <section class="progress-panel panel">
+      <div class="section-head">
+        <div><p class="eyebrow">THE MARCH OF DOMINION</p><h2>Progress of the Pact</h2></div>
+        <div class="period-chip"><span class="chip-icon">✦</span> NOVEMBER · 2026</div>
+      </div>
+      <div class="progress-layout">
+        <div class="ring-wrap">
+          <svg class="progress-ring" viewBox="0 0 240 240" role="img" aria-label="Live working progress">
+            <defs>
+              <linearGradient id="ringGradient" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#ff5267"/><stop offset="55%" stop-color="#b71939"/><stop offset="100%" stop-color="#6f1028"/></linearGradient>
+              <filter id="ringGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            </defs>
+            <circle class="ring-track" cx="120" cy="120" r="94"/>
+            <circle class="ring-progress" id="ringProgress" cx="120" cy="120" r="94"/>
+          </svg>
+          <div class="ring-center"><span class="ring-kicker">SOUL'S PROGRESS</span><strong id="progressPercent">0.00%</strong><span id="progressDays">0.00 / 25 days</span></div>
+        </div>
+        <div class="progress-details">
+          <div class="progress-stat">
+            <span class="stat-symbol">♜</span><div><span class="stat-label">DAYS OF DOMINION</span><strong id="workingDays">0 / 25</strong><small>Time-weighted, live calculation</small></div>
+          </div>
+          <div class="progress-stat">
+            <span class="stat-symbol">☽</span><div><span class="stat-label">TRIBUTE CLAIMED</span><strong id="earnedToDate">₹0.00</strong><small>Completed days + today's live earning</small></div>
+          </div>
+          <div class="progress-stat">
+            <span class="stat-symbol">✦</span><div><span class="stat-label">UNTIL RECKONING</span><strong id="daysRemaining">25 days remain</strong><small>Normal earnings cease after 25 November</small></div>
+          </div>
+          <div class="progress-note"><span>✧</span> The ring recalculates every second during duty. On 26 November, the normal salary clock falls silent.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div><p class="eyebrow">THE TREASURY OF SHADOWS</p><h2>Fortune &amp; Reckoning</h2></div>
+        <span class="section-note">ALL AMOUNTS IN INR</span>
+      </div>
+      <div class="summary-grid">
+        <article class="summary-card"><div class="card-top"><span>TRIBUTE CLAIMED</span><span class="card-glyph">☽</span></div><strong id="normalSalaryEarned">₹0.00</strong><small>Normal earnings to date</small></article>
+        <article class="summary-card"><div class="card-top"><span>FORBIDDEN BOUNTY</span><span class="card-glyph">✦</span></div><strong id="overtimeTotal">₹0.00</strong><small>Additional earnings</small></article>
+        <article class="summary-card"><div class="card-top"><span>BLOOD DEBT</span><span class="card-glyph red">†</span></div><strong id="advanceTotal">₹0.00</strong><small>Advances deducted</small></article>
+        <article class="summary-card featured"><div class="card-top"><span>PROPHECY OF FORTUNE</span><span class="card-glyph">♜</span></div><strong id="estimatedSalary">₹15,000.00</strong><small>Projected November total</small></article>
+        <article class="summary-card"><div class="card-top"><span>REMAINING HOARD</span><span class="card-glyph">◇</span></div><strong id="totalSalaryBalance">₹0.00</strong><small>Earned balance after adjustments</small></article>
+        <article class="summary-card"><div class="card-top"><span>THE COVENANT</span><span class="card-glyph">⌘</span></div><strong>₹15,000.00</strong><small>25 days × ₹600 · fixed target</small></article>
+      </div>
+    </section>
+
+    <section class="entry-grid">
+      <form class="panel entry-form" id="overtimeForm" novalidate>
+        <div class="panel-heading">
+          <div><p class="eyebrow">EXTRA TRIBUTE</p><h2>Claim Forbidden Bounty</h2></div><span class="pill positive">+ Adds to fortune</span>
+        </div>
+        <label>Offering amount
+          <div class="money-input"><span>₹</span><input id="overtimeAmount" name="amount" inputmode="decimal" autocomplete="off" placeholder="500.00" required></div>
+        </label>
+        <label>Date of reckoning<input id="overtimeDate" name="date" type="date" min="2026-11-01" max="2026-11-25" required></label>
+        <label>Inscription of the pact<input id="overtimeNote" name="note" maxlength="150" placeholder="e.g. Sunday extra duty"></label>
+        <p class="form-error" id="overtimeError" role="alert"></p>
+        <button class="btn btn-primary" type="submit">✦ Claim Forbidden Bounty</button>
+      </form>
+
+      <form class="panel entry-form" id="advanceForm" novalidate>
+        <div class="panel-heading">
+          <div><p class="eyebrow">THE PRICE OF NEED</p><h2>Forge a Blood Debt</h2></div><span class="pill negative">− Reduces payable</span>
+        </div>
+        <label>Debt amount
+          <div class="money-input"><span>₹</span><input id="advanceAmount" name="amount" inputmode="decimal" autocomplete="off" placeholder="3000.00" required></div>
+        </label>
+        <label>Date of reckoning<input id="advanceDate" name="date" type="date" min="2026-11-01" max="2026-11-25" required></label>
+        <label>Inscription of the pact<input id="advanceNote" name="note" maxlength="150" placeholder="e.g. Emergency expense"></label>
+        <p class="form-error" id="advanceError" role="alert"></p>
+        <button class="btn btn-primary" type="submit">† Forge a Blood Debt</button>
+      </form>
+    </section>
+
+    <section class="history-grid">
+      <section class="panel history-panel">
+        <div class="panel-heading">
+          <div><p class="eyebrow">ARCHIVES OF EXTRA TRIBUTE</p><h2>Chronicles of the Hunt</h2></div><strong class="panel-total" id="historyOvertimeTotal">₹0.00</strong>
+        </div>
+        <div class="history-list" id="overtimeHistory"></div>
+      </section>
+      <section class="panel history-panel">
+        <div class="panel-heading">
+          <div><p class="eyebrow">ARCHIVES OF DEBT</p><h2>The Debt Ledger</h2></div><strong class="panel-total" id="historyAdvanceTotal">₹0.00</strong>
+        </div>
+        <div class="history-list" id="advanceHistory"></div>
+      </section>
+    </section>
+    <footer class="footer"><div class="footer-sigil">✠</div><span>THE CRIMSON LEDGER</span><span class="footer-sep">✧</span><span>PRIVATE ARCHIVES · NOVEMBER 2026</span><span class="footer-right">LET THE ACCOUNTS BE SETTLED.</span></footer>
+  </div>
+
+  <div class="modal-backdrop" id="modalBackdrop" hidden>
+    <div class="modal panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-heading"><div><p class="eyebrow" id="modalEyebrow">ALTER THE PACT</p><h2 id="modalTitle">Alter the Pact</h2></div><button class="icon-btn" data-action="close-modal" aria-label="Close">×</button></div>
+      <form id="editForm" novalidate>
+        <input type="hidden" id="editType"><input type="hidden" id="editId">
+        <label>Offering amount<div class="money-input"><span>₹</span><input id="editAmount" inputmode="decimal" required></div></label>
+        <label>Date of reckoning<input id="editDate" type="date" min="2026-11-01" max="2026-11-25" required></label>
+        <label>Inscription of the pact<input id="editNote" maxlength="150"></label>
+        <p class="form-error" id="editError" role="alert"></p>
+        <div class="modal-actions"><button type="button" class="btn btn-ghost" data-action="close-modal">Abandon Ritual</button><button type="submit" class="btn btn-primary">⛧ Seal the Pact</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="confirmBackdrop" hidden>
+    <div class="modal panel small-modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+      <p class="eyebrow">THE FINAL DECREE</p><h2 id="confirmTitle">The reckoning awaits.</h2><p id="confirmMessage" class="subtle"></p>
+      <div class="modal-actions"><button class="btn btn-ghost" data-action="cancel-confirm">Abandon Ritual</button><button class="btn btn-danger" id="confirmButton">☠ So It Is Decreed</button></div>
+    </div>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js" defer></script>
+  <script src="print.js" defer></script>
+</body>
+</html>
