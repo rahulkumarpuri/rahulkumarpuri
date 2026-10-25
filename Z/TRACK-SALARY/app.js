@@ -1,14 +1,19 @@
+
 (() => {
   "use strict";
 
-  const STORAGE_KEY = "salaryTrackerData_v2";
+  const STORAGE_KEY = "infernalLedger_october2026_v1";
+
   const CONFIG = Object.freeze({
     dailySalary: 600,
     hourlyRate: 50,
     dutyStart: "07:00",
     dutyEnd: "19:00",
+    maxAmount: 1000000000,
     noteMaxLength: 150,
-    maxAmount: 1000000000
+    periodStart: "2026-10-01",
+    periodEnd: "2026-10-31",
+    workingDays: 31
   });
 
   const DEFAULT_STATE = () => ({
@@ -21,31 +26,36 @@
   let pendingConfirmation = null;
   let toastTimer = null;
 
-  const $ = (selector) => document.querySelector(selector);
+  const $ = s => document.querySelector(s);
 
   const refs = {
     periodLabel: $("#periodLabel"),
     liveEarning: $("#liveEarning"),
+    liveClock: $("#liveClock"),
+
     normalSalaryEarned: $("#normalSalaryEarned"),
     overtimeTotal: $("#overtimeTotal"),
     advanceTotal: $("#advanceTotal"),
     estimatedSalary: $("#estimatedSalary"),
     totalSalaryBalance: $("#totalSalaryBalance"),
+
     workingDays: $("#workingDays"),
+    earnedToDate: $("#earnedToDate"),
+    daysRemaining: $("#daysRemaining"),
+
     historyOvertimeTotal: $("#historyOvertimeTotal"),
     historyAdvanceTotal: $("#historyAdvanceTotal"),
     overtimeHistory: $("#overtimeHistory"),
     advanceHistory: $("#advanceHistory"),
+
     overtimeForm: $("#overtimeForm"),
     advanceForm: $("#advanceForm"),
-    overtimeAmount: $("#overtimeAmount"),
     overtimeDate: $("#overtimeDate"),
-    overtimeNote: $("#overtimeNote"),
-    advanceAmount: $("#advanceAmount"),
     advanceDate: $("#advanceDate"),
-    advanceNote: $("#advanceNote"),
+
     overtimeError: $("#overtimeError"),
     advanceError: $("#advanceError"),
+
     modalBackdrop: $("#modalBackdrop"),
     editForm: $("#editForm"),
     editType: $("#editType"),
@@ -54,247 +64,350 @@
     editDate: $("#editDate"),
     editNote: $("#editNote"),
     editError: $("#editError"),
+
     confirmBackdrop: $("#confirmBackdrop"),
     confirmMessage: $("#confirmMessage"),
     confirmButton: $("#confirmButton"),
     toast: $("#toast")
   };
 
-  function loadState() {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return DEFAULT_STATE();
-      const parsed = JSON.parse(raw);
-      return sanitizeState(parsed);
-    } catch {
-      return DEFAULT_STATE();
-    }
+  const money = value =>
+    new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(Number(value) || 0);
+
+  function localISO(d = new Date()) {
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
   }
 
-  function sanitizeState(raw) {
-    const clean = DEFAULT_STATE();
-    if (!raw || typeof raw !== "object") return clean;
+  function isValidDate(v) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(v)) return false;
 
-    if (raw.settings && typeof raw.settings === "object") {
-      clean.settings = {
-        ...clean.settings,
-        dailySalary: finitePositive(raw.settings.dailySalary) ? Number(raw.settings.dailySalary) : CONFIG.dailySalary,
-        hourlyRate: finitePositive(raw.settings.hourlyRate) ? Number(raw.settings.hourlyRate) : CONFIG.hourlyRate,
-        dutyStart: typeof raw.settings.dutyStart === "string" ? raw.settings.dutyStart : CONFIG.dutyStart,
-        dutyEnd: typeof raw.settings.dutyEnd === "string" ? raw.settings.dutyEnd : CONFIG.dutyEnd
-      };
-    }
+    const [y, m, d] = v.split("-").map(Number);
+    const dt = new Date(y, m - 1, d);
 
-    clean.overtime = sanitizeEntries(raw.overtime);
-    clean.advances = sanitizeEntries(raw.advances);
-    return clean;
+    return dt.getFullYear() === y &&
+      dt.getMonth() === m - 1 &&
+      dt.getDate() === d;
   }
 
-  function sanitizeEntries(list) {
-    if (!Array.isArray(list)) return [];
-    return list.map(item => {
-      if (!item || typeof item !== "object") return null;
-      const amount = Number(item.amount);
-      const date = String(item.date || "");
-      if (!Number.isFinite(amount) || amount <= 0 || amount > CONFIG.maxAmount || !isValidDate(date)) return null;
-      return {
-        id: typeof item.id === "string" && item.id ? item.id : makeId(),
-        amount,
-        date,
-        note: typeof item.note === "string" ? item.note.slice(0, CONFIG.noteMaxLength) : "",
-        createdAt: typeof item.createdAt === "string" ? item.createdAt : new Date().toISOString()
-      };
-    }).filter(Boolean);
-  }
+  function formatDate(v) {
+    if (!isValidDate(v)) return "Unrecorded date";
 
-  function saveState() {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    } catch {
-      showToast("Could not save data to this browser.");
-    }
+    return new Intl.DateTimeFormat("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric"
+    }).format(new Date(`${v}T00:00:00`));
   }
 
   function makeId() {
     return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
   }
 
-  function finitePositive(value) {
-    return Number.isFinite(Number(value)) && Number(value) > 0;
+  function sanitizeEntries(list) {
+    if (!Array.isArray(list)) return [];
+
+    return list.map(x => {
+      if (!x || typeof x !== "object") return null;
+
+      const amount = Number(x.amount);
+      const date = String(x.date || "");
+
+      if (
+        !Number.isFinite(amount) ||
+        amount <= 0 ||
+        amount > CONFIG.maxAmount ||
+        !isValidDate(date) ||
+        date < CONFIG.periodStart ||
+        date > CONFIG.periodEnd
+      ) {
+        return null;
+      }
+
+      return {
+        id: typeof x.id === "string" && x.id ? x.id : makeId(),
+        amount,
+        date,
+        note: typeof x.note === "string"
+          ? x.note.slice(0, CONFIG.noteMaxLength)
+          : "",
+        createdAt: typeof x.createdAt === "string"
+          ? x.createdAt
+          : new Date().toISOString()
+      };
+    }).filter(Boolean);
   }
 
-  function isValidDate(value) {
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
-    const [year, month, day] = value.split("-").map(Number);
-    const d = new Date(year, month - 1, day);
-    return (
-      d.getFullYear() === year &&
-      d.getMonth() === month - 1 &&
-      d.getDate() === day
-    );
+  function sanitizeState(raw) {
+    const s = DEFAULT_STATE();
+
+    if (!raw || typeof raw !== "object") return s;
+
+    s.overtime = sanitizeEntries(raw.overtime);
+    s.advances = sanitizeEntries(raw.advances);
+
+    return s;
   }
 
-  function todayISO() {
-    const d = new Date();
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, "0");
-    const day = String(d.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? sanitizeState(JSON.parse(raw)) : DEFAULT_STATE();
+    } catch {
+      return DEFAULT_STATE();
+    }
   }
 
-  function parseTime(time) {
-    const [h, m] = time.split(":").map(Number);
+  function saveState() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch {
+      showToast("The archives rejected the offering. Browser storage may be unavailable.");
+    }
+  }
+
+  function minutes(t) {
+    const [h, m] = t.split(":").map(Number);
     return h * 60 + m;
   }
 
-  function currentMonthInfo(now = new Date()) {
-    const year = now.getFullYear();
-    const month = now.getMonth();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const day = now.getDate();
-    return {
-      year, month, daysInMonth,
-      elapsedDays: Math.min(Math.max(day, 0), daysInMonth),
-      start: new Date(year, month, 1),
-      end: new Date(year, month + 1, 0)
-    };
+  function isInPeriod(now) {
+    const day = localISO(now);
+    return day >= CONFIG.periodStart && day <= CONFIG.periodEnd;
   }
 
-  function calculateNormalSalaryEarned(now = new Date()) {
-    // Before today's duty finishes, only completed previous days are fully earned.
-    // Today's earning is represented by the live earning amount.
-    const info = currentMonthInfo(now);
-    const completedPreviousDays = Math.max(0, info.elapsedDays - 1);
-    return completedPreviousDays * state.settings.dailySalary + calculateLiveEarning(now);
-  }
+  function calculateDayProgress(now = new Date()) {
+    const today = localISO(now);
 
-  function calculateFullMonthSalary(now = new Date()) {
-    return currentMonthInfo(now).daysInMonth * state.settings.dailySalary;
+    if (today < CONFIG.periodStart) return 0;
+    if (today > CONFIG.periodEnd) return CONFIG.workingDays;
+
+    const day = Number(today.slice(-2));
+    const start = minutes(CONFIG.dutyStart);
+    const end = minutes(CONFIG.dutyEnd);
+
+    const current =
+      now.getHours() * 60 +
+      now.getMinutes() +
+      now.getSeconds() / 60;
+
+    let todayFraction = 0;
+
+    if (current >= end) {
+      todayFraction = 1;
+    } else if (current > start) {
+      todayFraction = (current - start) / (end - start);
+    }
+
+    return Math.max(
+      0,
+      Math.min(CONFIG.workingDays, (day - 1) + todayFraction)
+    );
   }
 
   function calculateLiveEarning(now = new Date()) {
-    const start = parseTime(state.settings.dutyStart);
-    const end = parseTime(state.settings.dutyEnd);
-    const current = now.getHours() * 60 + now.getMinutes() + now.getSeconds() / 60;
-    const dutyMinutes = Math.max(0, end - start);
-    if (current <= start || dutyMinutes === 0) return 0;
-    if (current >= end) return state.settings.dailySalary;
-    const progress = (current - start) / dutyMinutes;
-    return state.settings.dailySalary * progress;
+    if (!isInPeriod(now)) return 0;
+
+    const current =
+      now.getHours() * 60 +
+      now.getMinutes() +
+      now.getSeconds() / 60;
+
+    const start = minutes(CONFIG.dutyStart);
+    const end = minutes(CONFIG.dutyEnd);
+
+    if (current <= start) return 0;
+    if (current >= end) return CONFIG.dailySalary;
+
+    return CONFIG.dailySalary * ((current - start) / (end - start));
   }
 
-  function calculateSalarySummary(now = new Date()) {
-    const info = currentMonthInfo(now);
-    const normalSalaryEarned = calculateNormalSalaryEarned(now);
-    const fullMonthSalary = calculateFullMonthSalary(now);
-    const overtimeTotal = state.overtime.reduce((sum, entry) => sum + entry.amount, 0);
-    const advanceTotal = state.advances.reduce((sum, entry) => sum + entry.amount, 0);
+  function calculateSummary(now = new Date()) {
+    const progress = calculateDayProgress(now);
+    const normal = progress * CONFIG.dailySalary;
 
-    // Estimated Salary is the projected full-month payable amount.
-    // Example: 18,600 - 5,000 + 400 = 14,000.
-    const estimatedSalary = fullMonthSalary - advanceTotal + overtimeTotal;
+    const overtime = state.overtime.reduce(
+      (sum, x) => sum + x.amount, 0
+    );
 
-    // Current balance is what has actually been earned so far, adjusted by
-    // advances and overtime. Today's live earning is included in this value.
-    const totalSalaryBalance = normalSalaryEarned - advanceTotal + overtimeTotal;
+    const advances = state.advances.reduce(
+      (sum, x) => sum + x.amount, 0
+    );
+
+    const salaryTarget = CONFIG.workingDays * CONFIG.dailySalary;
 
     return {
-      normalSalaryEarned,
-      fullMonthSalary,
-      overtimeTotal,
-      advanceTotal,
-      estimatedSalary,
-      totalSalaryBalance,
-      workingDays: info.elapsedDays,
-      totalDays: info.daysInMonth
+      progress,
+      normal,
+      overtime,
+      advances,
+      salaryTarget,
+      estimated: salaryTarget + overtime - advances,
+      balance: normal + overtime - advances
     };
   }
 
-  function money(value) {
-    return new Intl.NumberFormat("en-IN", {
-      style: "currency",
-      currency: "INR",
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(Number(value) || 0);
-  }
-
-  function formatDate(value) {
-    if (!isValidDate(value)) return "Invalid date";
-    return new Intl.DateTimeFormat("en-GB", {
-      day: "2-digit", month: "short", year: "numeric"
-    }).format(new Date(`${value}T00:00:00`));
-  }
-
   function renderApp() {
-    const summary = calculateSalarySummary();
-    const info = currentMonthInfo();
     const now = new Date();
+    const today = localISO(now);
+    const s = calculateSummary(now);
 
-    refs.periodLabel.textContent = `${new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric" }).format(now)} · ${formatDate(info.start.toISOString().slice(0,10))} → ${formatDate(info.end.toISOString().slice(0,10))}`;
-    refs.liveEarning.textContent = money(calculateLiveEarning(now));
-    refs.normalSalaryEarned.textContent = money(summary.normalSalaryEarned);
-    refs.overtimeTotal.textContent = money(summary.overtimeTotal);
-    refs.advanceTotal.textContent = money(summary.advanceTotal);
-    refs.estimatedSalary.textContent = money(summary.estimatedSalary);
-    refs.totalSalaryBalance.textContent = money(summary.totalSalaryBalance);
-    refs.workingDays.textContent = `${summary.workingDays} / ${summary.totalDays}`;
-    refs.historyOvertimeTotal.textContent = money(summary.overtimeTotal);
-    refs.historyAdvanceTotal.textContent = money(summary.advanceTotal);
+    const pct = s.progress / CONFIG.workingDays * 100;
+    const circumference = 2 * Math.PI * 94;
+
+    if (refs.periodLabel) {
+      refs.periodLabel.textContent =
+        today < CONFIG.periodStart
+          ? "COUNTDOWN TO 01 OCT 2026"
+          : today > CONFIG.periodEnd
+            ? "RECKONING COMPLETE · 31 OCT 2026"
+            : "OCTOBER 2026 · THE RECKONING";
+    }
+
+    if (refs.liveEarning) {
+      refs.liveEarning.textContent = money(calculateLiveEarning(now));
+    }
+
+    if (refs.liveClock) {
+      refs.liveClock.textContent = now.toLocaleTimeString("en-GB", {
+        hour12: false
+      });
+    }
+
+    $("#progressPercent").textContent = `${pct.toFixed(2)}%`;
+    $("#progressDays").textContent =
+      `${s.progress.toFixed(2)} / ${CONFIG.workingDays} days`;
+
+    $("#ringProgress").style.strokeDasharray = String(circumference);
+    $("#ringProgress").style.strokeDashoffset =
+      String(circumference * (1 - pct / 100));
+
+    refs.workingDays.textContent =
+      `${Math.floor(s.progress)} / ${CONFIG.workingDays}`;
+
+    refs.earnedToDate.textContent = money(s.normal);
+
+    refs.daysRemaining.textContent =
+      `${Math.max(0, CONFIG.workingDays - s.progress).toFixed(2)} days remain`;
+
+    refs.normalSalaryEarned.textContent = money(s.normal);
+    refs.overtimeTotal.textContent = money(s.overtime);
+    refs.advanceTotal.textContent = money(s.advances);
+    refs.estimatedSalary.textContent = money(s.estimated);
+    refs.totalSalaryBalance.textContent = money(s.balance);
+
+    refs.historyOvertimeTotal.textContent = money(s.overtime);
+    refs.historyAdvanceTotal.textContent = money(s.advances);
 
     renderHistory(refs.overtimeHistory, state.overtime, "overtime");
     renderHistory(refs.advanceHistory, state.advances, "advance");
   }
 
+  function escapeHtml(v) {
+    return String(v).replace(/[&<>"']/g, c => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    }[c]));
+  }
+
   function renderHistory(container, entries, type) {
-    const sorted = [...entries].sort((a, b) => {
-      const dateDiff = b.date.localeCompare(a.date);
-      return dateDiff || b.createdAt.localeCompare(a.createdAt);
-    });
+    const sorted = [...entries].sort(
+      (a, b) => b.date.localeCompare(a.date) ||
+        b.createdAt.localeCompare(a.createdAt)
+    );
 
     if (!sorted.length) {
-      container.innerHTML = `<div class="empty-state">No ${type} entries yet.</div>`;
+      container.innerHTML = `<div class="empty-state">${
+        type === "overtime"
+          ? "The chronicles remain untouched. No bounty has been claimed."
+          : "The debt ledger is silent. No blood debts recorded."
+      }</div>`;
       return;
     }
 
-    container.innerHTML = sorted.map(entry => `
+    container.innerHTML = sorted.map(e => `
       <article class="entry-row">
         <div class="entry-main">
-          <div class="entry-date">${escapeHtml(formatDate(entry.date))}</div>
-          <div class="entry-amount">${escapeHtml(money(entry.amount))}</div>
-          ${entry.note ? `<div class="entry-note" title="${escapeHtml(entry.note)}">${escapeHtml(entry.note)}</div>` : ""}
+          <div class="entry-date">${escapeHtml(formatDate(e.date))}</div>
+          <div class="entry-amount">${escapeHtml(money(e.amount))}</div>
+          ${e.note
+            ? `<div class="entry-note" title="${escapeHtml(e.note)}">${escapeHtml(e.note)}</div>`
+            : ""}
         </div>
         <div class="entry-actions">
-          <button class="small-btn" data-action="edit" data-type="${type}" data-id="${escapeHtml(entry.id)}">Edit</button>
-          <button class="small-btn delete" data-action="delete" data-type="${type}" data-id="${escapeHtml(entry.id)}">Delete</button>
+          <button class="small-btn"
+            data-action="edit"
+            data-type="${type}"
+            data-id="${escapeHtml(e.id)}">Alter</button>
+
+          <button class="small-btn delete"
+            data-action="delete"
+            data-type="${type}"
+            data-id="${escapeHtml(e.id)}">Banish</button>
         </div>
       </article>
     `).join("");
   }
 
-  function escapeHtml(value) {
-    return String(value).replace(/[&<>"']/g, char => ({
-      "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;"
-    }[char]));
-  }
+  function validateEntry(p) {
+    const amount = Number(String(p.amount).replace(/,/g, "").trim());
 
-  function validateEntry({ amount, date, note }) {
-    const numeric = Number(String(amount).replace(/,/g, "").trim());
-    if (!Number.isFinite(numeric) || numeric <= 0) return { ok:false, message:"Enter an amount greater than ₹0." };
-    if (numeric > CONFIG.maxAmount) return { ok:false, message:"That amount is too large." };
-    if (!isValidDate(date)) return { ok:false, message:"Choose a valid date." };
-    if (note.length > CONFIG.noteMaxLength) return { ok:false, message:`Note must be ${CONFIG.noteMaxLength} characters or fewer.` };
-    return { ok:true, amount:numeric, date, note };
+    if (!Number.isFinite(amount) || amount <= 0) {
+      return {
+        ok: false,
+        message: "The offering is unacceptable. Enter an amount greater than ₹0."
+      };
+    }
+
+    if (amount > CONFIG.maxAmount) {
+      return {
+        ok: false,
+        message: "That offering exceeds the permitted limit."
+      };
+    }
+
+    if (
+      !isValidDate(p.date) ||
+      p.date < CONFIG.periodStart ||
+      p.date > CONFIG.periodEnd
+    ) {
+      return {
+        ok: false,
+        message: "Choose a valid date between 1 and 31 October 2026."
+      };
+    }
+
+    if (String(p.note || "").length > CONFIG.noteMaxLength) {
+      return {
+        ok: false,
+        message: "Inscription must be 150 characters or fewer."
+      };
+    }
+
+    return {
+      ok: true,
+      amount,
+      date: p.date,
+      note: String(p.note || "").trim()
+    };
   }
 
   function addEntry(type, form, errorEl) {
-    const formData = new FormData(form);
-    const payload = {
-      amount: formData.get("amount"),
-      date: formData.get("date"),
-      note: String(formData.get("note") || "").trim()
-    };
-    const result = validateEntry(payload);
+    const fd = new FormData(form);
+
+    const result = validateEntry({
+      amount: fd.get("amount"),
+      date: fd.get("date"),
+      note: fd.get("note") || ""
+    });
+
     if (!result.ok) {
       errorEl.textContent = result.message;
       return;
@@ -307,25 +420,47 @@
       note: result.note,
       createdAt: new Date().toISOString()
     });
+
     saveState();
     form.reset();
-    if (type === "overtime") refs.overtimeDate.value = todayISO();
-    if (type === "advances") refs.advanceDate.value = todayISO();
+
+    const today = localISO();
+    const defaultDate =
+      today >= CONFIG.periodStart && today <= CONFIG.periodEnd
+        ? today
+        : CONFIG.periodStart;
+
+    const dateField =
+      type === "overtime" ? refs.overtimeDate : refs.advanceDate;
+
+    dateField.value = defaultDate;
     errorEl.textContent = "";
+
     renderApp();
-    showToast(`${type === "overtime" ? "Overtime" : "Advance"} added.`);
+
+    showToast(
+      type === "overtime"
+        ? "The bounty has been claimed. ✦"
+        : "The blood debt has been inscribed. †"
+    );
   }
 
   function openEdit(type, id) {
-    const entry = state[type].find(item => item.id === id);
+    const entry = state[type].find(x => x.id === id);
     if (!entry) return;
+
     refs.editType.value = type;
     refs.editId.value = id;
     refs.editAmount.value = entry.amount.toFixed(2);
     refs.editDate.value = entry.date;
     refs.editNote.value = entry.note;
     refs.editError.textContent = "";
-    $("#modalTitle").textContent = type === "overtime" ? "Edit Overtime" : "Edit Advance";
+
+    $("#modalTitle").textContent =
+      type === "overtime"
+        ? "Alter Forbidden Bounty"
+        : "Alter Blood Debt";
+
     refs.modalBackdrop.hidden = false;
     refs.editAmount.focus();
   }
@@ -336,47 +471,53 @@
     refs.editError.textContent = "";
   }
 
-  function saveEdit(event) {
-    event.preventDefault();
+  function saveEdit(e) {
+    e.preventDefault();
+
     const type = refs.editType.value;
     const id = refs.editId.value;
+
     const result = validateEntry({
       amount: refs.editAmount.value,
       date: refs.editDate.value,
       note: refs.editNote.value.trim()
     });
+
     if (!result.ok) {
       refs.editError.textContent = result.message;
       return;
     }
 
-    const entry = state[type].find(item => item.id === id);
+    const entry = state[type].find(x => x.id === id);
     if (!entry) return;
-    entry.amount = result.amount;
-    entry.date = result.date;
-    entry.note = result.note;
+
+    Object.assign(entry, {
+      amount: result.amount,
+      date: result.date,
+      note: result.note
+    });
+
     saveState();
     closeModal();
     renderApp();
-    showToast("Entry updated.");
+    showToast("The pact has been altered and resealed.");
   }
 
   function askDelete(type, id) {
-    const entry = state[type].find(item => item.id === id);
+    const entry = state[type].find(x => x.id === id);
     if (!entry) return;
+
     pendingConfirmation = () => {
-      state[type] = state[type].filter(item => item.id !== id);
+      state[type] = state[type].filter(x => x.id !== id);
       saveState();
       renderApp();
-      showToast("Entry deleted.");
+      showToast("The record has been banished.");
     };
-    refs.confirmMessage.textContent = `Delete ${money(entry.amount)} dated ${formatDate(entry.date)}? This cannot be undone.`;
-    refs.confirmBackdrop.hidden = false;
-  }
 
-  function closeConfirm() {
-    refs.confirmBackdrop.hidden = true;
-    pendingConfirmation = null;
+    refs.confirmMessage.textContent =
+      `Banish ${money(entry.amount)} dated ${formatDate(entry.date)} from the archives? This cannot be undone.`;
+
+    refs.confirmBackdrop.hidden = false;
   }
 
   function resetAllData() {
@@ -385,78 +526,178 @@
       state.advances = [];
       saveState();
       renderApp();
-      showToast("All salary records were reset.");
+      showToast("The ledger has been purged. The covenant remains.");
     };
-    refs.confirmMessage.textContent = "Are you sure you want to delete all salary records? Your salary configuration will stay unchanged.";
+
+    refs.confirmMessage.textContent =
+      "Purge every overtime and blood-debt record? The fixed October covenant will remain. This cannot be undone.";
+
     refs.confirmBackdrop.hidden = false;
+  }
+
+  function closeConfirm() {
+    refs.confirmBackdrop.hidden = true;
+    pendingConfirmation = null;
   }
 
   function showToast(message) {
     clearTimeout(toastTimer);
     refs.toast.textContent = message;
     refs.toast.classList.add("show");
-    toastTimer = setTimeout(() => refs.toast.classList.remove("show"), 2400);
+
+    toastTimer = setTimeout(
+      () => refs.toast.classList.remove("show"),
+      2800
+    );
   }
 
   function buildReceipt() {
-    const summary = calculateSalarySummary();
-    const overtime = [...state.overtime].sort((a,b) => b.date.localeCompare(a.date));
-    const advances = [...state.advances].sort((a,b) => b.date.localeCompare(a.date));
-    const period = currentMonthInfo();
-    const monthName = new Intl.DateTimeFormat("en-US", {month:"long", year:"numeric"}).format(new Date());
-    const rows = (entries, sign) => entries.length ? entries.map(e =>
-      `<tr><td>${escapeHtml(formatDate(e.date))}</td><td>${escapeHtml(money(e.amount))}</td><td>${escapeHtml(e.note || "—")}</td></tr>`
-    ).join("") : `<tr><td colspan="3">No entries</td></tr>`;
+    const s = calculateSummary(new Date());
 
-    return `<!doctype html><html><head><meta charset="utf-8"><title>Salary Receipt — ${monthName}</title>
-    <style>
-      *{box-sizing:border-box}body{font-family:Arial,sans-serif;color:#172033;margin:0;padding:36px;background:#fff}
-      .receipt{max-width:760px;margin:auto}.head{display:flex;justify-content:space-between;border-bottom:2px solid #172033;padding-bottom:18px;margin-bottom:22px}
-      h1{margin:0;font-size:25px}p{margin:5px 0;color:#647084}.summary{border:1px solid #dfe4eb;border-radius:12px;padding:18px;margin-bottom:22px}
-      .line{display:flex;justify-content:space-between;padding:9px 0}.line.total{border-top:2px solid #172033;margin-top:8px;padding-top:14px;font-size:20px;font-weight:800}
-      h2{font-size:16px;margin:26px 0 10px}table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:9px;border-bottom:1px solid #e7eaf0}th{background:#f6f8fb}
-      .plus{color:#13835f}.minus{color:#b23c3c}.footer{margin-top:30px;font-size:11px;color:#7b8492}@media print{body{padding:0}}
-    </style></head><body><main class="receipt">
-      <div class="head"><div><h1>Salary Receipt</h1><p>${monthName}</p></div><div><p>${formatDate(period.start.toISOString().slice(0,10))} → ${formatDate(period.end.toISOString().slice(0,10))}</p></div></div>
-      <section class="summary">
-        <div class="line"><span>Full-Month Normal Salary</span><strong>${escapeHtml(money(summary.fullMonthSalary))}</strong></div>
-        <div class="line plus"><span>Overtime</span><strong>+${escapeHtml(money(summary.overtimeTotal))}</strong></div>
-        <div class="line minus"><span>Advance</span><strong>-${escapeHtml(money(summary.advanceTotal))}</strong></div>
-        <div class="line"><span>Salary Earned So Far</span><strong>${escapeHtml(money(summary.normalSalaryEarned))}</strong></div><div class="line"><span>Current Salary Balance</span><strong>${escapeHtml(money(summary.totalSalaryBalance))}</strong></div><div class="line total"><span>Estimated Salary</span><strong>${escapeHtml(money(summary.estimatedSalary))}</strong></div>
-      </section>
-      <h2>Overtime Entries</h2><table><thead><tr><th>Date</th><th>Amount</th><th>Note</th></tr></thead><tbody>${rows(overtime, "+")}</tbody></table>
-      <h2>Advance Entries</h2><table><thead><tr><th>Date</th><th>Amount</th><th>Note</th></tr></thead><tbody>${rows(advances, "-")}</tbody></table>
-      <div class="footer">Generated by Salary Tracker · ${new Date().toLocaleString()}</div>
-    </main><script>window.onload=()=>window.print();</script></body></html>`;
+    const overtime = [...state.overtime].sort(
+      (a, b) => b.date.localeCompare(a.date)
+    );
+
+    const advances = [...state.advances].sort(
+      (a, b) => b.date.localeCompare(a.date)
+    );
+
+    const rows = entries => entries.length
+      ? entries.map(e => `
+          <tr>
+            <td>${escapeHtml(formatDate(e.date))}</td>
+            <td>${escapeHtml(money(e.amount))}</td>
+            <td>${escapeHtml(e.note || "—")}</td>
+          </tr>
+        `).join("")
+      : `<tr><td colspan="3">No records inscribed</td></tr>`;
+
+    return `<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>The Crimson Reckoning · October 2026</title>
+<style>
+*{box-sizing:border-box}
+body{font-family:Arial,sans-serif;color:#241822;margin:0;padding:34px;background:#fff}
+.receipt{max-width:760px;margin:auto}
+.head{display:flex;justify-content:space-between;gap:20px;border-bottom:3px solid #74152e;padding-bottom:18px;margin-bottom:22px}
+h1{font-family:Georgia,serif;letter-spacing:.08em;margin:0;font-size:27px;color:#74152e}
+p{margin:6px 0;color:#786875}
+.summary{border:1px solid #e3d5de;border-radius:10px;padding:17px;margin-bottom:22px;background:#fbf8fa}
+.line{display:flex;justify-content:space-between;gap:12px;padding:9px 0}
+.line.total{border-top:2px solid #74152e;margin-top:8px;padding-top:14px;font-size:20px;font-weight:800;color:#74152e}
+h2{font-family:Georgia,serif;color:#74152e;font-size:17px;margin:24px 0 10px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:9px;border-bottom:1px solid #e9e0e7}
+th{background:#f5edf2;color:#5c1b36}
+.footer{margin-top:30px;font-size:10px;color:#8c7c89}
+@media print{body{padding:0}}
+</style>
+</head>
+<body>
+<main class="receipt">
+  <div class="head">
+    <div>
+      <h1>THE CRIMSON RECKONING</h1>
+      <p>Infernal Ledger · October 2026</p>
+    </div>
+    <div>
+      <p>01 Oct — 31 Oct 2026</p>
+      <p>31 working days · ₹600/day</p>
+    </div>
+  </div>
+
+  <section class="summary">
+    <div class="line">
+      <span>Full Covenant · Normal Salary</span>
+      <strong>${escapeHtml(money(s.salaryTarget))}</strong>
+    </div>
+    <div class="line">
+      <span>Tribute Claimed to Date</span>
+      <strong>${escapeHtml(money(s.normal))}</strong>
+    </div>
+    <div class="line">
+      <span>Forbidden Bounty · Overtime</span>
+      <strong>+${escapeHtml(money(s.overtime))}</strong>
+    </div>
+    <div class="line">
+      <span>Blood Debt · Advances</span>
+      <strong>−${escapeHtml(money(s.advances))}</strong>
+    </div>
+    <div class="line">
+      <span>Remaining Hoard</span>
+      <strong>${escapeHtml(money(s.balance))}</strong>
+    </div>
+    <div class="line total">
+      <span>Prophecy of Fortune</span>
+      <strong>${escapeHtml(money(s.estimated))}</strong>
+    </div>
+  </section>
+
+  <h2>Chronicles of the Hunt</h2>
+  <table>
+    <thead>
+      <tr><th>Date</th><th>Bounty</th><th>Inscription</th></tr>
+    </thead>
+    <tbody>${rows(overtime)}</tbody>
+  </table>
+
+  <h2>The Debt Ledger</h2>
+  <table>
+    <thead>
+      <tr><th>Date</th><th>Debt</th><th>Inscription</th></tr>
+    </thead>
+    <tbody>${rows(advances)}</tbody>
+  </table>
+
+  <div class="footer">
+    Generated by Infernal Ledger · ${new Date().toLocaleString()} · Let the accounts be settled.
+  </div>
+</main>
+<script>window.onload=()=>window.print();</script>
+</body>
+</html>`;
   }
 
   function printReceipt() {
-    const popup = window.open("", "_blank", "noopener,noreferrer");
+    const popup = window.open("", "_blank");
+
     if (!popup) {
-      showToast("Please allow pop-ups to print the receipt.");
+      showToast("The portal is sealed. Allow pop-ups to summon the scroll.");
       return;
     }
+
+    popup.document.open();
     popup.document.write(buildReceipt());
     popup.document.close();
   }
 
   function wireEvents() {
-    refs.overtimeForm.addEventListener("submit", e => { e.preventDefault(); addEntry("overtime", refs.overtimeForm, refs.overtimeError); });
-    refs.advanceForm.addEventListener("submit", e => { e.preventDefault(); addEntry("advances", refs.advanceForm, refs.advanceError); });
+    refs.overtimeForm.addEventListener("submit", e => {
+      e.preventDefault();
+      addEntry("overtime", refs.overtimeForm, refs.overtimeError);
+    });
+
+    refs.advanceForm.addEventListener("submit", e => {
+      e.preventDefault();
+      addEntry("advances", refs.advanceForm, refs.advanceError);
+    });
+
     refs.editForm.addEventListener("submit", saveEdit);
 
     refs.overtimeHistory.addEventListener("click", handleHistoryClick);
     refs.advanceHistory.addEventListener("click", handleHistoryClick);
 
-    document.addEventListener("click", event => {
-      const actionTarget = event.target.closest("[data-action]");
-      if (!actionTarget) return;
-      const action = actionTarget.dataset.action;
-      if (action === "close-modal") closeModal();
-      if (action === "cancel-confirm") closeConfirm();
+    document.addEventListener("click", e => {
+      const t = e.target.closest("[data-action]");
+      if (!t) return;
+
+      if (t.dataset.action === "close-modal") closeModal();
+      if (t.dataset.action === "cancel-confirm") closeConfirm();
     });
 
-    $("#confirmButton").addEventListener("click", () => {
+    refs.confirmButton.addEventListener("click", () => {
       if (pendingConfirmation) pendingConfirmation();
       closeConfirm();
     });
@@ -464,8 +705,13 @@
     $("#resetBtn").addEventListener("click", resetAllData);
     $("#printBtn").addEventListener("click", printReceipt);
 
-    refs.modalBackdrop.addEventListener("click", e => { if (e.target === refs.modalBackdrop) closeModal(); });
-    refs.confirmBackdrop.addEventListener("click", e => { if (e.target === refs.confirmBackdrop) closeConfirm(); });
+    refs.modalBackdrop.addEventListener("click", e => {
+      if (e.target === refs.modalBackdrop) closeModal();
+    });
+
+    refs.confirmBackdrop.addEventListener("click", e => {
+      if (e.target === refs.confirmBackdrop) closeConfirm();
+    });
 
     document.addEventListener("keydown", e => {
       if (e.key === "Escape") {
@@ -475,30 +721,31 @@
     });
   }
 
-  function handleHistoryClick(event) {
-    const button = event.target.closest("[data-action]");
-    if (!button) return;
-    const { action, type, id } = button.dataset;
+  function handleHistoryClick(e) {
+    const b = e.target.closest("[data-action]");
+    if (!b) return;
+
+    const { action, type, id } = b.dataset;
+
     if (action === "edit") openEdit(type, id);
     if (action === "delete") askDelete(type, id);
   }
 
   function initialize() {
-    const today = todayISO();
-    refs.overtimeDate.value = today;
-    refs.advanceDate.value = today;
+    const today = localISO();
+
+    const defaultDate =
+      today >= CONFIG.periodStart && today <= CONFIG.periodEnd
+        ? today
+        : CONFIG.periodStart;
+
+    refs.overtimeDate.value = defaultDate;
+    refs.advanceDate.value = defaultDate;
+
     wireEvents();
     renderApp();
-    setInterval(() => {
-      refs.liveEarning.textContent = money(calculateLiveEarning(new Date()));
-      // Re-render at midnight so working-day/month labels roll over naturally.
-      const currentPeriod = currentMonthInfo();
-      const currentText = `${currentPeriod.year}-${currentPeriod.month}-${currentPeriod.elapsedDays}`;
-      if (initialize.lastPeriod !== currentText) {
-        initialize.lastPeriod = currentText;
-        renderApp();
-      }
-    }, 1000);
+
+    setInterval(renderApp, 1000);
   }
 
   initialize();
