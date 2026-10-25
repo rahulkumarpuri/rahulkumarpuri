@@ -156,16 +156,4 @@
     setInterval(()=>renderApp(),1000);
   }
   initialize();
-
-  document.body.style.setProperty("--bg", "#f7f7fb");
-document.body.style.setProperty("--panel", "#ffffff");
-document.body.style.setProperty("--text", "#241b27");
-document.body.style.setProperty("--muted", "#6f6473");
-document.querySelectorAll(".panel, .summary-card").forEach(el => {
-  el.style.background = "#ffffff";
-  el.style.color = "#241b27";
-  el.style.borderColor = "#e5dce7";
-});
-document.body.style.background = "#f7f7fb";
-document.body.style.color = "#241b27";
 })();
