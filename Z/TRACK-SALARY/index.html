@@ -80,5 +80,59 @@ function init(){let d=iso(),defaultDate=d>=C.start&&d<=C.end?d:C.start;R.otDate.
 init();
 })();
 </script>
+
+
+  <script>
+(() => {
+  const KEY = "infernalLedger_october2026_v2";
+
+  const overtime = [
+    ["2026-10-22",33], ["2026-10-21",150],
+    ["2026-10-19",150], ["2026-10-16",87],
+    ["2026-10-11",150], ["2026-10-10",150],
+    ["2026-10-09",75], ["2026-10-02",150],
+    ["2026-10-01",50]
+  ];
+
+  const advances = [
+    ["2026-10-24",15], ["2026-10-22",30],
+    ["2026-10-21",225], ["2026-10-21",185],
+    ["2026-10-20",375], ["2026-10-19",120],
+    ["2026-10-18",20], ["2026-10-17",515],
+    ["2026-10-16",1445], ["2026-10-15",10],
+    ["2026-10-14",770,"Recharge and Shopping"],
+    ["2026-10-13",400], ["2026-10-12",240],
+    ["2026-10-11",140], ["2026-10-10",670],
+    ["2026-10-09",10], ["2026-10-08",100],
+    ["2026-10-07",1450], ["2026-10-05",100],
+    ["2026-10-04",40], ["2026-10-03",75],
+    ["2026-10-02",600], ["2026-10-01",1560]
+  ];
+
+  const data = JSON.parse(localStorage.getItem(KEY) || "{}");
+  data.overtime ||= [];
+  data.advances ||= [];
+
+  const restore = (list, entries) => {
+    entries.forEach(([date, amount, note = ""]) => {
+      const exists = list.some(x =>
+        x.date === date && x.amount === amount &&
+        (x.note || "") === note
+      );
+      if (!exists) list.push({
+        id: crypto.randomUUID(),
+        date, amount, note,
+        createdAt: new Date().toISOString()
+      });
+    });
+  };
+
+  restore(data.overtime, overtime);
+  restore(data.advances, advances);
+  localStorage.setItem(KEY, JSON.stringify(data));
+
+  alert("Restored: 9 overtime entries + 23 advances. Refresh the page!");
+})();
+</script>
 </body>
 </html>
