@@ -1,350 +1,100 @@
-
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="color-scheme" content="dark">
-  <meta name="theme-color" content="#100b10">
-  <title>Salary Tracker | October 2026</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#f6f5f8">
+<title>Salary Tracker | November 2026</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Crimson+Pro:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap');
+:root{color-scheme:light;--bg:#f6f5f8;--panel:#fff;--text:#2b202d;--muted:#796d7c;--red:#a9183b;--red-bright:#d42d50;--line:#e9e1eb;--line-dark:#d9cbdc;--green:#237c59;--green-bg:#eaf7f0;--red-border:#efd1db;--shadow-sm:0 3px 12px rgba(48,25,49,.045);--shadow:0 12px 35px rgba(48,25,49,.075);--radius-sm:9px;--radius:15px;--radius-lg:21px;--transition:180ms ease}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scrollbar-color:#c9a7b7 #f6f2f7;scrollbar-width:thin}body{margin:0;min-height:100vh;overflow-x:hidden;background:radial-gradient(ellipse at 8% 0%,rgba(211,45,80,.065),transparent 34%),radial-gradient(ellipse at 95% 35%,rgba(126,76,142,.045),transparent 32%),var(--bg);color:var(--text);font:14px/1.6 Inter,Arial,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}body:before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.18;background-image:linear-gradient(90deg,transparent 49.9%,rgba(115,69,109,.025) 50%,transparent 50.1%);background-size:46px 46px}button,input{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible{outline:3px solid rgba(212,45,80,.25);outline-offset:3px}button:disabled{opacity:.55;cursor:not-allowed}::selection{background:#f3cad6;color:#401126}
+.ambient{position:fixed;z-index:-1;width:380px;height:380px;border-radius:50%;filter:blur(110px);opacity:.09;pointer-events:none}.ambient-one{top:8%;left:-260px;background:#c82049}.ambient-two{top:42%;right:-270px;background:#875195}.app-shell{width:min(1240px,calc(100% - 48px));margin:auto;padding:32px 0 24px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:24px;padding-bottom:25px;border-bottom:1px solid var(--line)}.brand-lockup{display:flex;align-items:center;gap:16px;min-width:0}.sigil{display:grid;place-items:center;flex-shrink:0;width:56px;height:56px;color:var(--red);font-size:29px;background:linear-gradient(145deg,#fff,#f8edf2);border:1px solid var(--red-border);clip-path:polygon(50% 0,88% 15%,100% 50%,88% 85%,50% 100%,12% 85%,0 50%,12% 15%);box-shadow:inset 0 0 18px rgba(169,24,59,.06)}.eyebrow{margin:0 0 6px;color:#947383;font-size:10px;font-weight:800;letter-spacing:.19em;line-height:1.5;text-transform:uppercase}.brand-lockup h1{margin:0;font:700 clamp(18px,2vw,24px)/1.25 Cinzel,Georgia,serif;letter-spacing:.09em}.brand-lockup h1 span{color:var(--red)}.tagline{margin:5px 0 0;color:var(--muted);font:italic 17px "Crimson Pro",Georgia,serif}.header-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:11px 15px;border:1px solid transparent;border-radius:var(--radius-sm);font-size:11px;font-weight:800;line-height:1.4;transition:all var(--transition)}.btn:hover{transform:translateY(-2px)}.btn-ghost{color:#59465d;background:#fff;border-color:var(--line-dark);box-shadow:var(--shadow-sm)}.btn-ghost:hover{background:#faf3f7;border-color:#d8b7c6}.btn-primary{color:#fff;background:linear-gradient(135deg,#c6274a,#8f1535);border-color:#a71b3d;box-shadow:0 6px 16px rgba(169,24,59,.16)}.btn-primary:hover{background:linear-gradient(135deg,#d83255,#a0193c)}.btn-danger-outline{color:#a32343;background:#fff8fa;border-color:#eccbd6}.btn-danger-outline:hover{background:#ffedf2}.btn-danger{color:#fff;background:#a71b3d;border-color:#a71b3d}
+.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:25px;padding:37px 0 29px}.hero-copy{padding:12px 0}.status-line{display:flex;align-items:center;flex-wrap:wrap;gap:10px;color:#957284;font-size:9px;font-weight:800;letter-spacing:.15em}.live-dot,.live-pill i{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--red-bright);box-shadow:0 0 0 4px rgba(212,45,80,.09);animation:pulse 1.8s ease-in-out infinite}.status-divider{color:#d1c2d2}@keyframes pulse{50%{box-shadow:0 0 0 7px rgba(212,45,80,.035);opacity:.65}}.hero-copy h2{margin:22px 0 16px;color:#302333;font:600 clamp(40px,5vw,66px)/1.08 Cinzel,Georgia,serif;letter-spacing:-.045em}.hero-copy h2 em{color:var(--red);font-style:normal}.hero-subtitle{max-width:470px;margin:0;color:#77697a;font:21px/1.5 "Crimson Pro",Georgia,serif}.hero-meta{display:flex;flex-wrap:wrap;gap:28px;margin-top:34px}.hero-meta>div{display:grid;gap:5px}.meta-label{color:#9b899c;font-size:9px;font-weight:800;letter-spacing:.13em}.hero-meta strong{color:#47354b;font-size:11px;letter-spacing:.04em}
+.panel{position:relative;min-width:0;overflow:hidden;background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow)}.panel:after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(130deg,rgba(255,255,255,.75),transparent 38%);opacity:.3}.live-card{display:flex;flex-direction:column;justify-content:center;min-height:220px;padding:27px;background:radial-gradient(ellipse at 100% 0%,rgba(212,45,80,.07),transparent 53%),#fff;border-color:#eadde7}.live-card-top{display:flex;align-items:center;justify-content:space-between;gap:10px}.live-pill{display:inline-flex;align-items:center;gap:8px;padding:6px 9px;color:#a51b3c;background:#fff0f4;border:1px solid #f0d4de;border-radius:30px;font-size:9px;font-weight:800;letter-spacing:.12em}.live-pill i{width:6px;height:6px;box-shadow:none}.live-amount{margin-top:13px;color:#342334;font:700 clamp(32px,4vw,46px)/1.25 Cinzel,Georgia,serif;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}.live-caption{color:#8b7c8d;font:16px "Crimson Pro",Georgia,serif}.live-divider{height:1px;margin:22px 0 14px;background:var(--line)}.live-foot{display:flex;justify-content:space-between;gap:12px;color:#8a7a8b;font-size:10px}.live-foot strong{color:#8f2346;font-variant-numeric:tabular-nums}
+.section-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:23px}.section-head h2,.panel-heading h2,.modal h2{margin:0;color:#342637;font:600 20px/1.4 Cinzel,Georgia,serif}.section-head .eyebrow,.panel-heading .eyebrow{margin-bottom:5px}.period-chip{padding:8px 12px;color:#8e294c;background:#fff4f7;border:1px solid #efd6df;border-radius:100px;font-size:9px;font-weight:800;letter-spacing:.1em}.section-note{color:#9b8a9d;font-size:9px;font-weight:800;letter-spacing:.13em}
+.progress-panel{margin-bottom:33px;padding:27px 30px 30px;background:radial-gradient(ellipse at 0% 65%,rgba(212,45,80,.035),transparent 42%),#fff}.progress-layout{display:grid;grid-template-columns:270px minmax(0,1fr);align-items:center;gap:35px}.ring-wrap{position:relative;width:240px;height:240px;margin:auto}.progress-ring{display:block;width:100%;height:100%;overflow:visible}.ring-track{fill:none;stroke:#eee6ef;stroke-width:10}.ring-progress{fill:none;stroke:#b71939;stroke-width:10;stroke-linecap:round;stroke-dasharray:590.62;stroke-dashoffset:590.62;transform:rotate(-90deg);transform-origin:120px 120px;filter:drop-shadow(0 0 4px rgba(212,45,80,.25));transition:stroke-dashoffset .35s linear}.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center}.ring-kicker{color:#927a91;font-size:9px;font-weight:800;letter-spacing:.15em}.ring-center strong{color:#332236;font:700 34px/1.2 Cinzel,Georgia,serif;font-variant-numeric:tabular-nums}.ring-center>span:last-child{color:#857488;font-size:11px}.progress-details{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:21px 23px}.progress-stat{display:flex;align-items:center;gap:12px;min-width:0}.stat-symbol{display:grid;place-items:center;flex:0 0 43px;height:43px;color:#a82248;background:#fff2f6;border:1px solid #f0dce4;border-radius:12px;font-size:19px}.progress-stat>div{display:grid;min-width:0;gap:3px}.stat-label{color:#927d91;font-size:9px;font-weight:800;letter-spacing:.1em;line-height:1.5}.progress-stat strong{color:#3c2b40;font:600 18px/1.4 Cinzel,Georgia,serif;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}.progress-stat small{color:#96879a;font-size:10px;line-height:1.5}.progress-note{grid-column:1/-1;padding-top:15px;border-top:1px solid var(--line);color:#8c7a8e;font-size:11px}
+.section{margin-bottom:33px}.summary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.summary-card{min-width:0;min-height:133px;padding:19px 20px;background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-sm);transition:all var(--transition)}.summary-card:hover{transform:translateY(-3px);border-color:#ddc6d7;box-shadow:var(--shadow)}.summary-card.featured{background:radial-gradient(ellipse at 100% 0%,rgba(212,45,80,.075),transparent 60%),#fff;border-color:#ebcdd8}.card-top{display:flex;justify-content:space-between;gap:10px;color:#8e7b90;font-size:9px;font-weight:800;letter-spacing:.08em;line-height:1.6}.card-glyph{color:#b85b79;font-size:20px}.card-glyph.red{color:var(--red)}.summary-card>strong{display:block;margin:12px 0 5px;color:#332438;font:700 clamp(20px,2.2vw,28px)/1.3 Cinzel,Georgia,serif;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}.summary-card small{color:#948497;font-size:10px;line-height:1.5}
+.entry-grid,.history-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:19px;margin-bottom:25px}.entry-form,.history-panel{padding:24px}.panel-heading{display:flex;align-items:center;justify-content:space-between;gap:13px;margin-bottom:23px}.panel-total{color:#97264b;font:700 17px Cinzel,Georgia,serif;font-variant-numeric:tabular-nums}.pill{display:inline-flex;align-items:center;justify-content:center;padding:6px 9px;border-radius:30px;font-size:9px;font-weight:800;line-height:1.4;white-space:nowrap}.positive{color:#237c59;background:var(--green-bg);border:1px solid #cfe9db}.negative{color:#a32343;background:#fff0f4;border:1px solid #efd1dc}
+label{display:block;margin-bottom:16px;color:#66536b;font-size:11px;font-weight:700}input{display:block;width:100%;min-height:43px;margin-top:7px;padding:11px 13px;color:#342638;background:#fdfbfd;border:1px solid #e4d9e7;border-radius:var(--radius-sm);outline:none;transition:all var(--transition)}input:hover{border-color:#d4bfd7}input:focus{background:#fff;border-color:#c44769;box-shadow:0 0 0 3px rgba(196,71,105,.09)}input::placeholder{color:#b2a4b5}input[type=date]{color-scheme:light}.money-input{display:flex;align-items:center;min-height:45px;padding-left:13px;color:#a51b3c;background:#fdfbfd;border:1px solid #e4d9e7;border-radius:var(--radius-sm)}.money-input:focus-within{border-color:#c44769;box-shadow:0 0 0 3px rgba(196,71,105,.09)}.money-input>span{flex-shrink:0;font-weight:800}.money-input input{min-width:0;margin:0;border:0;box-shadow:none;background:transparent}.money-input input:focus{border:0;box-shadow:none;background:transparent}.form-error{margin:0 0 10px;color:#b01f40;font-size:11px}.entry-form>.btn{width:100%}
+.history-list{display:grid;gap:11px}.entry-row{display:flex;align-items:center;justify-content:space-between;gap:13px;min-width:0;padding:13px 14px;background:#fcf9fc;border:1px solid #eee5ef;border-radius:11px}.entry-row:hover{background:#fff7fa;border-color:#e8cfda}.entry-main{min-width:0;overflow-wrap:anywhere}.entry-date{color:#928097;font-size:10px;font-weight:600}.entry-amount{margin:2px 0;color:#38283c;font:700 17px Cinzel,Georgia,serif;font-variant-numeric:tabular-nums}.entry-note{color:#95859a;font-size:11px;overflow-wrap:anywhere}.entry-actions{display:flex;flex-shrink:0;gap:6px}.small-btn,.icon-btn{display:inline-flex;align-items:center;justify-content:center;min-height:32px;padding:7px 9px;color:#654e6a;background:#fff;border:1px solid #e3d7e6;border-radius:7px;font-size:10px;font-weight:800}.small-btn:hover,.icon-btn:hover{background:#f9edf3;border-color:#d8b7c8}.small-btn.delete{color:#a32243;border-color:#efd5de;background:#fff8fa}.empty-state{padding:26px 12px;color:#95859a;text-align:center;font:17px "Crimson Pro",Georgia,serif}
+.footer{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin-top:30px;padding-top:22px;color:#96869a;border-top:1px solid var(--line);font-size:9px;font-weight:700;letter-spacing:.1em}.footer-sigil{color:var(--red);font-size:20px}.footer-sep{color:#c04b6c}.footer-right{margin-left:auto;color:#947889}
+.modal-backdrop{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:18px;background:rgba(43,27,47,.36);backdrop-filter:blur(8px)}.modal-backdrop[hidden]{display:none}.modal{width:min(480px,100%);padding:25px;background:#fff;border:1px solid #e5d7e8;border-radius:19px;box-shadow:0 25px 90px rgba(42,19,45,.2);animation:modalEnter .2s ease-out}.small-modal{width:min(420px,100%)}@keyframes modalEnter{from{opacity:0;transform:translateY(8px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}.modal-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:23px}.modal h2{font-size:21px}.modal-actions{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:10px;margin-top:19px}.subtle{color:#827287;font-size:12px}
+.toast{position:fixed;z-index:200;bottom:24px;left:50%;width:max-content;max-width:calc(100% - 32px);padding:13px 18px;color:#38263b;background:#fff;border:1px solid #e7d4df;border-left:4px solid var(--red);border-radius:10px;box-shadow:0 12px 35px rgba(43,24,46,.15);opacity:0;pointer-events:none;transform:translate(-50%,15px);font-size:12px;font-weight:600;transition:opacity .22s,transform .22s}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:1000px){.app-shell{width:min(calc(100% - 36px),900px)}.topbar{align-items:flex-start;flex-direction:column}.header-actions{justify-content:flex-start}.hero-grid{grid-template-columns:1fr 1fr}.progress-layout{grid-template-columns:240px minmax(0,1fr);gap:22px}.progress-details{gap:17px}}
+@media(max-width:720px){.app-shell{width:calc(100% - 28px);padding-top:22px}.hero-grid{grid-template-columns:1fr;gap:18px;padding-top:25px}.hero-copy{padding:4px 0}.hero-copy h2{font-size:clamp(37px,10vw,55px)}.hero-subtitle{font-size:19px}.hero-meta{gap:20px;margin-top:25px}.live-card{min-height:190px}.progress-panel{padding:23px 20px}.progress-layout{grid-template-columns:1fr;gap:25px}.ring-wrap{width:230px;height:230px}.progress-details{grid-template-columns:1fr;gap:20px}.progress-note{grid-column:auto}.entry-grid,.history-grid{grid-template-columns:1fr}.entry-form,.history-panel{padding:20px}.section-head h2{font-size:18px}.footer-right{margin-left:0;width:100%}}
+@media(max-width:420px){.brand-lockup{gap:11px}.sigil{width:45px;height:45px;font-size:24px}.brand-lockup h1{font-size:17px}.tagline{font-size:15px}.header-actions{width:100%}.header-actions .btn{flex:1;padding:10px 8px;font-size:10px}.summary-grid{grid-template-columns:1fr}.summary-card{min-height:120px}.progress-panel{padding:20px 16px}.ring-wrap{width:210px;height:210px}.ring-center strong{font-size:30px}.panel-heading{align-items:flex-start;flex-direction:column}.entry-row{align-items:flex-start;flex-direction:column}.entry-actions{width:100%}.entry-actions .small-btn{flex:1}.hero-meta{flex-direction:column;gap:14px}.modal{padding:20px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+</style>
 </head>
 <body>
-  <div class="ambient ambient-one"></div>
-  <div class="ambient ambient-two"></div>
-
-  <div class="app-shell">
-    <header class="topbar">
-      <div class="brand-lockup">
-        <div class="sigil" aria-hidden="true"><span>✠</span></div>
-        <div>
-          <p class="eyebrow">SALARY TRACKER · OCTOBER 2026</p>
-          <h1>SALARY <span>TRACKER</span></h1>
-          <p class="tagline">Track your salary, overtime and advances easily.</p>
-        </div>
-      </div>
-
-      <div class="header-actions">
-        <button class="btn btn-ghost" id="printBtn">♜ Print Salary Receipt</button>
-        <button class="btn btn-danger-outline" id="resetBtn">Reset All Data</button>
-      </div>
-    </header>
-
-    <section class="hero-grid">
-      <div class="hero-copy">
-        <div class="status-line">
-          <span class="live-dot"></span>
-          <span>LIVE EARNINGS</span>
-          <span class="status-divider">/</span>
-          <span id="periodLabel">OCTOBER 2026</span>
-        </div>
-
-        <h2>Your October<br><em>Salary Tracker.</em></h2>
-        <p class="hero-subtitle">
-          See how much you have earned and how much salary remains.
-        </p>
-
-        <div class="hero-meta">
-          <div>
-            <span class="meta-label">SALARY PERIOD</span>
-            <strong>01 — 31 OCT 2026</strong>
-          </div>
-          <div>
-            <span class="meta-label">SALARY TARGET</span>
-            <strong>31 DAYS · ₹600 PER DAY</strong>
-          </div>
-        </div>
-      </div>
-
-      <div class="live-card panel">
-        <div class="live-card-top">
-          <span class="eyebrow">TODAY'S EARNINGS</span>
-          <span class="live-pill"><i></i> LIVE</span>
-        </div>
-        <div class="live-amount" id="liveEarning">₹0.00</div>
-        <div class="live-caption">Earnings update automatically every second.</div>
-        <div class="live-divider"></div>
-        <div class="live-foot">
-          <span>Duty · 07:00–19:00</span>
-          <strong id="liveClock">--:--:--</strong>
-        </div>
-      </div>
-    </section>
-
-    <section class="progress-panel panel">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">WORK PROGRESS</p>
-          <h2>Monthly Work Progress</h2>
-        </div>
-        <div class="period-chip">✦ OCTOBER · 2026</div>
-      </div>
-
-      <div class="progress-layout">
-        <div class="ring-wrap">
-          <svg class="progress-ring" viewBox="0 0 240 240"
-               role="img" aria-label="Live working progress">
-            <defs>
-              <linearGradient id="ringGradient" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#ff5267"/>
-                <stop offset="55%" stop-color="#b71939"/>
-                <stop offset="100%" stop-color="#6f1028"/>
-              </linearGradient>
-              <filter id="ringGlow" x="-50%" y="-50%" width="200%" height="200%">
-                <feGaussianBlur stdDeviation="4" result="blur"/>
-                <feMerge>
-                  <feMergeNode in="blur"/>
-                  <feMergeNode in="SourceGraphic"/>
-                </feMerge>
-              </filter>
-            </defs>
-
-            <circle class="ring-track" cx="120" cy="120" r="94"/>
-            <circle class="ring-progress" id="ringProgress" cx="120" cy="120" r="94"/>
-          </svg>
-
-          <div class="ring-center">
-            <span class="ring-kicker">WORK PROGRESS</span>
-            <strong id="progressPercent">0.00%</strong>
-            <span id="progressDays">0.00 / 31 days</span>
-          </div>
-        </div>
-
-        <div class="progress-details">
-          <div class="progress-stat">
-            <span class="stat-symbol">♜</span>
-            <div>
-              <span class="stat-label">WORKING DAYS</span>
-              <strong id="workingDays">0 / 31</strong>
-              <small>Updates every second</small>
-            </div>
-          </div>
-
-          <div class="progress-stat">
-            <span class="stat-symbol">☽</span>
-            <div>
-              <span class="stat-label">NORMAL SALARY EARNED</span>
-              <strong id="earnedToDate">₹0.00</strong>
-              <small>Completed days plus today's earnings</small>
-            </div>
-          </div>
-
-          <div class="progress-stat">
-            <span class="stat-symbol">✦</span>
-            <div>
-              <span class="stat-label">DAYS REMAINING</span>
-              <strong id="daysRemaining">31 days remain</strong>
-              <small>No normal salary after 31 October</small>
-            </div>
-          </div>
-
-          <div class="progress-note">
-            ✧ The circular progress updates every second.
-            Normal salary stops after 31 October.
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">SALARY OVERVIEW</p>
-          <h2>Salary Summary</h2>
-        </div>
-        <span class="section-note">ALL AMOUNTS IN RUPEES</span>
-      </div>
-
-      <div class="summary-grid">
-        <article class="summary-card">
-          <div class="card-top"><span>NORMAL SALARY EARNED</span><span class="card-glyph">☽</span></div>
-          <strong id="normalSalaryEarned">₹0.00</strong>
-          <small>Normal salary earned so far</small>
-        </article>
-
-        <article class="summary-card">
-          <div class="card-top"><span>OVERTIME</span><span class="card-glyph">✦</span></div>
-          <strong id="overtimeTotal">₹0.00</strong>
-          <small>Extra salary from overtime</small>
-        </article>
-
-        <article class="summary-card">
-          <div class="card-top"><span>ADVANCES</span><span class="card-glyph red">†</span></div>
-          <strong id="advanceTotal">₹0.00</strong>
-          <small>Salary advances taken</small>
-        </article>
-
-        <article class="summary-card featured">
-          <div class="card-top"><span>ESTIMATED MONTHLY SALARY</span><span class="card-glyph">♜</span></div>
-          <strong id="estimatedSalary">₹18,600.00</strong>
-          <small>Expected total for October</small>
-        </article>
-
-        <article class="summary-card">
-          <div class="card-top"><span>CURRENT SALARY BALANCE</span><span class="card-glyph">◇</span></div>
-          <strong id="totalSalaryBalance">₹0.00</strong>
-          <small>Earned salary + overtime − advances</small>
-        </article>
-
-        <article class="summary-card">
-          <div class="card-top"><span>SALARY TARGET</span><span class="card-glyph">⌘</span></div>
-          <strong>₹18,600.00</strong>
-          <small>31 working days × ₹600</small>
-        </article>
-      </div>
-    </section>
-
-    <section class="entry-grid">
-      <form class="panel entry-form" id="overtimeForm" novalidate>
-        <div class="panel-heading">
-          <div>
-            <p class="eyebrow">EXTRA EARNINGS</p>
-            <h2>Add Overtime</h2>
-          </div>
-          <span class="pill positive">+ Adds to salary</span>
-        </div>
-
-        <label>Amount
-          <div class="money-input">
-            <span>₹</span>
-            <input id="overtimeAmount" name="amount" inputmode="decimal"
-                   autocomplete="off" placeholder="500.00" required>
-          </div>
-        </label>
-
-        <label>Date
-          <input id="overtimeDate" name="date" type="date"
-                 min="2026-10-01" max="2026-10-31" required>
-        </label>
-
-        <label>Note (optional)
-          <input id="overtimeNote" name="note" maxlength="150"
-                 placeholder="e.g. Extra shift">
-        </label>
-
-        <p class="form-error" id="overtimeError" role="alert"></p>
-        <button class="btn btn-primary" type="submit">+ Add Overtime</button>
-      </form>
-
-      <form class="panel entry-form" id="advanceForm" novalidate>
-        <div class="panel-heading">
-          <div>
-            <p class="eyebrow">SALARY ADVANCE</p>
-            <h2>Add Salary Advance</h2>
-          </div>
-          <span class="pill negative">− Deducted from salary</span>
-        </div>
-
-        <label>Amount
-          <div class="money-input">
-            <span>₹</span>
-            <input id="advanceAmount" name="amount" inputmode="decimal"
-                   autocomplete="off" placeholder="3000.00" required>
-          </div>
-        </label>
-
-        <label>Date
-          <input id="advanceDate" name="date" type="date"
-                 min="2026-10-01" max="2026-10-31" required>
-        </label>
-
-        <label>Note (optional)
-          <input id="advanceNote" name="note" maxlength="150"
-                 placeholder="e.g. Personal expense">
-        </label>
-
-        <p class="form-error" id="advanceError" role="alert"></p>
-        <button class="btn btn-primary" type="submit">− Add Salary Advance</button>
-      </form>
-    </section>
-
-    <section class="history-grid">
-      <section class="panel history-panel">
-        <div class="panel-heading">
-          <div>
-            <p class="eyebrow">EXTRA EARNINGS</p>
-            <h2>Overtime History</h2>
-          </div>
-          <strong class="panel-total" id="historyOvertimeTotal">₹0.00</strong>
-        </div>
-        <div class="history-list" id="overtimeHistory"></div>
-      </section>
-
-      <section class="panel history-panel">
-        <div class="panel-heading">
-          <div>
-            <p class="eyebrow">ADVANCE RECORDS</p>
-            <h2>Advance History</h2>
-          </div>
-          <strong class="panel-total" id="historyAdvanceTotal">₹0.00</strong>
-        </div>
-        <div class="history-list" id="advanceHistory"></div>
-      </section>
-    </section>
-
-    <footer class="footer">
-      <div class="footer-sigil">✠</div>
-      <span>SALARY TRACKER</span>
-      <span class="footer-sep">✧</span>
-      <span>OCTOBER 2026 · SALARY RECORD</span>
-      <span class="footer-right">YOUR SALARY, CLEARLY TRACKED.</span>
-    </footer>
-  </div>
-
-  <div class="modal-backdrop" id="modalBackdrop" hidden>
-    <div class="modal panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <div class="modal-heading">
-        <div>
-          <p class="eyebrow" id="modalEyebrow">EDIT ENTRY</p>
-          <h2 id="modalTitle">Edit Entry</h2>
-        </div>
-        <button class="icon-btn" data-action="close-modal" aria-label="Close">×</button>
-      </div>
-
-      <form id="editForm" novalidate>
-        <input type="hidden" id="editType">
-        <input type="hidden" id="editId">
-
-        <label>Amount
-          <div class="money-input">
-            <span>₹</span>
-            <input id="editAmount" inputmode="decimal" required>
-          </div>
-        </label>
-
-        <label>Date
-          <input id="editDate" type="date"
-                 min="2026-10-01" max="2026-10-31" required>
-        </label>
-
-        <label>Note (optional)
-          <input id="editNote" maxlength="150">
-        </label>
-
-        <p class="form-error" id="editError" role="alert"></p>
-
-        <div class="modal-actions">
-          <button type="button" class="btn btn-ghost" data-action="close-modal">Cancel</button>
-          <button type="submit" class="btn btn-primary">Save Changes</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <div class="modal-backdrop" id="confirmBackdrop" hidden>
-    <div class="modal panel small-modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
-      <p class="eyebrow">CONFIRM ACTION</p>
-      <h2 id="confirmTitle">Are you sure?</h2>
-      <p id="confirmMessage" class="subtle"></p>
-      <div class="modal-actions">
-        <button class="btn btn-ghost" data-action="cancel-confirm">Cancel</button>
-        <button class="btn btn-danger" id="confirmButton">Confirm</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
-
-  <script src="app.js" defer></script>
+<div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+<div class="app-shell">
+<header class="topbar"><div class="brand-lockup"><div class="sigil" aria-hidden="true">✠</div><div><p class="eyebrow">SALARY TRACKER · NOVEMBER 2026</p><h1>SALARY <span>TRACKER</span></h1><p class="tagline">Track your salary, overtime and advances easily.</p></div></div><div class="header-actions"><button class="btn btn-ghost" id="printBtn">♜ Print Salary Receipt</button><button class="btn btn-danger-outline" id="resetBtn">Reset All Data</button></div></header>
+<section class="hero-grid"><div class="hero-copy"><div class="status-line"><span class="live-dot"></span><span>LIVE EARNINGS</span><span class="status-divider">/</span><span id="periodLabel">NOVEMBER 2026</span></div><h2>Your November<br><em>Salary Tracker.</em></h2><p class="hero-subtitle">See how much you have earned and how much salary remains.</p><div class="hero-meta"><div><span class="meta-label">SALARY PERIOD</span><strong>01 — 25 NOV 2026</strong></div><div><span class="meta-label">SALARY TARGET</span><strong>25 WORKING DAYS · ₹600 PER DAY</strong></div></div></div><div class="live-card panel"><div class="live-card-top"><span class="eyebrow">TODAY'S EARNINGS</span><span class="live-pill"><i></i> LIVE</span></div><div class="live-amount" id="liveEarning">₹0.00</div><div class="live-caption">Earnings update automatically every second.</div><div class="live-divider"></div><div class="live-foot"><span>Duty · 07:00–19:00</span><strong id="liveClock">--:--:--</strong></div></div></section>
+<section class="progress-panel panel"><div class="section-head"><div><p class="eyebrow">WORK PROGRESS</p><h2>Monthly Work Progress</h2></div><div class="period-chip">✦ NOVEMBER · 2026</div></div><div class="progress-layout"><div class="ring-wrap"><svg class="progress-ring" viewBox="0 0 240 240" role="img" aria-label="Live working progress"><circle class="ring-track" cx="120" cy="120" r="94"/><circle class="ring-progress" id="ringProgress" cx="120" cy="120" r="94"/></svg><div class="ring-center"><span class="ring-kicker">WORK PROGRESS</span><strong id="progressPercent">0.00%</strong><span id="progressDays">0.00 / 25 days</span></div></div><div class="progress-details"><div class="progress-stat"><span class="stat-symbol">♜</span><div><span class="stat-label">WORKING DAYS</span><strong id="workingDays">0 / 25</strong><small>Updates every second</small></div></div><div class="progress-stat"><span class="stat-symbol">☽</span><div><span class="stat-label">NORMAL SALARY EARNED</span><strong id="earnedToDate">₹0.00</strong><small>Completed days plus today's earnings</small></div></div><div class="progress-stat"><span class="stat-symbol">✦</span><div><span class="stat-label">DAYS REMAINING</span><strong id="daysRemaining">25 days remain</strong><small>No normal salary after 25 November</small></div></div><div class="progress-note">✧ The circular progress updates every second. Normal salary stops after 25 November.</div></div></div></section>
+<section class="section"><div class="section-head"><div><p class="eyebrow">SALARY OVERVIEW</p><h2>Salary Summary</h2></div><span class="section-note">ALL AMOUNTS IN RUPEES</span></div><div class="summary-grid">
+<article class="summary-card"><div class="card-top"><span>TOTAL OVERTIME</span><span class="card-glyph">✦</span></div><strong id="overtimeTotal">₹0.00</strong><small>Extra salary from overtime</small></article>
+<article class="summary-card"><div class="card-top"><span>TOTAL ADVANCE</span><span class="card-glyph red">†</span></div><strong id="advanceTotal">₹0.00</strong><small>Salary advances taken</small></article>
+<article class="summary-card featured"><div class="card-top"><span>ESTIMATED SALARY</span><span class="card-glyph">♜</span></div><strong id="estimatedSalary">₹15,000.00</strong><small>₹15,000 base salary + overtime − advances</small></article>
+<article class="summary-card"><div class="card-top"><span>SALARY BALANCE</span><span class="card-glyph">◇</span></div><strong id="totalSalaryBalance">₹0.00</strong><small>Earned salary + overtime − advances</small></article>
+</div></section>
+<section class="entry-grid"><form class="panel entry-form" id="overtimeForm" novalidate><div class="panel-heading"><div><p class="eyebrow">EXTRA EARNINGS</p><h2>Add Overtime</h2></div><span class="pill positive">+ Adds to salary</span></div><label>Amount<div class="money-input"><span>₹</span><input id="overtimeAmount" name="amount" inputmode="decimal" autocomplete="off" placeholder="500.00" required></div></label><label>Date<input id="overtimeDate" name="date" type="date" min="2026-11-01" max="2026-11-25" required></label><label>Note (optional)<input id="overtimeNote" name="note" maxlength="150" placeholder="e.g. Extra shift"></label><p class="form-error" id="overtimeError" role="alert"></p><button class="btn btn-primary" type="submit">+ Add Overtime</button></form><form class="panel entry-form" id="advanceForm" novalidate><div class="panel-heading"><div><p class="eyebrow">SALARY ADVANCE</p><h2>Add Salary Advance</h2></div><span class="pill negative">− Deducted from salary</span></div><label>Amount<div class="money-input"><span>₹</span><input id="advanceAmount" name="amount" inputmode="decimal" autocomplete="off" placeholder="3000.00" required></div></label><label>Date<input id="advanceDate" name="date" type="date" min="2026-11-01" max="2026-11-25" required></label><label>Note (optional)<input id="advanceNote" name="note" maxlength="150" placeholder="e.g. Personal expense"></label><p class="form-error" id="advanceError" role="alert"></p><button class="btn btn-primary" type="submit">− Add Salary Advance</button></form></section>
+<section class="history-grid"><section class="panel history-panel"><div class="panel-heading"><div><p class="eyebrow">EXTRA EARNINGS</p><h2>Overtime History</h2></div><strong class="panel-total" id="historyOvertimeTotal">₹0.00</strong></div><div class="history-list" id="overtimeHistory"></div></section><section class="panel history-panel"><div class="panel-heading"><div><p class="eyebrow">ADVANCE RECORDS</p><h2>Advance History</h2></div><strong class="panel-total" id="historyAdvanceTotal">₹0.00</strong></div><div class="history-list" id="advanceHistory"></div></section></section>
+<footer class="footer"><div class="footer-sigil">✠</div><span>SALARY TRACKER</span><span class="footer-sep">✧</span><span>NOVEMBER 2026 · SALARY RECORD</span><span class="footer-right">YOUR SALARY, CLEARLY TRACKED.</span></footer>
+</div>
+<div class="modal-backdrop" id="modalBackdrop" hidden><div class="modal panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-heading"><div><p class="eyebrow" id="modalEyebrow">EDIT ENTRY</p><h2 id="modalTitle">Edit Entry</h2></div><button type="button" class="icon-btn" data-action="close-modal" aria-label="Close">×</button></div><form id="editForm" novalidate><input type="hidden" id="editType"><input type="hidden" id="editId"><label>Amount<div class="money-input"><span>₹</span><input id="editAmount" inputmode="decimal" required></div></label><label>Date<input id="editDate" type="date" min="2026-11-01" max="2026-11-25" required></label><label>Note (optional)<input id="editNote" maxlength="150"></label><p class="form-error" id="editError" role="alert"></p><div class="modal-actions"><button type="button" class="btn btn-ghost" data-action="close-modal">Cancel</button><button type="submit" class="btn btn-primary">Save Changes</button></div></form></div></div>
+<div class="modal-backdrop" id="confirmBackdrop" hidden><div class="modal panel small-modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle"><p class="eyebrow">CONFIRM ACTION</p><h2 id="confirmTitle">Are you sure?</h2><p id="confirmMessage" class="subtle"></p><div class="modal-actions"><button type="button" class="btn btn-ghost" data-action="cancel-confirm">Cancel</button><button type="button" class="btn btn-danger" id="confirmButton">Confirm</button></div></div></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+(()=>{"use strict";
+const C={dailySalary:600,dutyStart:"07:00",dutyEnd:"19:00",maxAmount:1e9,noteMaxLength:150,start:"2026-11-01",end:"2026-11-25",days:25};
+const KEY="infernalLedger_november2026_v1";
+const $=s=>document.querySelector(s);
+const R={period:$("#periodLabel"),live:$("#liveEarning"),clock:$("#liveClock"),ot:$("#overtimeTotal"),adv:$("#advanceTotal"),estimated:$("#estimatedSalary"),balance:$("#totalSalaryBalance"),working:$("#workingDays"),earned:$("#earnedToDate"),remaining:$("#daysRemaining"),otTotal:$("#historyOvertimeTotal"),advTotal:$("#historyAdvanceTotal"),otList:$("#overtimeHistory"),advList:$("#advanceHistory"),otForm:$("#overtimeForm"),advForm:$("#advanceForm"),otDate:$("#overtimeDate"),advDate:$("#advanceDate"),otError:$("#overtimeError"),advError:$("#advanceError"),modal:$("#modalBackdrop"),editForm:$("#editForm"),editType:$("#editType"),editId:$("#editId"),editAmount:$("#editAmount"),editDate:$("#editDate"),editNote:$("#editNote"),editError:$("#editError"),confirm:$("#confirmBackdrop"),confirmMessage:$("#confirmMessage"),confirmButton:$("#confirmButton"),toast:$("#toast")};
+const money=n=>new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",minimumFractionDigits:2,maximumFractionDigits:2}).format(Number(n)||0);
+const iso=(d=new Date())=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+const validDate=v=>{if(!/^\d{4}-\d{2}-\d{2}$/.test(v))return false;let[y,m,d]=v.split("-").map(Number),x=new Date(y,m-1,d);return x.getFullYear()===y&&x.getMonth()===m-1&&x.getDate()===d};
+const fmtDate=v=>validDate(v)?new Intl.DateTimeFormat("en-GB",{day:"2-digit",month:"short",year:"numeric"}).format(new Date(v+"T00:00:00")):"Unrecorded date";
+const id=()=>Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,9);
+const mins=t=>{let[h,m]=t.split(":").map(Number);return h*60+m};
+function clean(a){return(Array.isArray(a)?a:[]).map(x=>{if(!x||typeof x!=="object")return null;let amount=Number(x.amount),date=String(x.date||"");if(!Number.isFinite(amount)||amount<=0||amount>C.maxAmount||!validDate(date)||date<C.start||date>C.end)return null;return{id:typeof x.id==="string"&&x.id?x.id:id(),amount,date,note:typeof x.note==="string"?x.note.slice(0,C.noteMaxLength):"",createdAt:typeof x.createdAt==="string"?x.createdAt:new Date().toISOString()}}).filter(Boolean)}
+function load(){try{let x=JSON.parse(localStorage.getItem(KEY)||"{}");return{overtime:clean(x.overtime),advances:clean(x.advances)}}catch{return{overtime:[],advances:[]}}}
+let S=load(),pending=null,timer;
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch{toast("Browser storage unavailable; records may not persist.")}}
+function progress(now=new Date()){let day=iso(now);if(day<C.start)return 0;if(day>C.end)return C.days;let n=Number(day.slice(-2)),cur=now.getHours()*60+now.getMinutes()+now.getSeconds()/60,st=mins(C.dutyStart),en=mins(C.dutyEnd),fraction=cur<=st?0:cur>=en?1:(cur-st)/(en-st);return Math.max(0,Math.min(C.days,n-1+fraction))}
+function live(now=new Date()){if(iso(now)<C.start||iso(now)>C.end)return 0;let cur=now.getHours()*60+now.getMinutes()+now.getSeconds()/60,st=mins(C.dutyStart),en=mins(C.dutyEnd);return cur<=st?0:cur>=en?C.dailySalary:C.dailySalary*(cur-st)/(en-st)}
+function summary(now=new Date()){let p=progress(now),normal=p*C.dailySalary,ot=S.overtime.reduce((a,x)=>a+x.amount,0),adv=S.advances.reduce((a,x)=>a+x.amount,0),target=C.days*C.dailySalary;return{p,normal,ot,adv,target,estimated:target+ot-adv,balance:normal+ot-adv}}
+function render(){let now=new Date(),today=iso(now),s=summary(now),pct=Math.min(100,Math.max(0,s.p/C.days*100)),circ=2*Math.PI*94;
+R.period.textContent=today<C.start?"COUNTDOWN TO 01 NOV 2026":today>C.end?"WORK PERIOD COMPLETE · 25 NOV 2026":"NOVEMBER 2026 · 25-DAY PERIOD";
+R.live.textContent=money(live(now));R.clock.textContent=now.toLocaleTimeString("en-GB",{hour12:false});
+$("#progressPercent").textContent=pct.toFixed(2)+"%";$("#progressDays").textContent=s.p.toFixed(2)+" / 25 days";
+let ring=$("#ringProgress");ring.style.strokeDasharray=String(circ);ring.style.strokeDashoffset=String(circ*(1-pct/100));
+let elapsed=today<C.start?0:today>C.end?25:Number(today.slice(-2));
+R.working.textContent=`${elapsed} / 25`;R.earned.textContent=money(s.normal);R.remaining.textContent=`${Math.max(0,25-s.p).toFixed(2)} days remain`;
+R.ot.textContent=money(s.ot);R.adv.textContent=money(s.adv);R.estimated.textContent=money(s.estimated);R.balance.textContent=money(s.balance);R.otTotal.textContent=money(s.ot);R.advTotal.textContent=money(s.adv);
+history(R.otList,S.overtime,"overtime");history(R.advList,S.advances,"advance")}
+function esc(v){return String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+function history(el,list,type){let a=[...list].sort((x,y)=>y.date.localeCompare(x.date)||y.createdAt.localeCompare(x.createdAt));if(!a.length){el.innerHTML=`<div class="empty-state">${type==="overtime"?"No overtime entries have been added for November yet.":"No salary advances have been added for November yet."}</div>`;return}el.innerHTML=a.map(x=>`<article class="entry-row"><div class="entry-main"><div class="entry-date">${esc(fmtDate(x.date))}</div><div class="entry-amount">${esc(money(x.amount))}</div>${x.note?`<div class="entry-note" title="${esc(x.note)}">${esc(x.note)}</div>`:""}</div><div class="entry-actions"><button type="button" class="small-btn" data-action="edit" data-type="${type}" data-id="${esc(x.id)}">Edit</button><button type="button" class="small-btn delete" data-action="delete" data-type="${type}" data-id="${esc(x.id)}">Delete</button></div></article>`).join("")}
+function validate(p){let amount=Number(String(p.amount).replace(/,/g,"").trim());if(!Number.isFinite(amount)||amount<=0)return{error:"Enter an amount greater than ₹0."};if(amount>C.maxAmount)return{error:"That amount exceeds the permitted limit."};if(!validDate(p.date)||p.date<C.start||p.date>C.end)return{error:"Choose a date between 1 and 25 November 2026."};if(String(p.note||"").length>C.noteMaxLength)return{error:"Note must be 150 characters or fewer."};return{amount,date:p.date,note:String(p.note||"").trim()}}
+function add(type,form,error){let f=new FormData(form),r=validate({amount:f.get("amount"),date:f.get("date"),note:f.get("note")||""});if(r.error){error.textContent=r.error;return}S[type].push({...r,id:id(),createdAt:new Date().toISOString()});save();form.reset();let d=iso();(type==="overtime"?R.otDate:R.advDate).value=d>=C.start&&d<=C.end?d:C.start;error.textContent="";render();toast(type==="overtime"?"Overtime entry added.":"Salary advance added.")}
+function edit(type,key){let x=S[type].find(v=>v.id===key);if(!x)return;R.editType.value=type;R.editId.value=key;R.editAmount.value=x.amount.toFixed(2);R.editDate.value=x.date;R.editNote.value=x.note;R.editError.textContent="";$("#modalTitle").textContent=type==="overtime"?"Edit Overtime":"Edit Salary Advance";R.modal.hidden=false;R.editAmount.focus()}
+function closeEdit(){R.modal.hidden=true;R.editForm.reset();R.editError.textContent=""}
+function saveEdit(e){e.preventDefault();let type=R.editType.value,key=R.editId.value,r=validate({amount:R.editAmount.value,date:R.editDate.value,note:R.editNote.value});if(r.error){R.editError.textContent=r.error;return}let x=S[type].find(v=>v.id===key);if(!x)return;Object.assign(x,{amount:r.amount,date:r.date,note:r.note});save();closeEdit();render();toast("Entry updated.")}
+function askDelete(type,key){let x=S[type].find(v=>v.id===key);if(!x)return;pending=()=>{S[type]=S[type].filter(v=>v.id!==key);save();render();toast("Entry deleted.")};R.confirmMessage.textContent=`Delete ${money(x.amount)} dated ${fmtDate(x.date)}? This cannot be undone.`;R.confirm.hidden=false}
+function reset(){pending=()=>{S={overtime:[],advances:[]};save();render();toast("All November records have been cleared.")};R.confirmMessage.textContent="Delete every November overtime and advance record? This cannot be undone.";R.confirm.hidden=false}
+function closeConfirm(){R.confirm.hidden=true;pending=null}
+function toast(msg){clearTimeout(timer);R.toast.textContent=msg;R.toast.classList.add("show");timer=setTimeout(()=>R.toast.classList.remove("show"),2800)}
+function receipt(){let s=summary(),ot=[...S.overtime].sort((a,b)=>b.date.localeCompare(a.date)),ad=[...S.advances].sort((a,b)=>b.date.localeCompare(a.date)),rows=a=>a.length?a.map(x=>`<tr><td>${esc(fmtDate(x.date))}</td><td>${esc(money(x.amount))}</td><td>${esc(x.note||"—")}</td></tr>`).join(""):'<tr><td colspan="3">No records</td></tr>';return`<!doctype html><html><head><meta charset="utf-8"><title>Salary Tracker · November 2026</title><style>*{box-sizing:border-box}body{font:14px Arial,sans-serif;color:#2b202d;margin:0;padding:30px}.receipt{max-width:780px;margin:auto}.head{display:flex;justify-content:space-between;gap:20px;border-bottom:3px solid #a9183b;padding-bottom:18px}h1,h2{font-family:Georgia,serif;color:#a9183b}h1{font-size:26px}h2{font-size:17px;margin:24px 0 10px}.summary{margin:22px 0;padding:15px;border:1px solid #efd1db;background:#fff8fa}.line{display:flex;justify-content:space-between;gap:12px;padding:8px 0}.total{border-top:2px solid #a9183b;margin-top:8px;padding-top:14px;font-size:18px;font-weight:bold;color:#a9183b}table{width:100%;border-collapse:collapse;font-size:12px}th,td{text-align:left;padding:9px;border-bottom:1px solid #e9e1eb}th{background:#fff0f3;color:#74152e}.foot{margin-top:25px;color:#796d7c;font-size:10px}@media print{body{padding:0}}</style></head><body><main class="receipt"><div class="head"><div><h1>SALARY TRACKER</h1><p>November 2026 · Salary Record</p></div><div><p>01 Nov — 25 Nov 2026</p><p>25 working days · ₹600/day</p></div></div><section class="summary"><div class="line"><span>Full-Period Salary Target</span><strong>${esc(money(s.target))}</strong></div><div class="line"><span>Normal Salary Earned To Date</span><strong>${esc(money(s.normal))}</strong></div><div class="line"><span>Total Overtime</span><strong>+${esc(money(s.ot))}</strong></div><div class="line"><span>Total Advance</span><strong>−${esc(money(s.adv))}</strong></div><div class="line"><span>Salary Balance</span><strong>${esc(money(s.balance))}</strong></div><div class="line total"><span>Estimated Salary</span><strong>${esc(money(s.estimated))}</strong></div></section><h2>Overtime History</h2><table><thead><tr><th>Date</th><th>Amount</th><th>Note</th></tr></thead><tbody>${rows(ot)}</tbody></table><h2>Advance History</h2><table><thead><tr><th>Date</th><th>Amount</th><th>Note</th></tr></thead><tbody>${rows(ad)}</tbody></table><div class="foot">Generated by Salary Tracker · ${new Date().toLocaleString()}</div></main><script>window.onload=()=>window.print();<\/script></body></html>`}
+function print(){let w=window.open("","_blank");if(!w){toast("Allow pop-ups to print the receipt.");return}w.document.open();w.document.write(receipt());w.document.close()}
+function wire(){R.otForm.addEventListener("submit",e=>{e.preventDefault();add("overtime",R.otForm,R.otError)});R.advForm.addEventListener("submit",e=>{e.preventDefault();add("advances",R.advForm,R.advError)});R.editForm.addEventListener("submit",saveEdit);R.otList.addEventListener("click",clickHistory);R.advList.addEventListener("click",clickHistory);document.addEventListener("click",e=>{let b=e.target.closest("[data-action]");if(!b)return;if(b.dataset.action==="close-modal")closeEdit();if(b.dataset.action==="cancel-confirm")closeConfirm()});R.confirmButton.addEventListener("click",()=>{if(pending)pending();closeConfirm()});$("#resetBtn").addEventListener("click",reset);$("#printBtn").addEventListener("click",print);R.modal.addEventListener("click",e=>{if(e.target===R.modal)closeEdit()});R.confirm.addEventListener("click",e=>{if(e.target===R.confirm)closeConfirm()});document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeEdit();closeConfirm()}})}
+function clickHistory(e){let b=e.target.closest("[data-action]");if(!b)return;let{action,type,id:key}=b.dataset;if(action==="edit")edit(type,key);if(action==="delete")askDelete(type,key)}
+function init(){let d=iso(),defaultDate=d>=C.start&&d<=C.end?d:C.start;R.otDate.value=defaultDate;R.advDate.value=defaultDate;wire();render();setInterval(render,1000)}
+init();
+})();
+</script>
 </body>
 </html>
