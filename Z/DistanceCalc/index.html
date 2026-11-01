@@ -1,0 +1,902 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080d18">
+<title>Live Distance Tracker</title>
+
+<link rel="stylesheet"
+ href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #080d18;
+    color: #f1f5f9;
+    font-family: Arial, sans-serif;
+    min-height: 100vh;
+    padding: 18px;
+}
+
+.container {
+    max-width: 650px;
+    margin: auto;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 12px 0 22px;
+}
+
+.header h2 {
+    font-size: 21px;
+}
+
+.header p {
+    color: #8995a8;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.status {
+    background: #142b24;
+    color: #4ade80;
+    border: 1px solid #22543d;
+    border-radius: 20px;
+    padding: 7px 12px;
+    font-size: 11px;
+}
+
+.card {
+    background: #111a2a;
+    border: 1px solid #253148;
+    border-radius: 17px;
+    padding: 20px;
+    margin-bottom: 15px;
+}
+
+.section-label {
+    color: #8c9bb0;
+    font-size: 11px;
+    letter-spacing: 1.4px;
+    font-weight: bold;
+    margin-bottom: 12px;
+}
+
+.distance {
+    font-size: clamp(42px, 12vw, 62px);
+    font-weight: 800;
+    color: #4ade80;
+    letter-spacing: -2px;
+    text-align: center;
+    margin: 15px 0 3px;
+    overflow-wrap: anywhere;
+}
+
+.unit {
+    text-align: center;
+    color: #a0aec0;
+    font-size: 15px;
+}
+
+.meters {
+    text-align: center;
+    font-size: 19px;
+    font-weight: bold;
+    margin-top: 12px;
+    color: #e2e8f0;
+}
+
+.updated {
+    text-align: center;
+    color: #64748b;
+    font-size: 11px;
+    margin-top: 12px;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.stat {
+    background: #111a2a;
+    border: 1px solid #253148;
+    border-radius: 13px;
+    padding: 15px 8px;
+    text-align: center;
+    min-width: 0;
+}
+
+.stat .value {
+    font-size: 19px;
+    font-weight: bold;
+    margin-bottom: 7px;
+    overflow-wrap: anywhere;
+}
+
+.stat .label {
+    font-size: 10px;
+    color: #94a3b8;
+}
+
+#map {
+    height: 340px;
+    border-radius: 13px;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.location-box {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    min-width: 12px;
+    border-radius: 50%;
+    background: #4ade80;
+}
+
+.dot.red {
+    background: #fb7185;
+}
+
+.location-info {
+    min-width: 0;
+}
+
+.location-info p {
+    color: #8492a6;
+    font-size: 11px;
+    margin-bottom: 4px;
+}
+
+.location-info strong {
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
+.divider {
+    height: 1px;
+    background: #253148;
+    margin: 15px 0;
+}
+
+.buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+button {
+    flex: 1;
+    padding: 15px 8px;
+    border: none;
+    border-radius: 11px;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#startBtn {
+    background: #22c55e;
+    color: #06130a;
+}
+
+#pauseBtn {
+    background: #26354b;
+    color: white;
+}
+
+button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.message {
+    background: #192438;
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 12px;
+    color: #b7c5d8;
+    line-height: 1.6;
+    margin-top: 14px;
+}
+
+.message.error {
+    color: #fca5a5;
+}
+
+.footer {
+    text-align: center;
+    font-size: 11px;
+    color: #526078;
+    padding: 18px 0;
+}
+
+.leaflet-popup-content-wrapper {
+    border-radius: 10px;
+}
+
+@media(max-width: 380px) {
+    body { padding: 10px; }
+    .card { padding: 15px; }
+    .stat .value { font-size: 16px; }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+    <div class="header">
+        <div>
+            <h2>📍 Live Distance Tracker</h2>
+            <p>Real-time road distance monitoring</p>
+        </div>
+        <div class="status" id="status">● READY</div>
+    </div>
+
+    <!-- DISTANCE -->
+    <div class="card">
+        <div class="section-label">REMAINING ROAD DISTANCE</div>
+
+        <div class="distance" id="distance">--.--</div>
+        <div class="unit">Kilometres</div>
+
+        <div class="meters" id="meters">-- metres</div>
+
+        <div class="updated" id="updated">
+            Waiting for GPS location
+        </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats">
+        <div class="stat">
+            <div class="value" id="speed">0.0</div>
+            <div class="label">SPEED (KM/H)</div>
+        </div>
+
+        <div class="stat">
+            <div class="value" id="eta">--</div>
+            <div class="label">EST. TIME</div>
+        </div>
+
+        <div class="stat">
+            <div class="value" id="accuracy">--</div>
+            <div class="label">GPS ACCURACY</div>
+        </div>
+    </div>
+
+    <!-- LOCATIONS -->
+    <div class="card">
+        <div class="section-label">YOUR JOURNEY</div>
+
+        <div class="location-box">
+            <div class="dot"></div>
+            <div class="location-info">
+                <p>CURRENT LOCATION</p>
+                <strong id="currentLocation">Waiting for GPS...</strong>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="location-box">
+            <div class="dot red"></div>
+            <div class="location-info">
+                <p>FIXED DESTINATION</p>
+                <strong>26.582648, 85.036437</strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAP -->
+    <div class="card">
+        <div class="section-label">LIVE ROUTE MAP</div>
+        <div id="map"></div>
+
+        <div class="buttons">
+            <button id="startBtn" onclick="startTracking()">
+                ▶ START TRACKING
+            </button>
+
+            <button id="pauseBtn" onclick="pauseTracking()" disabled>
+                ⏸ PAUSE
+            </button>
+        </div>
+
+        <div class="message" id="message">
+            Press Start Tracking and allow location access.
+            Your current location will be detected automatically.
+        </div>
+    </div>
+
+    <div class="footer">
+        LIVE DISTANCE TRACKER · OPENSTREETMAP · OSRM
+    </div>
+
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+
+// ==========================================
+// CONFIGURATION
+// ==========================================
+
+const DESTINATION = {
+    lat: 26.582648,
+    lon: 85.036437
+};
+
+const ROUTE_API = "https://router.project-osrm.org/route/v1/driving/";
+
+// Route refresh settings
+const ROUTE_REFRESH_DISTANCE = 35; // metres
+const ROUTE_REFRESH_INTERVAL = 10000; // milliseconds
+
+// ==========================================
+// VARIABLES
+// ==========================================
+
+let map;
+let userMarker;
+let destinationMarker;
+let routeLine;
+
+let watchID = null;
+let displayTimer = null;
+
+let tracking = false;
+let routing = false;
+
+let currentPosition = null;
+let lastRouteOrigin = null;
+
+let routeCoordinates = [];
+let routeCumulative = [];
+let routeDistance = 0;
+let routeDuration = 0;
+
+let lastRouteTime = 0;
+let lastGpsTime = 0;
+
+let latestAccuracy = null;
+let latestSpeed = 0;
+
+// ==========================================
+// MAP INITIALIZATION
+// ==========================================
+
+function initializeMap() {
+
+    map = L.map("map").setView(
+        [DESTINATION.lat, DESTINATION.lon], 6
+    );
+
+    L.tileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap contributors'
+        }
+    ).addTo(map);
+
+    destinationMarker = L.marker([
+        DESTINATION.lat,
+        DESTINATION.lon
+    ]).addTo(map);
+
+    destinationMarker.bindPopup(
+        "Your Fixed Destination"
+    );
+
+}
+
+initializeMap();
+
+// ==========================================
+// DISTANCE CALCULATION
+// ==========================================
+
+function haversine(a, b) {
+
+    const R = 6371000;
+
+    const lat1 = a.lat * Math.PI / 180;
+    const lat2 = b.lat * Math.PI / 180;
+
+    const dLat = (b.lat - a.lat) * Math.PI / 180;
+    const dLon = (b.lon - a.lon) * Math.PI / 180;
+
+    const x =
+        Math.sin(dLat / 2) ** 2 +
+        Math.cos(lat1) *
+        Math.cos(lat2) *
+        Math.sin(dLon / 2) ** 2;
+
+    return R * 2 * Math.atan2(
+        Math.sqrt(x),
+        Math.sqrt(1 - x)
+    );
+}
+
+// ==========================================
+// ROUTE GEOMETRY
+// ==========================================
+
+function prepareRoute(coords) {
+
+    routeCoordinates = coords.map(point => ({
+        lat: point[1],
+        lon: point[0]
+    }));
+
+    routeCumulative = [0];
+
+    for (let i = 1; i < routeCoordinates.length; i++) {
+
+        const segment = haversine(
+            routeCoordinates[i - 1],
+            routeCoordinates[i]
+        );
+
+        routeCumulative.push(
+            routeCumulative[i - 1] + segment
+        );
+    }
+
+    routeDistance =
+        routeCumulative[routeCumulative.length - 1];
+}
+
+// ==========================================
+// REMAINING DISTANCE ON ROUTE
+// ==========================================
+
+function getRemainingRouteDistance(position) {
+
+    if (routeCoordinates.length < 2) {
+        return routeDistance;
+    }
+
+    let nearestDistance = Infinity;
+    let remainingDistance = routeDistance;
+    let nearestIndex = 0;
+
+    for (let i = 0; i < routeCoordinates.length - 1; i++) {
+
+        const a = routeCoordinates[i];
+        const b = routeCoordinates[i + 1];
+
+        // Local projection for nearest point
+        const meanLat =
+            (position.lat + a.lat + b.lat) / 3 *
+            Math.PI / 180;
+
+        const scaleX = 111320 * Math.cos(meanLat);
+        const scaleY = 111320;
+
+        const ax = (a.lon - position.lon) * scaleX;
+        const ay = (a.lat - position.lat) * scaleY;
+
+        const bx = (b.lon - position.lon) * scaleX;
+        const by = (b.lat - position.lat) * scaleY;
+
+        const dx = bx - ax;
+        const dy = by - ay;
+
+        const denominator = dx * dx + dy * dy;
+
+        let t = denominator === 0 ? 0 :
+            -(ax * dx + ay * dy) / denominator;
+
+        t = Math.max(0, Math.min(1, t));
+
+        const px = ax + t * dx;
+        const py = ay + t * dy;
+
+        const distance = Math.sqrt(px * px + py * py);
+
+        if (distance < nearestDistance) {
+
+            nearestDistance = distance;
+            nearestIndex = i;
+
+            const segmentLength =
+                routeCumulative[i + 1] -
+                routeCumulative[i];
+
+            remainingDistance =
+                routeDistance -
+                routeCumulative[i] -
+                segmentLength * t;
+        }
+    }
+
+    return Math.max(0, remainingDistance);
+}
+
+// ==========================================
+// ROUTE FETCHING
+// ==========================================
+
+async function fetchRoute(position) {
+
+    if (routing || !tracking) return;
+
+    routing = true;
+
+    showMessage("Calculating your road route...");
+
+    try {
+
+        const url =
+            ROUTE_API +
+            `${position.lon},${position.lat};` +
+            `${DESTINATION.lon},${DESTINATION.lat}` +
+            "?overview=full&geometries=geojson&steps=false";
+
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error("Routing server unavailable.");
+        }
+
+        const data = await response.json();
+
+        if (data.code !== "Ok" || !data.routes.length) {
+            throw new Error("No driving route found.");
+        }
+
+        const route = data.routes[0];
+
+        // Ignore stale results if tracking was paused
+        if (!tracking) return;
+
+        routeDuration = route.duration;
+        prepareRoute(route.geometry.coordinates);
+
+        lastRouteOrigin = {
+            lat: position.lat,
+            lon: position.lon
+        };
+
+        lastRouteTime = Date.now();
+
+        if (routeLine) {
+            map.removeLayer(routeLine);
+        }
+
+        routeLine = L.polyline(
+            routeCoordinates.map(p => [p.lat, p.lon]),
+            {
+                color: "#22c55e",
+                weight: 5,
+                opacity: 0.85
+            }
+        ).addTo(map);
+
+        map.fitBounds(routeLine.getBounds(), {
+            padding: [35, 35]
+        });
+
+        showMessage("Road route successfully calculated.");
+
+        updateDisplay();
+
+    } catch (error) {
+
+        showMessage(
+            error.message +
+            " Your GPS is still active. Retrying when appropriate.",
+            true
+        );
+
+    } finally {
+        routing = false;
+    }
+}
+
+// ==========================================
+// GPS POSITION UPDATE
+// ==========================================
+
+function onLocationSuccess(position) {
+
+    if (!tracking) return;
+
+    const now = Date.now();
+
+    currentPosition = {
+        lat: position.coords.latitude,
+        lon: position.coords.longitude
+    };
+
+    latestAccuracy = position.coords.accuracy;
+
+    if (position.coords.speed !== null &&
+        position.coords.speed >= 0) {
+
+        latestSpeed = position.coords.speed * 3.6;
+    }
+
+    lastGpsTime = now;
+
+    document.getElementById("currentLocation").textContent =
+        currentPosition.lat.toFixed(6) + ", " +
+        currentPosition.lon.toFixed(6);
+
+    if (!userMarker) {
+
+        userMarker = L.circleMarker(
+            [currentPosition.lat, currentPosition.lon],
+            {
+                radius: 9,
+                color: "#ffffff",
+                weight: 3,
+                fillColor: "#22c55e",
+                fillOpacity: 1
+            }
+        ).addTo(map);
+
+    } else {
+
+        userMarker.setLatLng([
+            currentPosition.lat,
+            currentPosition.lon
+        ]);
+    }
+
+    // Check whether route needs refreshing
+    const moved = lastRouteOrigin
+        ? haversine(lastRouteOrigin, currentPosition)
+        : Infinity;
+
+    const elapsed = now - lastRouteTime;
+
+    if (
+        !routing &&
+        (
+            !lastRouteOrigin ||
+            moved >= ROUTE_REFRESH_DISTANCE ||
+            elapsed >= ROUTE_REFRESH_INTERVAL
+        )
+    ) {
+        fetchRoute(currentPosition);
+    }
+
+    updateDisplay();
+}
+
+// ==========================================
+// LIVE DISPLAY
+// ==========================================
+
+function updateDisplay() {
+
+    if (!currentPosition) return;
+
+    if (!routeCoordinates.length) return;
+
+    const remaining = getRemainingRouteDistance(
+        currentPosition
+    );
+
+    const km = remaining / 1000;
+
+    document.getElementById("distance").textContent =
+        km.toFixed(3);
+
+    document.getElementById("meters").textContent =
+        Math.round(remaining).toLocaleString("en-IN") +
+        " metres";
+
+    document.getElementById("speed").textContent =
+        latestSpeed.toFixed(1);
+
+    // Estimated time based on remaining route proportion
+    const remainingSeconds =
+        routeDistance > 0
+        ? routeDuration * (remaining / routeDistance)
+        : 0;
+
+    document.getElementById("eta").textContent =
+        formatTime(remainingSeconds);
+
+    document.getElementById("accuracy").textContent =
+        latestAccuracy !== null
+        ? "±" + Math.round(latestAccuracy) + "m"
+        : "--";
+
+    const secondsAgo = Math.max(
+        0,
+        Math.floor((Date.now() - lastRouteTime) / 1000)
+    );
+
+    document.getElementById("updated").textContent =
+        "Route calculated " + secondsAgo +
+        " seconds ago · Display refreshes every second";
+
+}
+
+// ==========================================
+// TIME FORMAT
+// ==========================================
+
+function formatTime(seconds) {
+
+    if (!Number.isFinite(seconds)) return "--";
+
+    const minutes = Math.round(seconds / 60);
+
+    if (minutes < 1) return "<1 min";
+
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+
+    if (hours === 0) {
+        return minutes + " min";
+    }
+
+    return hours + "h " + remainingMinutes + "m";
+}
+
+// ==========================================
+// TRACKING CONTROLS
+// ==========================================
+
+function startTracking() {
+
+    if (!navigator.geolocation) {
+
+        showMessage(
+            "Your browser does not support GPS location.",
+            true
+        );
+
+        return;
+    }
+
+    if (tracking) return;
+
+    tracking = true;
+
+    document.getElementById("status").textContent =
+        "● SEARCHING GPS";
+
+    document.getElementById("startBtn").disabled = true;
+    document.getElementById("pauseBtn").disabled = false;
+
+    showMessage("Requesting your GPS location...");
+
+    watchID = navigator.geolocation.watchPosition(
+        onLocationSuccess,
+        onLocationError,
+        {
+            enableHighAccuracy: true,
+            maximumAge: 1000,
+            timeout: 20000
+        }
+    );
+
+    // Display refresh every second
+    displayTimer = setInterval(() => {
+
+        if (!tracking) return;
+
+        if (
+            lastGpsTime &&
+            Date.now() - lastGpsTime > 15000
+        ) {
+            document.getElementById("status").textContent =
+                "● GPS STALE";
+
+            showMessage(
+                "No fresh GPS update received. Checking connection..."
+            );
+
+        } else if (currentPosition) {
+
+            document.getElementById("status").textContent =
+                "● TRACKING";
+        }
+
+        updateDisplay();
+
+    }, 1000);
+}
+
+function pauseTracking() {
+
+    tracking = false;
+
+    if (watchID !== null) {
+        navigator.geolocation.clearWatch(watchID);
+        watchID = null;
+    }
+
+    if (displayTimer !== null) {
+        clearInterval(displayTimer);
+        displayTimer = null;
+    }
+
+    document.getElementById("status").textContent =
+        "● PAUSED";
+
+    document.getElementById("startBtn").disabled = false;
+    document.getElementById("pauseBtn").disabled = true;
+
+    showMessage("Tracking paused. Press Start to resume.");
+}
+
+// ==========================================
+// GPS ERRORS
+// ==========================================
+
+function onLocationError(error) {
+
+    let message = "";
+
+    switch (error.code) {
+
+        case 1:
+            message = "Location permission denied. Please allow GPS access.";
+            break;
+
+        case 2:
+            message = "GPS position unavailable. Check your location settings.";
+            break;
+
+        case 3:
+            message = "GPS request timed out. Waiting for another update.";
+            break;
+
+        default:
+            message = "An unknown GPS error occurred.";
+    }
+
+    document.getElementById("status").textContent =
+        "● GPS ERROR";
+
+    showMessage(message, true);
+}
+
+// ==========================================
+// MESSAGE
+// ==========================================
+
+function showMessage(message, error = false) {
+
+    const element = document.getElementById("message");
+
+    element.textContent = message;
+
+    element.className = error
+        ? "message error"
+        : "message";
+}
+
+</script>
+
+</body>
+</html>
