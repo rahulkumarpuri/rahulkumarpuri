@@ -2343,53 +2343,6 @@ function write(key,value){
 
 }
 
-
-/* =========================================================
-   DAILY RESET
-========================================================= */
-
-function ensureDay(){
-
-  const oldDay =
-    localStorage.getItem(
-      KEY.day
-    );
-
-
-  if(oldDay !== TODAY){
-
-    [
-      KEY.opening,
-      KEY.closing,
-      KEY.normalOil,
-      KEY.discountOil,
-      KEY.testing,
-      KEY.quick,
-      KEY.physical,
-      KEY.manual,
-      KEY.shift
-    ].forEach(
-      function(key){
-
-        localStorage.removeItem(key);
-
-      }
-    );
-
-
-    localStorage.setItem(
-      KEY.day,
-      TODAY
-    );
-
-  }
-
-}
-
-
-ensureDay();
-
-
 /* =========================================================
    DEFAULT DATA
 ========================================================= */
