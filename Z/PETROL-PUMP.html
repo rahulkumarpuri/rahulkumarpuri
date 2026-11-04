@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+        <!DOCTYPE html>
 <html lang="en">
 <head>
 
@@ -1686,12 +1686,25 @@ input:focus{
 
     </div>
 
-    <button
-      class="btn"
-      id="addEntryButton"
-    >
-      + Add Entry
-    </button>
+    <div class="manual-form-row">
+
+  <button
+    class="btn"
+    id="addEntryButton"
+    style="margin-top:0"
+  >
+    ➕ Add Entry
+  </button>
+
+  <button
+    class="btn danger"
+    id="addMinusEntryButton"
+    style="margin-top:0"
+  >
+    ➖ Add Minus Entry
+  </button>
+
+</div>
 
 
     <div
@@ -2602,10 +2615,10 @@ function calculateSale(){
   ){
 
     for(
-      let i=0;
-      i<4;
-      i++
-    ){
+  let i=0;
+  i<6;
+  i++
+){
 
       let volume =
         num(
@@ -2999,32 +3012,15 @@ function renderCollected(){
 
 function fillReadings(){
 
-  const opening =
-    getOpening();
+  const opening = getOpening();
+  const closing = getClosing();
 
-  const closing =
-    getClosing();
+  for(let i = 0; i < 6; i++){
 
-
-  for(
-    let i=0;
-    i<4;
-    i++
-  ){
-
-    document
-      .getElementById(
-        "opening"+i
-      )
-      .value =
+    document.getElementById("opening" + i).value =
       opening.values[i] ?? "";
 
-
-    document
-      .getElementById(
-        "closing"+i
-      )
-      .value =
+    document.getElementById("closing" + i).value =
       closing.values[i] ?? "";
 
   }
@@ -3034,27 +3030,17 @@ function fillReadings(){
 
 function saveReading(type){
 
-  const values=[];
+  const values = [];
 
-
-  for(
-    let i=0;
-    i<4;
-    i++
-  ){
+  for(let i = 0; i < 6; i++){
 
     values.push(
       num(
-        document
-          .getElementById(
-            type+i
-          )
-          .value
+        document.getElementById(type + i).value
       )
     );
 
   }
-
 
   write(
     type === "opening"
@@ -3065,7 +3051,6 @@ function saveReading(type){
       values
     }
   );
-
 
   renderAll();
 
@@ -3606,44 +3591,29 @@ function renderPhysical(){
 function saveManual(){
 
   const amountInput =
-    document.getElementById(
-      "manualAmount"
-    );
-
+    document.getElementById("manualAmount");
 
   const headingInput =
-    document.getElementById(
-      "manualHeading"
-    );
+    document.getElementById("manualHeading");
 
+  const amount = num(amountInput.value);
 
-  const amount =
-    num(
-      amountInput.value
-    );
+  const heading = headingInput.value.trim();
 
+  if(amount <= 0 || !heading){
 
-  const heading =
-    headingInput.value.trim();
-
-
-  if(
-    amount <= 0 ||
-    !heading
-  ){
-
-    alert(
-      "Please enter a valid amount and heading."
-    );
+    alert("Please enter a valid amount and heading.");
 
     return;
 
   }
 
+  const entries = getManual();
 
-  const entries =
-    getManual();
-
+  const signedAmount =
+    manualEntryMode === "minus"
+      ? -amount
+      : amount;
 
   entries.push({
 
@@ -3651,41 +3621,28 @@ function saveManual(){
       "m_" +
       Date.now() +
       "_" +
-      Math.random()
-        .toString(36)
-        .slice(2,6),
+      Math.random().toString(36).slice(2,6),
 
-    amount,
+    amount: signedAmount,
 
     heading,
 
-    time:
-      timeNow(),
+    time: timeNow(),
 
-    timestamp:
-      Date.now()
+    timestamp: Date.now()
 
   });
 
+  write(KEY.manual, entries);
 
-  write(
-    KEY.manual,
-    entries
-  );
-
-
-  amountInput.value="";
-  headingInput.value="";
-
+  amountInput.value = "";
+  headingInput.value = "";
 
   document
-    .getElementById(
-      "manualForm"
-    )
-    .classList.add(
-      "hidden"
-    );
+    .getElementById("manualForm")
+    .classList.add("hidden");
 
+  manualEntryMode = "plus";
 
   renderAll();
 
@@ -3742,9 +3699,13 @@ function renderManual(){
               "
             >
 
-              <div class="manual-amount">
-                ₹ ${money(entry.amount)}
-              </div>
+              <div
+  class="manual-amount"
+  style="color:${entry.amount < 0 ? '#dc2626' : '#047857'}"
+>
+  ${entry.amount < 0 ? '−' : '+'}
+  ₹ ${money(Math.abs(entry.amount))}
+</div>
 
               <div class="manual-actions">
 
@@ -4327,23 +4288,30 @@ document
 
 /* Manual entry */
 
-document
-  .getElementById(
-    "addEntryButton"
-  )
-  .onclick =
-  function(){
+let manualEntryMode = "plus";
 
-    document
-      .getElementById(
-        "manualForm"
-      )
-      .classList.toggle(
-        "hidden"
-      );
+function openManualForm(mode){
 
-  };
+  manualEntryMode = mode;
 
+  const form = document.getElementById("manualForm");
+
+  form.classList.remove("hidden");
+
+  document.getElementById("manualSave").textContent =
+    mode === "minus"
+      ? "➖ Add Minus Entry"
+      : "➕ Add Entry";
+
+}
+
+document.getElementById("addEntryButton").onclick = function(){
+  openManualForm("plus");
+};
+
+document.getElementById("addMinusEntryButton").onclick = function(){
+  openManualForm("minus");
+};
 
 document
   .getElementById(
@@ -4468,10 +4436,10 @@ document
 
 
         const amount =
-          prompt(
-            "Amount:",
-            entry.amount
-          );
+  prompt(
+    "Amount:",
+    Math.abs(entry.amount)
+  );
 
 
         if(amount === null)
@@ -4511,8 +4479,12 @@ document
         }
 
 
-        entry.amount=n;
-        entry.heading=h;
+        entry.amount =
+  entry.amount < 0
+    ? -n
+    : n;
+
+entry.heading = h;
 
 
         write(
