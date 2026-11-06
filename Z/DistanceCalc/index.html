@@ -1,902 +1,386 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#080d18">
-<title>Live Distance Tracker</title>
-
-<link rel="stylesheet"
- href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#090d16">
+<title>Live Distance | Route Tracker</title>
+<link rel="preconnect" href="https://unpkg.com">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    background: #080d18;
-    color: #f1f5f9;
-    font-family: Arial, sans-serif;
-    min-height: 100vh;
-    padding: 18px;
-}
-
-.container {
-    max-width: 650px;
-    margin: auto;
-}
-
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 12px 0 22px;
-}
-
-.header h2 {
-    font-size: 21px;
-}
-
-.header p {
-    color: #8995a8;
-    font-size: 12px;
-    margin-top: 5px;
-}
-
-.status {
-    background: #142b24;
-    color: #4ade80;
-    border: 1px solid #22543d;
-    border-radius: 20px;
-    padding: 7px 12px;
-    font-size: 11px;
-}
-
-.card {
-    background: #111a2a;
-    border: 1px solid #253148;
-    border-radius: 17px;
-    padding: 20px;
-    margin-bottom: 15px;
-}
-
-.section-label {
-    color: #8c9bb0;
-    font-size: 11px;
-    letter-spacing: 1.4px;
-    font-weight: bold;
-    margin-bottom: 12px;
-}
-
-.distance {
-    font-size: clamp(42px, 12vw, 62px);
-    font-weight: 800;
-    color: #4ade80;
-    letter-spacing: -2px;
-    text-align: center;
-    margin: 15px 0 3px;
-    overflow-wrap: anywhere;
-}
-
-.unit {
-    text-align: center;
-    color: #a0aec0;
-    font-size: 15px;
-}
-
-.meters {
-    text-align: center;
-    font-size: 19px;
-    font-weight: bold;
-    margin-top: 12px;
-    color: #e2e8f0;
-}
-
-.updated {
-    text-align: center;
-    color: #64748b;
-    font-size: 11px;
-    margin-top: 12px;
-}
-
-.stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-bottom: 15px;
-}
-
-.stat {
-    background: #111a2a;
-    border: 1px solid #253148;
-    border-radius: 13px;
-    padding: 15px 8px;
-    text-align: center;
-    min-width: 0;
-}
-
-.stat .value {
-    font-size: 19px;
-    font-weight: bold;
-    margin-bottom: 7px;
-    overflow-wrap: anywhere;
-}
-
-.stat .label {
-    font-size: 10px;
-    color: #94a3b8;
-}
-
-#map {
-    height: 340px;
-    border-radius: 13px;
-    overflow: hidden;
-    z-index: 1;
-}
-
-.location-box {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    margin-bottom: 16px;
-}
-
-.dot {
-    width: 12px;
-    height: 12px;
-    min-width: 12px;
-    border-radius: 50%;
-    background: #4ade80;
-}
-
-.dot.red {
-    background: #fb7185;
-}
-
-.location-info {
-    min-width: 0;
-}
-
-.location-info p {
-    color: #8492a6;
-    font-size: 11px;
-    margin-bottom: 4px;
-}
-
-.location-info strong {
-    font-size: 13px;
-    overflow-wrap: anywhere;
-}
-
-.divider {
-    height: 1px;
-    background: #253148;
-    margin: 15px 0;
-}
-
-.buttons {
-    display: flex;
-    gap: 10px;
-    margin-top: 16px;
-}
-
-button {
-    flex: 1;
-    padding: 15px 8px;
-    border: none;
-    border-radius: 11px;
-    font-size: 13px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-#startBtn {
-    background: #22c55e;
-    color: #06130a;
-}
-
-#pauseBtn {
-    background: #26354b;
-    color: white;
-}
-
-button:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-}
-
-.message {
-    background: #192438;
-    border-radius: 10px;
-    padding: 12px;
-    font-size: 12px;
-    color: #b7c5d8;
-    line-height: 1.6;
-    margin-top: 14px;
-}
-
-.message.error {
-    color: #fca5a5;
-}
-
-.footer {
-    text-align: center;
-    font-size: 11px;
-    color: #526078;
-    padding: 18px 0;
-}
-
-.leaflet-popup-content-wrapper {
-    border-radius: 10px;
-}
-
-@media(max-width: 380px) {
-    body { padding: 10px; }
-    .card { padding: 15px; }
-    .stat .value { font-size: 16px; }
-}
+:root{color-scheme:dark;--bg:#090d16;--panel:#111a29;--panel2:#172235;--line:rgba(157,178,211,.14);--muted:#8796ad;--text:#f3f7ff;--lime:#a3ff65;--cyan:#55d9ff;--pink:#ff6e91;--amber:#ffc76b;--shadow:0 22px 60px rgba(0,0,0,.28)}
+*{box-sizing:border-box}html{min-height:100%;background:var(--bg)}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 8% 0%,rgba(50,115,105,.19),transparent 35%),radial-gradient(ellipse at 100% 28%,rgba(50,94,155,.16),transparent 34%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;padding:calc(18px + env(safe-area-inset-top)) 16px calc(24px + env(safe-area-inset-bottom))}.app{width:min(100%,760px);margin:auto}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:8px 2px 25px}.brand{display:flex;align-items:center;gap:12px}.brand-icon{width:46px;height:46px;display:grid;place-items:center;border-radius:15px;background:linear-gradient(145deg,#b5ff76,#42d9b0);color:#07130e;font-size:23px;box-shadow:0 8px 28px #8dfb6530}.brand h1{font-size:19px;letter-spacing:-.5px;margin:0}.brand p{font-size:11px;color:var(--muted);margin:4px 0 0}.live-pill{display:flex;align-items:center;gap:8px;border:1px solid #3a765c;background:#10271f;color:#9cffc3;border-radius:999px;padding:9px 12px;font-size:10px;font-weight:800;letter-spacing:1px;white-space:nowrap}.pulse{width:8px;height:8px;border-radius:50%;background:var(--lime);box-shadow:0 0 0 5px #a3ff6518;animation:pulse 1.8s infinite}@keyframes pulse{50%{box-shadow:0 0 0 9px #a3ff6500}}
+.hero{position:relative;overflow:hidden;border:1px solid rgba(163,255,101,.18);border-radius:26px;padding:23px 21px 20px;background:linear-gradient(135deg,rgba(35,67,57,.55),rgba(17,26,41,.97) 52%),var(--panel);box-shadow:var(--shadow);margin-bottom:14px}.hero:after{content:"";position:absolute;width:210px;height:210px;border-radius:50%;right:-85px;top:-105px;background:#a3ff6510;filter:blur(3px);pointer-events:none}.eyebrow,.section-kicker{font-size:10px;font-weight:800;letter-spacing:1.8px;color:#a2b1c6}.distance-wrap{display:flex;align-items:baseline;gap:9px;margin:22px 0 2px;white-space:nowrap}.distance{font-size:clamp(42px,12vw,76px);font-weight:850;letter-spacing:-3px;line-height:1;color:var(--lime);font-variant-numeric:tabular-nums}.distance-unit{font-size:15px;color:#b9c7d8;font-weight:650}.meters{font-size:15px;font-weight:700;color:#e6edf7;margin-top:12px;font-variant-numeric:tabular-nums}.hero-foot{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:23px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:11px}.route-state{color:#a9f58b;font-weight:700}.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:14px}.stat{min-width:0;padding:16px 12px;border-radius:18px;border:1px solid var(--line);background:linear-gradient(150deg,#172337,#101827);box-shadow:0 12px 30px #00000018}.stat-top{display:flex;align-items:center;justify-content:space-between;color:var(--muted);font-size:9px;font-weight:800;letter-spacing:1px}.stat-icon{font-size:15px}.stat-value{font-size:clamp(17px,5vw,24px);font-weight:800;letter-spacing:-.5px;margin-top:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}.stat-note{font-size:10px;color:var(--muted);margin-top:5px}.panel{border:1px solid var(--line);border-radius:21px;background:linear-gradient(145deg,rgba(23,34,53,.96),rgba(15,23,37,.98));padding:19px;margin-bottom:14px;box-shadow:0 12px 35px #00000018}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:18px}.panel-title{font-size:11px;letter-spacing:1.7px;font-weight:850;color:#b5c3d7}.tiny-tag{font-size:9px;color:var(--cyan);border:1px solid #55d9ff35;background:#55d9ff0d;border-radius:999px;padding:6px 9px;font-weight:800;letter-spacing:.7px}.place{display:flex;gap:13px;align-items:flex-start}.place-symbol{width:12px;height:12px;flex:none;border-radius:50%;margin-top:5px;background:var(--lime);box-shadow:0 0 0 5px #a3ff6516}.place-symbol.dest{background:var(--pink);box-shadow:0 0 0 5px #ff6e9118}.place-label{font-size:10px;color:var(--muted);letter-spacing:1px;font-weight:750;margin-bottom:6px}.place-value{font-size:13px;font-weight:700;line-height:1.5;overflow-wrap:anywhere}.connector{height:24px;border-left:1px dashed #50617a;margin:8px 0 8px 5px}.map-panel{padding:13px}.map-panel .panel-head{padding:5px 5px 0;margin-bottom:12px}#map{height:330px;border-radius:15px;overflow:hidden;background:#101a29}.map-legend{display:flex;gap:16px;flex-wrap:wrap;padding:12px 5px 3px;color:var(--muted);font-size:10px}.legend-item{display:flex;align-items:center;gap:7px}.legend-dot{width:8px;height:8px;border-radius:50%;background:var(--lime)}.legend-dot.pink{background:var(--pink)}.message{display:flex;align-items:flex-start;gap:9px;padding:13px 14px;border:1px solid var(--line);border-radius:14px;background:#0d1522;color:#aebdd0;font-size:11px;line-height:1.55;margin-bottom:14px}.message-icon{font-size:15px}.message.error{border-color:#ff6e9140;color:#ffb1c2}.message.good{border-color:#a3ff6530;color:#c5f7ad}.destination-link{display:inline-flex;align-items:center;gap:7px;color:#9bdcff;text-decoration:none;font-size:11px;font-weight:700;margin-top:3px}.foot{text-align:center;color:#65758d;font-size:10px;line-height:1.7;padding:5px 12px 12px}.leaflet-container{font:12px system-ui,sans-serif}.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#142033;color:#f3f7ff}.leaflet-popup-content{margin:10px 13px}.leaflet-control-zoom a{background:#172337!important;color:#fff!important;border-color:#34445d!important}.leaflet-control-attribution{background:#101827d9!important;color:#9aa9bd!important}.leaflet-control-attribution a{color:#8ddcff!important}
+@media(max-width:390px){body{padding-left:11px;padding-right:11px}.hero{padding:20px 16px}.panel{padding:15px}.stats{gap:7px}.stat{padding:13px 9px}.stat-note{font-size:9px}.distance{letter-spacing:-2.5px}.distance-unit{font-size:13px}}
 </style>
 </head>
-
 <body>
-<div class="container">
+<main class="app">
+  <header class="top">
+    <div class="brand"><div class="brand-icon">⌖</div><div><h1>Live Distance</h1><p>Your road journey, in real time</p></div></div>
+    <div class="live-pill" id="livePill"><span class="pulse"></span><span id="statusText">STARTING</span></div>
+  </header>
 
-    <div class="header">
-        <div>
-            <h2>📍 Live Distance Tracker</h2>
-            <p>Real-time road distance monitoring</p>
-        </div>
-        <div class="status" id="status">● READY</div>
-    </div>
+  <section class="hero">
+    <div class="eyebrow">REMAINING ROAD DISTANCE</div>
+    <div class="distance-wrap"><div class="distance" id="distance">--.---</div><div class="distance-unit">km</div></div>
+    <div class="meters" id="meters">Waiting for GPS fix</div>
+    <div class="hero-foot"><span id="routeAge">Route not calculated yet</span><span class="route-state" id="routeState">● ROUTE PENDING</span></div>
+  </section>
 
-    <!-- DISTANCE -->
-    <div class="card">
-        <div class="section-label">REMAINING ROAD DISTANCE</div>
+  <section class="stats">
+    <div class="stat"><div class="stat-top"><span>YOUR SPEED</span><span class="stat-icon">◉</span></div><div class="stat-value" id="speed">0.0 km/h</div><div class="stat-note" id="speedNote">Waiting for movement</div></div>
+    <div class="stat"><div class="stat-top"><span>ARRIVAL ESTIMATE</span><span class="stat-icon">◷</span></div><div class="stat-value" id="eta">--</div><div class="stat-note">Based on current route</div></div>
+    <div class="stat"><div class="stat-top"><span>GPS ACCURACY</span><span class="stat-icon">⌖</span></div><div class="stat-value" id="accuracy">--</div><div class="stat-note">Reported horizontal accuracy</div></div>
+  </section>
 
-        <div class="distance" id="distance">--.--</div>
-        <div class="unit">Kilometres</div>
+  <section class="panel">
+    <div class="panel-head"><div class="panel-title">JOURNEY DETAILS</div><div class="tiny-tag">FIXED DESTINATION</div></div>
+    <div class="place"><span class="place-symbol"></span><div><div class="place-label">YOUR CURRENT POSITION</div><div class="place-value" id="currentLocation">Waiting for location permission…</div></div></div>
+    <div class="connector"></div>
+    <div class="place"><span class="place-symbol dest"></span><div><div class="place-label">DESTINATION</div><div class="place-value">26.582648, 85.036437</div><a class="destination-link" href="https://www.google.com/maps?q=26.582648,85.036437" target="_blank" rel="noopener">↗ Open destination in Maps</a></div></div>
+  </section>
 
-        <div class="meters" id="meters">-- metres</div>
+  <section class="panel map-panel">
+    <div class="panel-head"><div class="panel-title">LIVE ROUTE MAP</div><div class="tiny-tag" id="mapTag">WAITING FOR GPS</div></div>
+    <div id="map"></div>
+    <div class="map-legend"><span class="legend-item"><i class="legend-dot"></i>Your location</span><span class="legend-item"><i class="legend-dot pink"></i>Destination</span></div>
+  </section>
 
-        <div class="updated" id="updated">
-            Waiting for GPS location
-        </div>
-    </div>
-
-    <!-- STATS -->
-    <div class="stats">
-        <div class="stat">
-            <div class="value" id="speed">0.0</div>
-            <div class="label">SPEED (KM/H)</div>
-        </div>
-
-        <div class="stat">
-            <div class="value" id="eta">--</div>
-            <div class="label">EST. TIME</div>
-        </div>
-
-        <div class="stat">
-            <div class="value" id="accuracy">--</div>
-            <div class="label">GPS ACCURACY</div>
-        </div>
-    </div>
-
-    <!-- LOCATIONS -->
-    <div class="card">
-        <div class="section-label">YOUR JOURNEY</div>
-
-        <div class="location-box">
-            <div class="dot"></div>
-            <div class="location-info">
-                <p>CURRENT LOCATION</p>
-                <strong id="currentLocation">Waiting for GPS...</strong>
-            </div>
-        </div>
-
-        <div class="divider"></div>
-
-        <div class="location-box">
-            <div class="dot red"></div>
-            <div class="location-info">
-                <p>FIXED DESTINATION</p>
-                <strong>26.582648, 85.036437</strong>
-            </div>
-        </div>
-    </div>
-
-    <!-- MAP -->
-    <div class="card">
-        <div class="section-label">LIVE ROUTE MAP</div>
-        <div id="map"></div>
-
-        <div class="buttons">
-            <button id="startBtn" onclick="startTracking()">
-                ▶ START TRACKING
-            </button>
-
-            <button id="pauseBtn" onclick="pauseTracking()" disabled>
-                ⏸ PAUSE
-            </button>
-        </div>
-
-        <div class="message" id="message">
-            Press Start Tracking and allow location access.
-            Your current location will be detected automatically.
-        </div>
-    </div>
-
-    <div class="footer">
-        LIVE DISTANCE TRACKER · OPENSTREETMAP · OSRM
-    </div>
-
-</div>
+  <div class="message" id="message"><span class="message-icon">⌖</span><span>Starting location tracking automatically. Allow location access when your browser asks.</span></div>
+  <footer class="foot">AUTOMATIC GPS TRACKING · ROAD ROUTING BY OSRM · MAP DATA © OPENSTREETMAP<br>Keep this page open for continuous live updates. Closing the browser ends its GPS session.</footer>
+</main>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
 <script>
+'use strict';
 
-// ==========================================
-// CONFIGURATION
-// ==========================================
+// Fixed destination supplied for this tracker.
+const DESTINATION = { lat: 26.582648, lon: 85.036437 };
+const ROUTE_ENDPOINT = 'https://router.project-osrm.org/route/v1/driving/';
 
-const DESTINATION = {
-    lat: 26.582648,
-    lon: 85.036437
-};
+// Public OSRM demo server: keep requests modest. A new route is requested
+// after meaningful movement or after the refresh interval, not every second.
+const ROUTE_REFRESH_METERS = 75;
+const ROUTE_REFRESH_MS = 60000;
+const GPS_STALE_MS = 15000;
 
-const ROUTE_API = "https://router.project-osrm.org/route/v1/driving/";
-
-// Route refresh settings
-const ROUTE_REFRESH_DISTANCE = 35; // metres
-const ROUTE_REFRESH_INTERVAL = 10000; // milliseconds
-
-// ==========================================
-// VARIABLES
-// ==========================================
-
-let map;
-let userMarker;
-let destinationMarker;
-let routeLine;
-
-let watchID = null;
+let map, userMarker, routeLine;
+let watchId = null;
 let displayTimer = null;
-
 let tracking = false;
-let routing = false;
-
+let routeBusy = false;
+let routeController = null;
 let currentPosition = null;
 let lastRouteOrigin = null;
-
-let routeCoordinates = [];
+let routePoints = [];
 let routeCumulative = [];
-let routeDistance = 0;
-let routeDuration = 0;
-
-let lastRouteTime = 0;
-let lastGpsTime = 0;
-
+let routeGeometryLength = 0;
+let routeDistanceMeters = 0;
+let routeDurationSeconds = 0;
+let lastRouteAt = 0;
+let lastGpsAt = 0;
+let lastGpsSample = null;
+let speedAnchor = null;
+let filteredSpeedKmh = 0;
+let stationarySince = 0;
 let latestAccuracy = null;
-let latestSpeed = 0;
+let hasRoute = false;
 
-// ==========================================
-// MAP INITIALIZATION
-// ==========================================
+const $ = id => document.getElementById(id);
 
-function initializeMap() {
-
-    map = L.map("map").setView(
-        [DESTINATION.lat, DESTINATION.lon], 6
-    );
-
-    L.tileLayer(
-        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-        {
-            maxZoom: 19,
-            attribution: '&copy; OpenStreetMap contributors'
-        }
-    ).addTo(map);
-
-    destinationMarker = L.marker([
-        DESTINATION.lat,
-        DESTINATION.lon
-    ]).addTo(map);
-
-    destinationMarker.bindPopup(
-        "Your Fixed Destination"
-    );
-
+function setStatus(text, state = 'live') {
+  $('statusText').textContent = text;
+  $('livePill').style.borderColor = state === 'error' ? '#8b4054' : state === 'waiting' ? '#80683b' : '#3a765c';
+  $('livePill').style.background = state === 'error' ? '#301722' : state === 'waiting' ? '#2b2415' : '#10271f';
+  $('livePill').style.color = state === 'error' ? '#ff9db2' : state === 'waiting' ? '#ffd58a' : '#9cffc3';
 }
 
-initializeMap();
+function showMessage(message, type = '') {
+  const el = $('message');
+  el.className = 'message' + (type ? ' ' + type : '');
+  el.innerHTML = '<span class="message-icon">' + (type === 'error' ? '!' : type === 'good' ? '✓' : '⌖') + '</span><span></span>';
+  el.lastElementChild.textContent = message;
+}
 
-// ==========================================
-// DISTANCE CALCULATION
-// ==========================================
+function initMap() {
+  map = L.map('map', { zoomControl: true }).setView([DESTINATION.lat, DESTINATION.lon], 6);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  }).addTo(map);
+  L.marker([DESTINATION.lat, DESTINATION.lon]).addTo(map)
+    .bindPopup('Fixed destination');
+}
 
 function haversine(a, b) {
-
-    const R = 6371000;
-
-    const lat1 = a.lat * Math.PI / 180;
-    const lat2 = b.lat * Math.PI / 180;
-
-    const dLat = (b.lat - a.lat) * Math.PI / 180;
-    const dLon = (b.lon - a.lon) * Math.PI / 180;
-
-    const x =
-        Math.sin(dLat / 2) ** 2 +
-        Math.cos(lat1) *
-        Math.cos(lat2) *
-        Math.sin(dLon / 2) ** 2;
-
-    return R * 2 * Math.atan2(
-        Math.sqrt(x),
-        Math.sqrt(1 - x)
-    );
+  const R = 6371000;
+  const rad = Math.PI / 180;
+  const dLat = (b.lat - a.lat) * rad;
+  const dLon = (b.lon - a.lon) * rad;
+  const lat1 = a.lat * rad;
+  const lat2 = b.lat * rad;
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2;
+  return 2 * R * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
 }
 
-// ==========================================
-// ROUTE GEOMETRY
-// ==========================================
-
-function prepareRoute(coords) {
-
-    routeCoordinates = coords.map(point => ({
-        lat: point[1],
-        lon: point[0]
-    }));
-
-    routeCumulative = [0];
-
-    for (let i = 1; i < routeCoordinates.length; i++) {
-
-        const segment = haversine(
-            routeCoordinates[i - 1],
-            routeCoordinates[i]
-        );
-
-        routeCumulative.push(
-            routeCumulative[i - 1] + segment
-        );
-    }
-
-    routeDistance =
-        routeCumulative[routeCumulative.length - 1];
-}
-
-// ==========================================
-// REMAINING DISTANCE ON ROUTE
-// ==========================================
-
-function getRemainingRouteDistance(position) {
-
-    if (routeCoordinates.length < 2) {
-        return routeDistance;
-    }
-
-    let nearestDistance = Infinity;
-    let remainingDistance = routeDistance;
-    let nearestIndex = 0;
-
-    for (let i = 0; i < routeCoordinates.length - 1; i++) {
-
-        const a = routeCoordinates[i];
-        const b = routeCoordinates[i + 1];
-
-        // Local projection for nearest point
-        const meanLat =
-            (position.lat + a.lat + b.lat) / 3 *
-            Math.PI / 180;
-
-        const scaleX = 111320 * Math.cos(meanLat);
-        const scaleY = 111320;
-
-        const ax = (a.lon - position.lon) * scaleX;
-        const ay = (a.lat - position.lat) * scaleY;
-
-        const bx = (b.lon - position.lon) * scaleX;
-        const by = (b.lat - position.lat) * scaleY;
-
-        const dx = bx - ax;
-        const dy = by - ay;
-
-        const denominator = dx * dx + dy * dy;
-
-        let t = denominator === 0 ? 0 :
-            -(ax * dx + ay * dy) / denominator;
-
-        t = Math.max(0, Math.min(1, t));
-
-        const px = ax + t * dx;
-        const py = ay + t * dy;
-
-        const distance = Math.sqrt(px * px + py * py);
-
-        if (distance < nearestDistance) {
-
-            nearestDistance = distance;
-            nearestIndex = i;
-
-            const segmentLength =
-                routeCumulative[i + 1] -
-                routeCumulative[i];
-
-            remainingDistance =
-                routeDistance -
-                routeCumulative[i] -
-                segmentLength * t;
-        }
-    }
-
-    return Math.max(0, remainingDistance);
-}
-
-// ==========================================
-// ROUTE FETCHING
-// ==========================================
-
-async function fetchRoute(position) {
-
-    if (routing || !tracking) return;
-
-    routing = true;
-
-    showMessage("Calculating your road route...");
-
-    try {
-
-        const url =
-            ROUTE_API +
-            `${position.lon},${position.lat};` +
-            `${DESTINATION.lon},${DESTINATION.lat}` +
-            "?overview=full&geometries=geojson&steps=false";
-
-        const response = await fetch(url);
-
-        if (!response.ok) {
-            throw new Error("Routing server unavailable.");
-        }
-
-        const data = await response.json();
-
-        if (data.code !== "Ok" || !data.routes.length) {
-            throw new Error("No driving route found.");
-        }
-
-        const route = data.routes[0];
-
-        // Ignore stale results if tracking was paused
-        if (!tracking) return;
-
-        routeDuration = route.duration;
-        prepareRoute(route.geometry.coordinates);
-
-        lastRouteOrigin = {
-            lat: position.lat,
-            lon: position.lon
-        };
-
-        lastRouteTime = Date.now();
-
-        if (routeLine) {
-            map.removeLayer(routeLine);
-        }
-
-        routeLine = L.polyline(
-            routeCoordinates.map(p => [p.lat, p.lon]),
-            {
-                color: "#22c55e",
-                weight: 5,
-                opacity: 0.85
-            }
-        ).addTo(map);
-
-        map.fitBounds(routeLine.getBounds(), {
-            padding: [35, 35]
-        });
-
-        showMessage("Road route successfully calculated.");
-
-        updateDisplay();
-
-    } catch (error) {
-
-        showMessage(
-            error.message +
-            " Your GPS is still active. Retrying when appropriate.",
-            true
-        );
-
-    } finally {
-        routing = false;
-    }
-}
-
-// ==========================================
-// GPS POSITION UPDATE
-// ==========================================
-
-function onLocationSuccess(position) {
-
-    if (!tracking) return;
-
-    const now = Date.now();
-
-    currentPosition = {
-        lat: position.coords.latitude,
-        lon: position.coords.longitude
-    };
-
-    latestAccuracy = position.coords.accuracy;
-
-    if (position.coords.speed !== null &&
-        position.coords.speed >= 0) {
-
-        latestSpeed = position.coords.speed * 3.6;
-    }
-
-    lastGpsTime = now;
-
-    document.getElementById("currentLocation").textContent =
-        currentPosition.lat.toFixed(6) + ", " +
-        currentPosition.lon.toFixed(6);
-
-    if (!userMarker) {
-
-        userMarker = L.circleMarker(
-            [currentPosition.lat, currentPosition.lon],
-            {
-                radius: 9,
-                color: "#ffffff",
-                weight: 3,
-                fillColor: "#22c55e",
-                fillOpacity: 1
-            }
-        ).addTo(map);
-
+// GPS speed is noisy when a phone is stationary. This estimates speed from
+// successive fixes, and only accepts movement larger than the combined GPS
+// uncertainty. Small coordinate jitter is treated as stationary, not travel.
+function updateFilteredSpeed(position, now) {
+  const sample = {
+    lat: position.coords.latitude,
+    lon: position.coords.longitude,
+    accuracy: Math.max(1, position.coords.accuracy || 15),
+    time: now
+  };
+
+  if (!speedAnchor) {
+    speedAnchor = sample;
+    lastGpsSample = sample;
+    stationarySince = now;
+    filteredSpeedKmh = 0;
+    return;
+  }
+
+  const elapsed = (now - speedAnchor.time) / 1000;
+  const displacement = haversine(speedAnchor, sample);
+  const noiseThreshold = Math.max(10, Math.min(35, (speedAnchor.accuracy + sample.accuracy) * 1.15));
+
+  if (elapsed >= 2 && displacement > noiseThreshold) {
+    const measuredKmh = (displacement / elapsed) * 3.6;
+    // Reject impossible GPS jumps instead of displaying a ridiculous speed.
+    if (measuredKmh <= 180) {
+      filteredSpeedKmh = filteredSpeedKmh === 0
+        ? measuredKmh
+        : (filteredSpeedKmh * 0.35) + (measuredKmh * 0.65);
+      speedAnchor = sample;
+      stationarySince = now;
     } else {
-
-        userMarker.setLatLng([
-            currentPosition.lat,
-            currentPosition.lon
-        ]);
+      // Re-anchor after a GPS teleport/jump; do not call it movement.
+      speedAnchor = sample;
+      filteredSpeedKmh = 0;
+      stationarySince = now;
     }
-
-    // Check whether route needs refreshing
-    const moved = lastRouteOrigin
-        ? haversine(lastRouteOrigin, currentPosition)
-        : Infinity;
-
-    const elapsed = now - lastRouteTime;
-
-    if (
-        !routing &&
-        (
-            !lastRouteOrigin ||
-            moved >= ROUTE_REFRESH_DISTANCE ||
-            elapsed >= ROUTE_REFRESH_INTERVAL
-        )
-    ) {
-        fetchRoute(currentPosition);
+  } else if (elapsed >= 2 && displacement <= noiseThreshold) {
+    // Keep the anchor while stationary so tiny GPS jitters do not accumulate.
+    if (now - stationarySince >= 6000) {
+      filteredSpeedKmh = 0;
+      // Reset the baseline after a confirmed stationary period so the next
+      // genuine movement is not averaged against an old position.
+      speedAnchor = sample;
+      stationarySince = now;
     }
+  }
 
-    updateDisplay();
+  if (now - lastGpsAt > 12000 || (stationarySince && now - stationarySince > 10000 && displacement <= noiseThreshold)) {
+    filteredSpeedKmh = 0;
+  }
+  lastGpsSample = sample;
 }
 
-// ==========================================
-// LIVE DISPLAY
-// ==========================================
+function prepareRoute(coordinates) {
+  routePoints = coordinates.map(c => ({ lat: c[1], lon: c[0] }));
+  routeCumulative = [0];
+  for (let i = 1; i < routePoints.length; i++) {
+    routeCumulative.push(routeCumulative[i - 1] + haversine(routePoints[i - 1], routePoints[i]));
+  }
+  routeGeometryLength = routeCumulative[routeCumulative.length - 1] || 0;
+}
+
+// Find the nearest point along the route and measure the remaining route
+// fraction. OSRM's own route distance scales the geometry to road distance.
+function remainingDistance(position) {
+  if (routePoints.length < 2 || routeGeometryLength <= 0) return routeDistanceMeters;
+  let nearest = Infinity;
+  let along = 0;
+  const rad = Math.PI / 180;
+  for (let i = 0; i < routePoints.length - 1; i++) {
+    const a = routePoints[i], b = routePoints[i + 1];
+    const meanLat = ((position.lat + a.lat + b.lat) / 3) * rad;
+    const sx = 111320 * Math.cos(meanLat), sy = 111320;
+    const ax = (a.lon - position.lon) * sx, ay = (a.lat - position.lat) * sy;
+    const bx = (b.lon - position.lon) * sx, by = (b.lat - position.lat) * sy;
+    const dx = bx - ax, dy = by - ay;
+    const denom = dx * dx + dy * dy;
+    const t = denom === 0 ? 0 : Math.max(0, Math.min(1, -(ax * dx + ay * dy) / denom));
+    const px = ax + t * dx, py = ay + t * dy;
+    const d = Math.hypot(px, py);
+    if (d < nearest) {
+      nearest = d;
+      along = routeCumulative[i] + (routeCumulative[i + 1] - routeCumulative[i]) * t;
+    }
+  }
+  return Math.max(0, routeDistanceMeters * (1 - along / routeGeometryLength));
+}
+
+async function calculateRoute(origin) {
+  if (routeBusy || !tracking) return;
+  routeBusy = true;
+  if (routeController) routeController.abort();
+  routeController = new AbortController();
+  $('routeState').textContent = '● CALCULATING';
+  $('mapTag').textContent = 'UPDATING ROUTE';
+  try {
+    const url = ROUTE_ENDPOINT + `${origin.lon},${origin.lat};${DESTINATION.lon},${DESTINATION.lat}?overview=full&geometries=geojson&steps=false`;
+    const response = await fetch(url, { signal: routeController.signal });
+    if (!response.ok) throw new Error('Routing service returned HTTP ' + response.status);
+    const data = await response.json();
+    if (!tracking) return;
+    if (data.code !== 'Ok' || !data.routes || !data.routes.length) throw new Error('No driving route was found for these locations.');
+
+    const route = data.routes[0];
+    routeDistanceMeters = route.distance;
+    routeDurationSeconds = route.duration;
+    prepareRoute(route.geometry.coordinates);
+    lastRouteOrigin = { lat: origin.lat, lon: origin.lon };
+    lastRouteAt = Date.now();
+    hasRoute = true;
+
+    if (routeLine) map.removeLayer(routeLine);
+    routeLine = L.polyline(routePoints.map(p => [p.lat, p.lon]), {
+      color: '#a3ff65', weight: 5, opacity: .9, lineCap: 'round', lineJoin: 'round'
+    }).addTo(map);
+    $('routeState').textContent = '● ROUTE READY';
+    $('mapTag').textContent = 'ROUTE ACTIVE';
+    showMessage('Road route calculated. Your distance display will refresh every second; the route itself refreshes after meaningful movement.', 'good');
+    updateDisplay();
+  } catch (error) {
+    if (error.name !== 'AbortError') {
+      $('routeState').textContent = '● ROUTE ERROR';
+      $('mapTag').textContent = 'ROUTE UNAVAILABLE';
+      showMessage(error.message + ' GPS tracking remains active. The route will retry later.', 'error');
+    }
+  } finally {
+    routeBusy = false;
+  }
+}
+
+function onPosition(position) {
+  if (!tracking) return;
+  const now = Date.now();
+  const coords = position.coords;
+  currentPosition = { lat: coords.latitude, lon: coords.longitude };
+  latestAccuracy = Number.isFinite(coords.accuracy) ? coords.accuracy : null;
+  lastGpsAt = now;
+  updateFilteredSpeed(position, now);
+
+  $('currentLocation').textContent = currentPosition.lat.toFixed(6) + ', ' + currentPosition.lon.toFixed(6);
+  if (!userMarker) {
+    userMarker = L.circleMarker([currentPosition.lat, currentPosition.lon], {
+      radius: 8, color: '#eaffdc', weight: 3, fillColor: '#a3ff65', fillOpacity: 1
+    }).addTo(map).bindPopup('Your current position');
+    map.setView([currentPosition.lat, currentPosition.lon], 8);
+  } else {
+    userMarker.setLatLng([currentPosition.lat, currentPosition.lon]);
+  }
+
+  const moved = lastRouteOrigin ? haversine(lastRouteOrigin, currentPosition) : Infinity;
+  const routeOld = !lastRouteAt || now - lastRouteAt >= ROUTE_REFRESH_MS;
+  if (!routeBusy && (!hasRoute || moved >= ROUTE_REFRESH_METERS || routeOld)) {
+    calculateRoute(currentPosition);
+  }
+  updateDisplay();
+}
+
+function formatDuration(seconds) {
+  if (!Number.isFinite(seconds) || seconds < 0) return '--';
+  const mins = Math.round(seconds / 60);
+  if (mins < 1) return '<1 min';
+  const hours = Math.floor(mins / 60), rest = mins % 60;
+  return hours ? `${hours}h ${rest}m` : `${mins} min`;
+}
 
 function updateDisplay() {
+  if (!currentPosition) return;
+  $('speed').textContent = filteredSpeedKmh.toFixed(1) + ' km/h';
+  $('speedNote').textContent = filteredSpeedKmh < 1 ? 'Stationary / below GPS noise threshold' : 'Filtered GPS movement estimate';
+  $('accuracy').textContent = latestAccuracy === null ? '--' : '±' + Math.round(latestAccuracy) + ' m';
 
-    if (!currentPosition) return;
-
-    if (!routeCoordinates.length) return;
-
-    const remaining = getRemainingRouteDistance(
-        currentPosition
-    );
-
-    const km = remaining / 1000;
-
-    document.getElementById("distance").textContent =
-        km.toFixed(3);
-
-    document.getElementById("meters").textContent =
-        Math.round(remaining).toLocaleString("en-IN") +
-        " metres";
-
-    document.getElementById("speed").textContent =
-        latestSpeed.toFixed(1);
-
-    // Estimated time based on remaining route proportion
-    const remainingSeconds =
-        routeDistance > 0
-        ? routeDuration * (remaining / routeDistance)
-        : 0;
-
-    document.getElementById("eta").textContent =
-        formatTime(remainingSeconds);
-
-    document.getElementById("accuracy").textContent =
-        latestAccuracy !== null
-        ? "±" + Math.round(latestAccuracy) + "m"
-        : "--";
-
-    const secondsAgo = Math.max(
-        0,
-        Math.floor((Date.now() - lastRouteTime) / 1000)
-    );
-
-    document.getElementById("updated").textContent =
-        "Route calculated " + secondsAgo +
-        " seconds ago · Display refreshes every second";
-
+  if (hasRoute) {
+    const remaining = remainingDistance(currentPosition);
+    $('distance').textContent = (remaining / 1000).toFixed(3);
+    $('meters').textContent = Math.round(remaining).toLocaleString('en-IN') + ' metres remaining';
+    const etaSeconds = routeDistanceMeters > 0 ? routeDurationSeconds * remaining / routeDistanceMeters : 0;
+    $('eta').textContent = formatDuration(etaSeconds);
+    const age = Math.max(0, Math.floor((Date.now() - lastRouteAt) / 1000));
+    $('routeAge').textContent = 'Route updated ' + age + 's ago';
+  }
 }
 
-// ==========================================
-// TIME FORMAT
-// ==========================================
+function onPositionError(error) {
+  if (!tracking) return;
+  let message;
+  if (error.code === 1) message = 'Location permission was denied. Allow location access for this website in your browser settings, then reload the page.';
+  else if (error.code === 2) message = 'GPS position is unavailable. Turn on device location and try moving near a window or outdoors.';
+  else if (error.code === 3) message = 'GPS took too long to respond. Still waiting for a location fix.';
+  else message = 'An unknown GPS error occurred.';
+  setStatus('GPS ISSUE', 'error');
+  showMessage(message, 'error');
+}
 
-function formatTime(seconds) {
-
-    if (!Number.isFinite(seconds)) return "--";
-
-    const minutes = Math.round(seconds / 60);
-
-    if (minutes < 1) return "<1 min";
-
-    const hours = Math.floor(minutes / 60);
-    const remainingMinutes = minutes % 60;
-
-    if (hours === 0) {
-        return minutes + " min";
+function startAutomatically() {
+  if (!('geolocation' in navigator)) {
+    setStatus('GPS UNSUPPORTED', 'error');
+    showMessage('This browser does not support geolocation.', 'error');
+    return;
+  }
+  if (!window.isSecureContext) {
+    setStatus('HTTPS REQUIRED', 'error');
+    showMessage('Location tracking requires HTTPS (or localhost). Open this page through your HTTPS website.', 'error');
+    return;
+  }
+  if (tracking) return;
+  tracking = true;
+  setStatus('GETTING GPS', 'waiting');
+  showMessage('Requesting your location automatically. Allow the browser permission prompt to continue.');
+  watchId = navigator.geolocation.watchPosition(onPosition, onPositionError, {
+    enableHighAccuracy: true,
+    maximumAge: 0,
+    timeout: 25000
+  });
+  displayTimer = setInterval(() => {
+    if (!tracking) return;
+    if (lastGpsAt && Date.now() - lastGpsAt > GPS_STALE_MS) {
+      setStatus('GPS WAITING', 'waiting');
+      showMessage('No fresh GPS fix received recently. The browser is still watching for your location.');
+      filteredSpeedKmh = 0;
+    } else if (currentPosition) {
+      setStatus('TRACKING');
     }
-
-    return hours + "h " + remainingMinutes + "m";
+    updateDisplay();
+  }, 1000);
 }
 
-// ==========================================
-// TRACKING CONTROLS
-// ==========================================
-
-function startTracking() {
-
-    if (!navigator.geolocation) {
-
-        showMessage(
-            "Your browser does not support GPS location.",
-            true
-        );
-
-        return;
-    }
-
-    if (tracking) return;
-
-    tracking = true;
-
-    document.getElementById("status").textContent =
-        "● SEARCHING GPS";
-
-    document.getElementById("startBtn").disabled = true;
-    document.getElementById("pauseBtn").disabled = false;
-
-    showMessage("Requesting your GPS location...");
-
-    watchID = navigator.geolocation.watchPosition(
-        onLocationSuccess,
-        onLocationError,
-        {
-            enableHighAccuracy: true,
-            maximumAge: 1000,
-            timeout: 20000
-        }
-    );
-
-    // Display refresh every second
-    displayTimer = setInterval(() => {
-
-        if (!tracking) return;
-
-        if (
-            lastGpsTime &&
-            Date.now() - lastGpsTime > 15000
-        ) {
-            document.getElementById("status").textContent =
-                "● GPS STALE";
-
-            showMessage(
-                "No fresh GPS update received. Checking connection..."
-            );
-
-        } else if (currentPosition) {
-
-            document.getElementById("status").textContent =
-                "● TRACKING";
-        }
-
-        updateDisplay();
-
-    }, 1000);
+// Automatically start on every page load. No Start button is needed.
+function boot() {
+  initMap();
+  startAutomatically();
 }
 
-function pauseTracking() {
+// Mobile browsers may suspend page activity in the background. On return,
+// refresh the map layout and ensure tracking is active if the page was restored.
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) {
+    setTimeout(() => { if (map) map.invalidateSize(); }, 150);
+    if (!tracking) startAutomatically();
+  }
+});
 
-    tracking = false;
+window.addEventListener('pageshow', () => {
+  if (!tracking) startAutomatically();
+});
 
-    if (watchID !== null) {
-        navigator.geolocation.clearWatch(watchID);
-        watchID = null;
-    }
+window.addEventListener('pagehide', () => {
+  // The browser ends the page's GPS session when it is closed. No background
+  // tracking is claimed here; reopening the page starts a fresh GPS watch.
+  if (watchId !== null) navigator.geolocation.clearWatch(watchId);
+  if (displayTimer !== null) clearInterval(displayTimer);
+  if (routeController) routeController.abort();
+  tracking = false;
+});
 
-    if (displayTimer !== null) {
-        clearInterval(displayTimer);
-        displayTimer = null;
-    }
-
-    document.getElementById("status").textContent =
-        "● PAUSED";
-
-    document.getElementById("startBtn").disabled = false;
-    document.getElementById("pauseBtn").disabled = true;
-
-    showMessage("Tracking paused. Press Start to resume.");
-}
-
-// ==========================================
-// GPS ERRORS
-// ==========================================
-
-function onLocationError(error) {
-
-    let message = "";
-
-    switch (error.code) {
-
-        case 1:
-            message = "Location permission denied. Please allow GPS access.";
-            break;
-
-        case 2:
-            message = "GPS position unavailable. Check your location settings.";
-            break;
-
-        case 3:
-            message = "GPS request timed out. Waiting for another update.";
-            break;
-
-        default:
-            message = "An unknown GPS error occurred.";
-    }
-
-    document.getElementById("status").textContent =
-        "● GPS ERROR";
-
-    showMessage(message, true);
-}
-
-// ==========================================
-// MESSAGE
-// ==========================================
-
-function showMessage(message, error = false) {
-
-    const element = document.getElementById("message");
-
-    element.textContent = message;
-
-    element.className = error
-        ? "message error"
-        : "message";
-}
-
+boot();
 </script>
-
 </body>
 </html>
