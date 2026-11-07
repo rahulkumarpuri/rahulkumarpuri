@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#090d18">
+<title>Rahul's Journey | Ernakulam → Muzaffarpur</title>
+<style>
+:root{--bg:#080c16;--panel:#111827;--panel2:#172235;--text:#f4f7ff;--muted:#9aa8bd;--line:rgba(255,255,255,.10);--cyan:#55e6dc;--violet:#a78bfa;--gold:#f7c873;--green:#69e6a6}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 10% 0%,rgba(87,91,214,.22),transparent 35%),radial-gradient(ellipse at 90% 20%,rgba(32,194,183,.13),transparent 30%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.5}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.16;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:42px 42px;mask-image:linear-gradient(to bottom,black,transparent 75%)}
+.wrap{width:min(1120px,calc(100% - 32px));margin:auto;position:relative}.topbar{display:flex;align-items:center;justify-content:space-between;padding:24px 0}.brand{display:flex;align-items:center;gap:11px;font-weight:800;letter-spacing:.08em;font-size:12px;color:#dce7f7}.brand-mark{width:38px;height:38px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,var(--cyan),var(--violet));color:#08101b;font-size:19px;box-shadow:0 8px 30px #55e6dc33}.top-tag{font-size:11px;color:var(--green);border:1px solid #69e6a644;background:#69e6a611;padding:7px 11px;border-radius:99px;letter-spacing:.1em;font-weight:800}
+.hero{padding:34px 0 26px}.eyebrow{color:var(--cyan);font-size:11px;letter-spacing:.22em;text-transform:uppercase;font-weight:800}.hero h1{font-size:clamp(38px,7vw,76px);line-height:.98;letter-spacing:-.065em;margin:14px 0 15px;max-width:850px}.hero h1 span{background:linear-gradient(90deg,#fff 5%,var(--cyan) 48%,var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent}.hero p{color:var(--muted);margin:0;font-size:15px}.hero-meta{display:flex;flex-wrap:wrap;gap:9px;margin-top:22px}.chip{padding:8px 12px;border:1px solid var(--line);background:#ffffff08;border-radius:99px;color:#d9e2f1;font-size:12px}
+.ticket{margin-top:22px;border:1px solid #ffffff1c;border-radius:28px;overflow:hidden;background:linear-gradient(145deg,#17253b,#101827 58%,#111a2a);box-shadow:0 28px 90px #0008;position:relative}.ticket:after{content:"";position:absolute;width:340px;height:340px;border-radius:50%;border:1px solid #ffffff0c;right:-120px;top:-190px;box-shadow:0 0 0 35px #ffffff06,0 0 0 70px #ffffff04;pointer-events:none}.ticket-head{display:flex;justify-content:space-between;align-items:center;padding:22px 26px;border-bottom:1px solid var(--line);position:relative;z-index:1}.train-name{font-size:19px;font-weight:800}.train-sub{color:var(--muted);font-size:12px;margin-top:3px}.confirmed{color:#78f0b2;background:#69e6a615;border:1px solid #69e6a64c;border-radius:99px;padding:7px 12px;font-size:11px;font-weight:900;letter-spacing:.1em}
+.route{padding:34px 26px 30px;display:grid;grid-template-columns:1fr minmax(130px,1.1fr) 1fr;gap:15px;align-items:center;position:relative;z-index:1}.station:last-child{text-align:right}.station-code{font-size:clamp(35px,6vw,57px);font-weight:900;letter-spacing:-.06em;line-height:1}.station-name{font-weight:700;margin-top:8px}.station-place{font-size:12px;color:var(--muted)}.route-mid{text-align:center}.route-distance{font-size:11px;color:var(--muted);letter-spacing:.1em}.route-line{height:2px;background:linear-gradient(90deg,var(--cyan),var(--violet));margin:13px 0;position:relative}.route-line:before,.route-line:after{content:"";position:absolute;width:8px;height:8px;border-radius:50%;background:var(--cyan);top:-3px;left:0;box-shadow:0 0 14px var(--cyan)}.route-line:after{left:auto;right:0;background:var(--violet);box-shadow:0 0 14px var(--violet)}.train-icon{font-size:24px;display:inline-block;animation:float 2.5s ease-in-out infinite}@keyframes float{50%{transform:translateY(-4px)}}.duration{font-size:12px;color:#d8e1ef}
+.date-strip{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--line);position:relative;z-index:1}.date-cell{padding:20px 26px}.date-cell+ .date-cell{border-left:1px solid var(--line)}.date-label{font-size:10px;color:var(--muted);letter-spacing:.16em;text-transform:uppercase;font-weight:800}.date-time{font-size:28px;font-weight:900;letter-spacing:-.04em;margin-top:5px}.date-full{font-size:12px;color:#c2cde0}
+.grid{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;margin:22px 0}.card{border:1px solid var(--line);border-radius:22px;background:linear-gradient(150deg,#151f30dd,#0f1725ee);padding:23px;box-shadow:0 16px 45px #0002}.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.section-title{font-size:15px;font-weight:850;letter-spacing:.01em}.section-kicker{font-size:10px;color:var(--muted);letter-spacing:.13em;text-transform:uppercase}.pax-name{font-size:23px;font-weight:900;letter-spacing:-.04em}.pax-sub{color:var(--muted);font-size:12px;margin-top:3px}.pax-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:20px}.mini{background:#ffffff08;border:1px solid var(--line);border-radius:13px;padding:12px}.mini span{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em}.mini b{display:block;margin-top:5px;font-size:15px}.berth{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:15px;padding:13px 14px;background:#69e6a610;border:1px solid #69e6a633;border-radius:13px}.berth b{color:var(--green);font-size:12px;letter-spacing:.08em}.berth span{font-size:12px;color:#d5e5df}
+.fare-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line);font-size:13px;color:#c4cfdf}.fare-row strong{color:#f4f7ff}.fare-total{margin-top:15px;padding:17px;border-radius:15px;background:linear-gradient(110deg,#55e6dc19,#a78bfa1a);border:1px solid #55e6dc38}.fare-total small{color:var(--muted);font-size:10px;letter-spacing:.13em;font-weight:800}.fare-total b{display:block;font-size:31px;letter-spacing:-.04em;margin-top:3px}
+.details{margin:0 0 22px}.detail-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.detail{padding:14px;border:1px solid var(--line);background:#ffffff06;border-radius:13px;min-width:0}.detail span{display:block;font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}.detail b{display:block;margin-top:5px;font-size:13px;overflow-wrap:anywhere}
+.notice{display:flex;gap:13px;align-items:flex-start;padding:15px;border-radius:15px;background:#f7c8730d;border:1px solid #f7c87333;color:#e9d9b7;font-size:12px}.notice-icon{font-size:19px}.notice b{color:var(--gold)}
+.footer{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:20px 2px 38px;color:var(--muted);font-size:11px}.footer strong{color:#dce7f7}.actions{display:flex;gap:9px}.btn{cursor:pointer;border:1px solid var(--line);background:#ffffff0b;color:var(--text);border-radius:11px;padding:10px 13px;font-weight:750;font-size:12px;transition:.2s}.btn:hover{transform:translateY(-2px);border-color:#55e6dc88;background:#55e6dc12}.btn.primary{background:linear-gradient(100deg,var(--cyan),#a7a1ff);color:#07111b;border:0}
+@media(max-width:720px){.grid{grid-template-columns:1fr}.route{padding:27px 17px 23px;grid-template-columns:1fr .75fr 1fr;gap:8px}.ticket-head{padding:18px}.date-cell{padding:17px}.date-time{font-size:24px}.card{padding:18px}.pax-grid{grid-template-columns:repeat(2,1fr)}.detail-grid{grid-template-columns:repeat(2,1fr)}.footer{align-items:flex-start;flex-direction:column}.hero{padding-top:24px}}
+@media print{body{background:#fff;color:#111}.wrap{width:100%}.topbar,.actions{display:none}.hero p,.station-place,.train-sub,.date-label,.section-kicker,.mini span,.detail span,.footer,.fare-row{color:#555}.ticket,.card{box-shadow:none;background:#fff;border:1px solid #bbb;color:#111;break-inside:avoid}.confirmed{color:#087b43}.station-code,.date-time,.pax-name,.mini b,.detail b,.fare-row strong,.fare-total b{color:#111}.mini,.detail,.fare-total{background:#f5f7fa;border:1px solid #ddd}.notice{color:#333;background:#fff8e8}.notice b{color:#805400}.hero h1 span{-webkit-text-fill-color:#111}.route-line{background:#888}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="topbar">
+    <div class="brand"><div class="brand-mark">✦</div><div>JOURNEY<span style="color:var(--cyan)">/</span>LOG <span style="color:var(--muted);font-weight:500">· 2026</span></div></div>
+    <div class="top-tag">● TICKET CONFIRMED</div>
+  </header>
+
+  <section class="hero">
+    <div class="eyebrow">A long ride. A familiar destination.</div>
+    <h1>Back to <span>where it feels like home.</span></h1>
+    <p>Ernakulam, Kerala → Muzaffarpur, Bihar · Your complete railway journey at a glance.</p>
+    <div class="hero-meta">
+      <span class="chip">🚆 Train 12522</span><span class="chip">🛏 Sleeper Class</span><span class="chip">📍 3,342 km</span><span class="chip">🎟 General Quota</span>
+    </div>
+  </section>
+
+  <main>
+    <section class="ticket">
+      <div class="ticket-head">
+        <div><div class="train-name">Rapti Sagar Express</div><div class="train-sub">TRAIN NO. 12522 · INDIAN RAILWAYS</div></div>
+        <div class="confirmed">✓ CONFIRMED</div>
+      </div>
+      <div class="route">
+        <div class="station"><div class="station-code">ERS</div><div class="station-name">Ernakulam Jn.</div><div class="station-place">Kerala · Origin</div></div>
+        <div class="route-mid"><div class="route-distance">3,342 KILOMETRES</div><div class="route-line"></div><div class="train-icon">🚆</div><div class="duration">Approx. 58h 45m</div></div>
+        <div class="station"><div class="station-code">MFP</div><div class="station-name">Muzaffarpur Jn.</div><div class="station-place">Bihar · Destination</div></div>
+      </div>
+      <div class="date-strip">
+        <div class="date-cell"><div class="date-label">Departure · Friday</div><div class="date-time">10:50 AM</div><div class="date-full">27 November 2026 · Ernakulam Jn.</div></div>
+        <div class="date-cell"><div class="date-label">Arrival · Sunday</div><div class="date-time">09:35 PM</div><div class="date-full">29 November 2026 · Muzaffarpur Jn.</div></div>
+      </div>
+    </section>
+
+    <div class="grid">
+      <section class="card">
+        <div class="section-head"><div class="section-title">Passenger & berth</div><div class="section-kicker">01 / Traveller</div></div>
+        <div class="pax-name">RAHUL KUMAR</div><div class="pax-sub">Passenger 1 · Male · Age 18 as printed on ticket</div>
+        <div class="pax-grid">
+          <div class="mini"><span>Coach</span><b>S6</b></div><div class="mini"><span>Berth no.</span><b>2</b></div><div class="mini"><span>Berth type</span><b>Middle</b></div><div class="mini"><span>Class</span><b>Sleeper</b></div>
+        </div>
+        <div class="berth"><span>Current reservation status</span><b>✓ CNF / S6 / 2 / MIDDLE</b></div>
+      </section>
+
+      <section class="card">
+        <div class="section-head"><div class="section-title">Fare summary</div><div class="section-kicker">02 / Payment</div></div>
+        <div class="fare-row"><span>Ticket fare</span><strong>₹1,130.00</strong></div>
+        <div class="fare-row"><span>IRCTC convenience fee (incl. GST)</span><strong>₹11.80</strong></div>
+        <div class="fare-row"><span>Travel insurance (incl. GST)</span><strong>₹0.45</strong></div>
+        <div class="fare-total"><small>TOTAL PAID · ALL INCLUSIVE</small><b>₹1,142.25</b></div>
+      </section>
+    </div>
+
+    <section class="card details">
+      <div class="section-head"><div class="section-title">Booking information</div><div class="section-kicker">03 / Ticket details</div></div>
+      <div class="detail-grid">
+        <div class="detail"><span>PNR number</span><b>4658280030</b></div>
+        <div class="detail"><span>Booking date</span><b>28 Sep 2026 · 08:29:22</b></div>
+        <div class="detail"><span>Quota</span><b>General (GN)</b></div>
+        <div class="detail"><span>Transaction ID</span><b>100006875693385</b></div>
+        <div class="detail"><span>Ticket type</span><b>Electronic Reservation Slip</b></div>
+        <div class="detail"><span>Booking category</span><b>Normal User</b></div>
+      </div>
+    </section>
+
+    <section class="card details">
+      <div class="section-head"><div class="section-title">Travel checklist</div><div class="section-kicker">04 / Before boarding</div></div>
+      <div class="detail-grid">
+        <div class="detail"><span>Boarding station</span><b>Ernakulam Jn. (ERS)</b></div>
+        <div class="detail"><span>Destination station</span><b>Muzaffarpur Jn. (MFP)</b></div>
+        <div class="detail"><span>Distance</span><b>3,342 km</b></div>
+        <div class="detail"><span>Railway enquiry</span><b>139</b></div>
+        <div class="detail"><span>IRCTC support</span><b>14646</b></div>
+        <div class="detail"><span>E-catering</span><b>1323 · ecatering.irctc.co.in</b></div>
+      </div>
+      <div class="notice" style="margin-top:15px"><div class="notice-icon">🪪</div><div><b>Carry your original valid photo ID.</b> Keep your ERS / SMS / VRM ticket available during the journey. Aadhaar, passport, voter ID, PAN, driving licence and other accepted IDs are listed in the IRCTC rules.</div></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div><strong>YOUR JOURNEY, ONE PLACE.</strong><br>Personal travel summary · Not a replacement for the original IRCTC ERS.</div>
+    <div class="actions"><button class="btn" onclick="window.print()">↗ Save / Print</button><button class="btn primary" onclick="navigator.clipboard?.writeText('PNR: 4658280030 | Train: 12522 Rapti Sagar Express | ERS 27 Nov 2026 10:50 → MFP 29 Nov 2026 21:35 | Coach S6, Berth 2 Middle | Total ₹1,142.25').then(()=>{this.textContent='Copied ✓'}).catch(()=>{this.textContent='Copy unavailable'})">Copy journey details</button></div>
+  </footer>
+</div>
+</body>
+</html>
