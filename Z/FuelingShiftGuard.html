@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101827">
+<title>ShiftGuard | Nozzle Reconciliation</title>
+<style>
+:root{--bg:#0b1220;--panel:#121d2e;--panel2:#172438;--line:#26364d;--text:#edf4ff;--muted:#91a3bb;--cyan:#56d6e8;--green:#35d39a;--red:#ff7185;--amber:#ffc66d}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 15% 0%,#18314a 0,transparent 32%),var(--bg);color:var(--text);font:15px/1.5 Inter,system-ui,-apple-system,Segoe UI,sans-serif;padding:22px}
+.wrap{max-width:1050px;margin:auto}.top{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:22px}.brand{display:flex;align-items:center;gap:12px}.logo{width:45px;height:45px;border-radius:14px;background:linear-gradient(135deg,#4bd6e8,#247caa);display:grid;place-items:center;font-size:23px;box-shadow:0 8px 24px #35c9df30}.eyebrow{color:var(--cyan);font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase}.top h1{font-size:23px;margin:1px 0 0}.tag{color:var(--muted);font-size:12px}.actions{display:flex;gap:8px;flex-wrap:wrap}
+button{border:1px solid var(--line);background:#1a2a40;color:var(--text);border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}button:hover{filter:brightness(1.15)}button.primary{background:var(--cyan);color:#06202a;border-color:transparent}button.danger{color:#ff9aa8}
+.hero{background:linear-gradient(120deg,#142b40,#142236);border:1px solid #29435b;border-radius:18px;padding:19px 21px;margin-bottom:17px}.hero strong{color:var(--cyan)}.hero p{margin:5px 0 0;color:#b9c8da;font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}.card{background:linear-gradient(160deg,#142033,#101a2a);border:1px solid var(--line);border-radius:16px;padding:18px;min-width:0}.card h2{font-size:15px;margin:0 0 14px;display:flex;align-items:center;gap:9px}.num{background:#203c53;color:var(--cyan);width:25px;height:25px;border-radius:8px;display:grid;place-items:center;font-size:12px}.fieldgrid{display:grid;grid-template-columns:1fr 1fr;gap:11px}.field{min-width:0}.field.full{grid-column:1/-1}label{display:block;color:var(--muted);font-size:12px;margin-bottom:6px}input{width:100%;background:#0b1524;border:1px solid #2a3b52;border-radius:10px;padding:12px;color:var(--text);font:inherit;outline:none;min-width:0}input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px #56d6e81c}input::placeholder{color:#53647a}.hint{color:#70839b;font-size:11px;margin-top:5px}
+.results{margin-top:16px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.metric{background:#111d2d;border:1px solid var(--line);border-radius:14px;padding:14px}.metric span{display:block;color:var(--muted);font-size:11px}.metric b{display:block;font-size:21px;margin-top:4px;font-variant-numeric:tabular-nums}.metric small{color:var(--muted);font-size:11px}
+.final{margin-top:15px;padding:19px;border-radius:17px;border:1px solid var(--line);background:#111e2e;display:flex;justify-content:space-between;align-items:center;gap:15px}.final .label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:800}.final .amount{font-size:34px;font-weight:850;letter-spacing:-1px;font-variant-numeric:tabular-nums}.status{font-size:12px;font-weight:800;padding:7px 11px;border-radius:30px;background:#26364d;color:#dce9f8;display:inline-block;margin-top:5px}.short{border-color:#773b4b;background:linear-gradient(110deg,#321c2b,#171d2c)}.short .amount,.short .status{color:var(--red)}.excess{border-color:#23694f;background:linear-gradient(110deg,#12352f,#171f2d)}.excess .amount,.excess .status{color:var(--green)}.balanced .amount,.balanced .status{color:var(--cyan)}
+.breakdown{margin-top:15px;background:#101b2a;border:1px solid var(--line);border-radius:14px;padding:16px}.breakdown h3{font-size:13px;margin:0 0 10px}.line{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid #223148;color:#b9c8da;font-size:13px}.line:last-child{border:0}.line b{color:var(--text);font-variant-numeric:tabular-nums}.line.total{font-weight:800;color:var(--text);padding-top:12px}.note{margin-top:13px;color:var(--muted);font-size:11px}.footer{color:#667b95;text-align:center;font-size:11px;margin:20px 0 5px}
+@media(max-width:700px){body{padding:14px}.top{align-items:flex-start}.top h1{font-size:19px}.grid{grid-template-columns:1fr}.results{grid-template-columns:1fr 1fr}.results .metric:last-child{grid-column:1/-1}.final{align-items:flex-start;flex-direction:column}.final .amount{font-size:31px}}
+@media(max-width:380px){.fieldgrid{grid-template-columns:1fr}.field.full{grid-column:auto}.actions button{padding:8px 10px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><div class="logo">⛽</div><div><div class="eyebrow">ShiftGuard</div><h1>Lunch Break Reconciliation</h1><div class="tag">Nozzle · Cash · PhonePe · Oil</div></div></div>
+    <div class="actions"><button id="exampleBtn">Load example</button><button class="danger" id="resetBtn">Reset</button></div>
+  </header>
+  <section class="hero"><strong>One clean handover. No salary surprises.</strong><p>Enter the readings before leaving and after returning. The calculator accounts for your drawer change float and oil sales, then shows the actual shortage or excess.</p></section>
+
+  <main class="grid">
+    <section class="card">
+      <h2><span class="num">1</span> Nozzle machine reading</h2>
+      <div class="fieldgrid">
+        <div class="field"><label for="nozzleBefore">Reading before lunch (₹)</label><input id="nozzleBefore" type="number" step="0.01" placeholder="e.g. 50000.00"></div>
+        <div class="field"><label for="nozzleAfter">Reading after lunch (₹)</label><input id="nozzleAfter" type="number" step="0.01" placeholder="e.g. 51971.91"></div>
+      </div><div class="hint">Nozzle sale = after reading − before reading.</div>
+    </section>
+
+    <section class="card">
+      <h2><span class="num">2</span> PhonePe / UPI total</h2>
+      <div class="fieldgrid">
+        <div class="field"><label for="upiBefore">UPI total before lunch (₹)</label><input id="upiBefore" type="number" step="0.01" placeholder="Screenshot total before"></div>
+        <div class="field"><label for="upiAfter">UPI total after lunch (₹)</label><input id="upiAfter" type="number" step="0.01" placeholder="Screenshot total after"></div>
+      </div><div class="hint">UPI received during lunch = after total − before total.</div>
+    </section>
+
+    <section class="card">
+      <h2><span class="num">3</span> Cash drawer count</h2>
+      <div class="fieldgrid">
+        <div class="field full"><label for="cash">Total cash counted after returning (₹)</label><input id="cash" type="number" step="0.01" placeholder="e.g. 2310"></div>
+        <div class="field full"><label for="change">Change amount kept in drawer (₹)</label><input id="change" type="number" step="0.01" value="1500"></div>
+      </div><div class="hint">The change float is deducted from counted cash so it is not mistaken for sales.</div>
+    </section>
+
+    <section class="card">
+      <h2><span class="num">4</span> Oil sales</h2>
+      <div class="fieldgrid">
+        <div class="field"><label for="oilBefore">Oil quantity before (ml)</label><input id="oilBefore" type="number" step="1" placeholder="e.g. 350"></div>
+        <div class="field"><label for="oilAfter">Oil quantity after (ml)</label><input id="oilAfter" type="number" step="1" placeholder="e.g. 450"></div>
+        <div class="field full"><label for="oilRate">Oil rate (₹ per litre)</label><input id="oilRate" type="number" step="0.01" value="450"></div>
+      </div><div class="hint">Oil sold = after quantity − before quantity. Oil sale is added to nozzle sale.</div>
+    </section>
+  </main>
+
+  <section class="results">
+    <div class="metric"><span>Nozzle sale</span><b id="nozzleSale">₹0.00</b><small>Machine reading difference</small></div>
+    <div class="metric"><span>UPI received</span><b id="upiSale">₹0.00</b><small>PhonePe total difference</small></div>
+    <div class="metric"><span>Oil sale</span><b id="oilSale">₹0.00</b><small><span id="oilQty">0</span> ml sold</small></div>
+  </section>
+
+  <section class="final balanced" id="finalCard">
+    <div><div class="label">Final reconciliation</div><div class="amount" id="finalAmount">₹0.00</div><div class="status" id="finalStatus">Enter your readings</div></div>
+    <div class="tag" id="finalExplain">Cash + UPI − change float − total sales</div>
+  </section>
+
+  <section class="breakdown">
+    <h3>Calculation breakdown</h3>
+    <div class="line"><span>Cash counted</span><b id="bCash">₹0.00</b></div>
+    <div class="line"><span>UPI received during lunch</span><b id="bUpi">₹0.00</b></div>
+    <div class="line"><span>Less: change float</span><b id="bChange">− ₹1,500.00</b></div>
+    <div class="line"><span>Actual money collected</span><b id="bCollected">₹0.00</b></div>
+    <div class="line"><span>Nozzle sale</span><b id="bNozzle">₹0.00</b></div>
+    <div class="line"><span>Plus: oil sale</span><b id="bOil">₹0.00</b></div>
+    <div class="line total"><span>Total expected sales</span><b id="bExpected">₹0.00</b></div>
+    <div class="line total"><span>Difference (collected − expected)</span><b id="bDiff">₹0.00</b></div>
+    <div class="note">Positive difference means excess. Negative difference means shortage. Make sure the PhonePe screenshots cover the same exact time window as the nozzle readings. This tool calculates from the values you enter; it does not verify transactions or machine records.</div>
+  </section>
+  <div class="actions" style="margin-top:14px"><button class="primary" id="copyBtn">Copy reconciliation report</button></div>
+  <div class="footer">SHIFTGUARD · Local calculation only · Your entries stay in this browser session</div>
+</div>
+<script>
+const ids=['nozzleBefore','nozzleAfter','upiBefore','upiAfter','cash','change','oilBefore','oilAfter','oilRate'];
+const el=id=>document.getElementById(id);
+const val=id=>{const n=parseFloat(el(id).value);return Number.isFinite(n)?n:0};
+const money=n=>'₹'+n.toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmt=n=>(n<0?'− ':'')+money(Math.abs(n));
+let report='';
+function calculate(){
+ const nozzle=val('nozzleAfter')-val('nozzleBefore');
+ const upi=val('upiAfter')-val('upiBefore');
+ const oilQty=val('oilAfter')-val('oilBefore');
+ const oil=oilQty/1000*val('oilRate');
+ const cash=val('cash'), change=val('change');
+ const collected=cash+upi-change;
+ const expected=nozzle+oil;
+ const diff=collected-expected;
+ el('nozzleSale').textContent=money(nozzle);el('upiSale').textContent=money(upi);
+ el('oilSale').textContent=money(oil);el('oilQty').textContent=oilQty.toLocaleString('en-IN');
+ el('bCash').textContent=money(cash);el('bUpi').textContent=money(upi);el('bChange').textContent='− '+money(change);
+ el('bCollected').textContent=money(collected);el('bNozzle').textContent=money(nozzle);
+ el('bOil').textContent=money(oil);el('bExpected').textContent=money(expected);el('bDiff').textContent=fmt(diff);
+ const card=el('finalCard');card.className='final '+(diff<-.005?'short':diff>.005?'excess':'balanced');
+ el('finalAmount').textContent=fmt(diff);
+ el('finalStatus').textContent=diff<-.005?'SHORTAGE':diff>.005?'EXCESS':'BALANCED';
+ el('finalExplain').textContent=diff<-.005?'Amount missing from the expected sales total':diff>.005?'Money collected is above expected sales':'Collected amount matches expected sales';
+ report=`SHIFTGUARD — LUNCH BREAK RECONCILIATION
+Nozzle sale: ${money(nozzle)}
+UPI received: ${money(upi)}
+Oil sold: ${oilQty} ml
+Oil sale: ${money(oil)}
+Cash counted: ${money(cash)}
+Change float: ${money(change)}
+Actual money collected (cash + UPI - change): ${money(collected)}
+Total expected sales (nozzle + oil): ${money(expected)}
+Final difference: ${fmt(diff)} ${diff<-.005?'SHORTAGE':diff>.005?'EXCESS':'BALANCED'}`;
+}
+ids.forEach(id=>el(id).addEventListener('input',calculate));
+el('exampleBtn').addEventListener('click',()=>{
+ const data={nozzleBefore:0,nozzleAfter:1971.91,upiBefore:0,upiAfter:1192.28,cash:2310,change:1500,oilBefore:350,oilAfter:450,oilRate:450};
+ Object.entries(data).forEach(([k,v])=>el(k).value=v);calculate();
+});
+el('resetBtn').addEventListener('click',()=>{
+ ids.forEach(id=>el(id).value='');el('change').value='1500';el('oilRate').value='450';calculate();
+});
+el('copyBtn').addEventListener('click',async()=>{
+ try{await navigator.clipboard.writeText(report);el('copyBtn').textContent='Copied ✓';setTimeout(()=>el('copyBtn').textContent='Copy reconciliation report',1600)}
+ catch(e){const t=document.createElement('textarea');t.value=report;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove();el('copyBtn').textContent='Copied ✓';}
+});
+calculate();
+</script>
+</body>
+</html>
