@@ -33,52 +33,293 @@ label{display:block;margin-bottom:16px;color:#66536b;font-size:11px;font-weight:
 <body>
 <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
 <div class="app-shell">
-<header class="topbar"><div class="brand-lockup"><div class="sigil" aria-hidden="true">✠</div><div><p class="eyebrow">SALARY TRACKER · NOVEMBER 2026</p><h1>SALARY <span>TRACKER</span></h1><p class="tagline">Track your salary, overtime and advances easily.</p></div></div><div class="header-actions"><button class="btn btn-ghost" id="printBtn">♜ Print Salary Receipt</button><button class="btn btn-danger-outline" id="resetBtn">Reset All Data</button></div></header>
-<section class="hero-grid"><div class="hero-copy"><div class="status-line"><span class="live-dot"></span><span>LIVE EARNINGS</span><span class="status-divider">/</span><span id="periodLabel">NOVEMBER 2026</span></div><h2>Your November<br><em>Salary Tracker.</em></h2><p class="hero-subtitle">See how much you have earned and how much salary remains.</p><div class="hero-meta"><div><span class="meta-label">SALARY PERIOD</span><strong>01 — 25 NOV 2026</strong></div><div><span class="meta-label">SALARY TARGET</span><strong>25 WORKING DAYS · 15 HOURS · ₹750 PER DAY</strong></div></div></div><div class="live-card panel"><div class="live-card-top"><span class="eyebrow">TODAY'S EARNINGS</span><span class="live-pill"><i></i> LIVE</span></div><div class="live-amount" id="liveEarning">₹0.00</div><div class="live-caption">Earnings update automatically every second.</div><div class="live-divider"></div><div class="live-foot"><span>Duty · 07:00–22:00</span><strong id="liveClock">--:--:--</strong></div></div></section>
-<section class="progress-panel panel"><div class="section-head"><div><p class="eyebrow">WORK PROGRESS</p><h2>Monthly Work Progress</h2></div><div class="period-chip">✦ NOVEMBER · 2026</div></div><div class="progress-layout"><div class="ring-wrap"><svg class="progress-ring" viewBox="0 0 240 240" role="img" aria-label="Live working progress"><circle class="ring-track" cx="120" cy="120" r="94"/><circle class="ring-progress" id="ringProgress" cx="120" cy="120" r="94"/></svg><div class="ring-center"><span class="ring-kicker">WORK PROGRESS</span><strong id="progressPercent">0.00%</strong><span id="progressDays">0.00 / 25 days</span></div></div><div class="progress-details"><div class="progress-stat"><span class="stat-symbol">♜</span><div><span class="stat-label">WORKING DAYS</span><strong id="workingDays">0 / 25</strong><small>Updates every second</small></div></div><div class="progress-stat"><span class="stat-symbol">☽</span><div><span class="stat-label">NORMAL SALARY EARNED</span><strong id="earnedToDate">₹0.00</strong><small>Completed days plus today's earnings</small></div></div><div class="progress-stat"><span class="stat-symbol">✦</span><div><span class="stat-label">DAYS REMAINING</span><strong id="daysRemaining">25 days remain</strong><small>No salary accrues after 25 November</small></div></div><div class="progress-note">✧ The circular progress follows your 15-hour shift, 07:00–22:00. Earnings stop after 25 November.</div></div></div></section>
-<section class="section"><div class="section-head"><div><p class="eyebrow">SALARY OVERVIEW</p><h2>Salary Summary</h2></div><span class="section-note">ALL AMOUNTS IN RUPEES</span></div><div class="summary-grid">
-<article class="summary-card"><div class="card-top"><span>TOTAL OVERTIME REDUCTION</span><span class="card-glyph">✦</span></div><strong id="reductionTotal">₹0.00</strong><small>Deduction for overtime hours not worked</small></article>
-<article class="summary-card"><div class="card-top"><span>TOTAL ADVANCE</span><span class="card-glyph red">†</span></div><strong id="advanceTotal">₹0.00</strong><small>Salary advances taken</small></article>
-<article class="summary-card featured"><div class="card-top"><span>ESTIMATED SALARY</span><span class="card-glyph">♜</span></div><strong id="estimatedSalary">₹18,750.00</strong><small>₹750 × 25 days − overtime reductions − advances</small></article>
-<article class="summary-card"><div class="card-top"><span>SALARY BALANCE</span><span class="card-glyph">◇</span></div><strong id="totalSalaryBalance">₹0.00</strong><small>Earned salary − reductions − advances</small></article>
-</div></section>
-<section class="entry-grid"><form class="panel entry-form" id="reductionForm" novalidate><div class="panel-heading"><div><p class="eyebrow">MISSED OVERTIME</p><h2>Reduce Overtime</h2></div><span class="pill negative">− Deducts from salary</span></div><label>Reduction Amount<div class="money-input"><span>₹</span><input id="reductionAmount" name="amount" inputmode="decimal" autocomplete="off" placeholder="e.g. 50.00" required></div></label><label>Date<input id="reductionDate" name="date" type="date" min="2026-11-01" max="2026-11-25" required></label><label>Note (optional)<input id="reductionNote" name="note" maxlength="150" placeholder="e.g. Left at 9 PM"></label><p class="form-error" id="reductionError" role="alert"></p><p class="subtle">₹25 = 30 min less · ₹50 = 1 hour less · ₹100 = 2 hours less · ₹150 = no overtime (7 AM–7 PM).</p><button class="btn btn-primary" type="submit">− Add Overtime Reduction</button></form>
-<form class="panel entry-form" id="advanceForm" novalidate><div class="panel-heading"><div><p class="eyebrow">SALARY ADVANCE</p><h2>Add Salary Advance</h2></div><span class="pill negative">− Deducted from salary</span></div><label>Amount<div class="money-input"><span>₹</span><input id="advanceAmount" name="amount" inputmode="decimal" autocomplete="off" placeholder="3000.00" required></div></label><label>Date<input id="advanceDate" name="date" type="date" min="2026-11-01" max="2026-11-25" required></label><label>Note (optional)<input id="advanceNote" name="note" maxlength="150" placeholder="e.g. Personal expense"></label><p class="form-error" id="advanceError" role="alert"></p><button class="btn btn-primary" type="submit">− Add Salary Advance</button></form></section>
-<section class="history-grid"><section class="panel history-panel"><div class="panel-heading"><div><p class="eyebrow">MISSED OVERTIME</p><h2>Overtime Reduction History</h2></div><strong class="panel-total" id="historyReductionTotal">₹0.00</strong></div><div class="history-list" id="reductionHistory"></div></section><section class="panel history-panel"><div class="panel-heading"><div><p class="eyebrow">ADVANCE RECORDS</p><h2>Advance History</h2></div><strong class="panel-total" id="historyAdvanceTotal">₹0.00</strong></div><div class="history-list" id="advanceHistory"></div></section></section>
+<header class="topbar">
+  <div class="brand-lockup"><div class="sigil" aria-hidden="true">✠</div><div><p class="eyebrow">SALARY TRACKER · NOVEMBER 2026</p><h1>SALARY <span>TRACKER</span></h1><p class="tagline">Track your daily wages, overtime and advances.</p></div></div>
+  <div class="header-actions"><button class="btn btn-ghost" id="printBtn">♜ Print Salary Receipt</button><button class="btn btn-danger-outline" id="resetBtn">Reset All Data</button></div>
+</header>
+
+<section class="hero-grid">
+  <div class="hero-copy">
+    <div class="status-line"><span class="live-dot"></span><span>LIVE EARNINGS PREVIEW</span><span class="status-divider">/</span><span id="periodLabel">NOVEMBER 2026</span></div>
+    <h2>Your November<br><em>Salary Tracker.</em></h2>
+    <p class="hero-subtitle">Preview today's earnings live. Your actual salary changes only when you manually record daily wages.</p>
+    <div class="hero-meta">
+      <div><span class="meta-label">SALARY PERIOD</span><strong>01 — 25 NOV 2026</strong></div>
+      <div><span class="meta-label">DAILY BASE SALARY</span><strong>25 DAYS · 15 HOURS · ₹600 PER DAY</strong></div>
+    </div>
+  </div>
+  <div class="live-card panel">
+    <div class="live-card-top"><span class="eyebrow">TODAY'S LIVE EARNING</span><span class="live-pill"><i></i> LIVE PREVIEW</span></div>
+    <div class="live-amount" id="liveEarning">₹0.00</div>
+    <div class="live-caption">Preview only. Not added to salary automatically.</div>
+    <div class="live-divider"></div>
+    <div class="live-foot"><span>Duty · 07:00–22:00</span><strong id="liveClock">--:--:--</strong></div>
+  </div>
+</section>
+
+<section class="progress-panel panel">
+  <div class="section-head"><div><p class="eyebrow">WORK PROGRESS</p><h2>Monthly Work Progress</h2></div><div class="period-chip">✦ NOVEMBER · 2026</div></div>
+  <div class="progress-layout">
+    <div class="ring-wrap">
+      <svg class="progress-ring" viewBox="0 0 240 240" role="img" aria-label="Live working progress"><circle class="ring-track" cx="120" cy="120" r="94"/><circle class="ring-progress" id="ringProgress" cx="120" cy="120" r="94"/></svg>
+      <div class="ring-center"><span class="ring-kicker">WORK PROGRESS</span><strong id="progressPercent">0.00%</strong><span id="progressDays">0.00 / 25 days</span></div>
+    </div>
+    <div class="progress-details">
+      <div class="progress-stat"><span class="stat-symbol">♜</span><div><span class="stat-label">WORKING DAYS ELAPSED</span><strong id="workingDays">0 / 25</strong><small>Follows the duty clock</small></div></div>
+      <div class="progress-stat"><span class="stat-symbol">☽</span><div><span class="stat-label">RECORDED WAGES</span><strong id="earnedToDate">₹0.00</strong><small>Manual entries only</small></div></div>
+      <div class="progress-stat"><span class="stat-symbol">✦</span><div><span class="stat-label">DAYS REMAINING</span><strong id="daysRemaining">25 days remain</strong><small>Work period ends 25 November</small></div></div>
+      <div class="progress-note">✧ Live progress is only a preview. Salary is added exclusively through manual Daily Wages entries.</div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head"><div><p class="eyebrow">SALARY OVERVIEW</p><h2>Salary Summary</h2></div><span class="section-note">ALL AMOUNTS IN RUPEES</span></div>
+  <div class="summary-grid">
+    <article class="summary-card"><div class="card-top"><span>TOTAL OVERTIME EARNED</span><span class="card-glyph">✦</span></div><strong id="overtimeTotal">₹0.00</strong><small>Automatically calculated above ₹600 per date</small></article>
+    <article class="summary-card"><div class="card-top"><span>TOTAL ADVANCE</span><span class="card-glyph red">†</span></div><strong id="advanceTotal">₹0.00</strong><small>Salary advances taken</small></article>
+    <article class="summary-card featured"><div class="card-top"><span>ESTIMATED SALARY</span><span class="card-glyph">♜</span></div><strong id="estimatedSalary">₹15,000.00</strong><small>₹600 × 25 days + overtime − advances</small></article>
+    <article class="summary-card"><div class="card-top"><span>SALARY BALANCE</span><span class="card-glyph">◇</span></div><strong id="totalSalaryBalance">₹0.00</strong><small>Recorded wages − advances</small></article>
+  </div>
+</section>
+
+<section class="entry-grid">
+  <form class="panel entry-form" id="wageForm" novalidate>
+    <div class="panel-heading"><div><p class="eyebrow">DAILY SALARY RECORD</p><h2>Add Daily Wages</h2></div><span class="pill positive">+ Adds to salary</span></div>
+    <label>Daily Wage Amount<div class="money-input"><span>₹</span><input id="wageAmount" name="amount" inputmode="decimal" autocomplete="off" placeholder="e.g. 600.00" required></div></label>
+    <label>Date<input id="wageDate" name="date" type="date" min="2026-11-01" max="2026-11-25" required></label>
+    <label>Note (optional)<input id="wageNote" name="note" maxlength="150" placeholder="e.g. Full day duty"></label>
+    <p class="form-error" id="wageError" role="alert"></p>
+    <p class="subtle">Daily base salary: ₹600. Any combined amount above ₹600 for the same date automatically counts as overtime.</p>
+    <button class="btn btn-primary" type="submit">+ Add Daily Wages</button>
+  </form>
+
+  <form class="panel entry-form" id="advanceForm" novalidate>
+    <div class="panel-heading"><div><p class="eyebrow">SALARY ADVANCE</p><h2>Add Salary Advance</h2></div><span class="pill negative">− Deducted from balance</span></div>
+    <label>Amount<div class="money-input"><span>₹</span><input id="advanceAmount" name="amount" inputmode="decimal" autocomplete="off" placeholder="3000.00" required></div></label>
+    <label>Date<input id="advanceDate" name="date" type="date" min="2026-11-01" max="2026-11-25" required></label>
+    <label>Note (optional)<input id="advanceNote" name="note" maxlength="150" placeholder="e.g. Personal expense"></label>
+    <p class="form-error" id="advanceError" role="alert"></p>
+    <button class="btn btn-primary" type="submit">− Add Salary Advance</button>
+  </form>
+</section>
+
+<section class="history-grid">
+  <section class="panel history-panel"><div class="panel-heading"><div><p class="eyebrow">DAILY SALARY RECORDS</p><h2>Daily Wages History</h2></div><strong class="panel-total" id="historyWageTotal">₹0.00</strong></div><div class="history-list" id="wageHistory"></div></section>
+  <section class="panel history-panel"><div class="panel-heading"><div><p class="eyebrow">ADVANCE RECORDS</p><h2>Advance History</h2></div><strong class="panel-total" id="historyAdvanceTotal">₹0.00</strong></div><div class="history-list" id="advanceHistory"></div></section>
+</section>
+
 <footer class="footer"><div class="footer-sigil">✠</div><span>SALARY TRACKER</span><span class="footer-sep">✧</span><span>NOVEMBER 2026 · SALARY RECORD</span><span class="footer-right">YOUR SALARY, CLEARLY TRACKED.</span></footer>
 </div>
-<div class="modal-backdrop" id="modalBackdrop" hidden><div class="modal panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-heading"><div><p class="eyebrow" id="modalEyebrow">EDIT ENTRY</p><h2 id="modalTitle">Edit Entry</h2></div><button type="button" class="icon-btn" data-action="close-modal" aria-label="Close">×</button></div><form id="editForm" novalidate><input type="hidden" id="editType"><input type="hidden" id="editId"><label>Amount<div class="money-input"><span>₹</span><input id="editAmount" inputmode="decimal" required></div></label><label>Date<input id="editDate" type="date" min="2026-11-01" max="2026-11-25" required></label><label>Note (optional)<input id="editNote" maxlength="150"></label><p class="form-error" id="editError" role="alert"></p><div class="modal-actions"><button type="button" class="btn btn-ghost" data-action="close-modal">Cancel</button><button type="submit" class="btn btn-primary">Save Changes</button></div></form></div></div>
+
+<div class="modal-backdrop" id="modalBackdrop" hidden><div class="modal panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-heading"><div><p class="eyebrow">EDIT RECORD</p><h2 id="modalTitle">Edit Entry</h2></div><button type="button" class="icon-btn" data-action="close-modal" aria-label="Close">×</button></div><form id="editForm" novalidate><input type="hidden" id="editType"><input type="hidden" id="editId"><label>Amount<div class="money-input"><span>₹</span><input id="editAmount" inputmode="decimal" required></div></label><label>Date<input id="editDate" type="date" min="2026-11-01" max="2026-11-25" required></label><label>Note (optional)<input id="editNote" maxlength="150"></label><p class="form-error" id="editError" role="alert"></p><div class="modal-actions"><button type="button" class="btn btn-ghost" data-action="close-modal">Cancel</button><button type="submit" class="btn btn-primary">Save Changes</button></div></form></div></div>
 <div class="modal-backdrop" id="confirmBackdrop" hidden><div class="modal panel small-modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle"><p class="eyebrow">CONFIRM ACTION</p><h2 id="confirmTitle">Are you sure?</h2><p id="confirmMessage" class="subtle"></p><div class="modal-actions"><button type="button" class="btn btn-ghost" data-action="cancel-confirm">Cancel</button><button type="button" class="btn btn-danger" id="confirmButton">Confirm</button></div></div></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
 <script>
-(()=>{"use strict";
-const C={dailySalary:750,dutyStart:"07:00",dutyEnd:"22:00",maxAmount:1e9,noteMaxLength:150,start:"2026-11-01",end:"2026-11-25",days:25,overtimePay:150};
-const KEY="infernalLedger_november2026_v2",$=s=>document.querySelector(s);
-const R={period:$("#periodLabel"),live:$("#liveEarning"),clock:$("#liveClock"),reduction:$("#reductionTotal"),adv:$("#advanceTotal"),estimated:$("#estimatedSalary"),balance:$("#totalSalaryBalance"),working:$("#workingDays"),earned:$("#earnedToDate"),remaining:$("#daysRemaining"),reductionTotal:$("#historyReductionTotal"),advTotal:$("#historyAdvanceTotal"),reductionList:$("#reductionHistory"),advList:$("#advanceHistory"),reductionForm:$("#reductionForm"),advForm:$("#advanceForm"),reductionDate:$("#reductionDate"),advDate:$("#advanceDate"),reductionError:$("#reductionError"),advError:$("#advanceError"),modal:$("#modalBackdrop"),editForm:$("#editForm"),editType:$("#editType"),editId:$("#editId"),editAmount:$("#editAmount"),editDate:$("#editDate"),editNote:$("#editNote"),editError:$("#editError"),confirm:$("#confirmBackdrop"),confirmMessage:$("#confirmMessage"),confirmButton:$("#confirmButton"),toast:$("#toast")};
-const money=n=>new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",minimumFractionDigits:2,maximumFractionDigits:2}).format(Number(n)||0),iso=(d=new Date())=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
-const validDate=v=>{if(!/^\d{4}-\d{2}-\d{2}$/.test(v))return false;let[y,m,d]=v.split("-").map(Number),x=new Date(y,m-1,d);return x.getFullYear()===y&&x.getMonth()===m-1&&x.getDate()===d},fmtDate=v=>validDate(v)?new Intl.DateTimeFormat("en-GB",{day:"2-digit",month:"short",year:"numeric"}).format(new Date(v+"T00:00:00")):"Unrecorded date",id=()=>Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,9),mins=t=>{let[h,m]=t.split(":").map(Number);return h*60+m};
-function clean(a){return(Array.isArray(a)?a:[]).map(x=>{if(!x||typeof x!=="object")return null;let amount=Number(x.amount),date=String(x.date||"");if(!Number.isFinite(amount)||amount<=0||amount>C.maxAmount||!validDate(date)||date<C.start||date>C.end)return null;return{id:typeof x.id==="string"&&x.id?x.id:id(),amount,date,note:typeof x.note==="string"?x.note.slice(0,C.noteMaxLength):"",createdAt:typeof x.createdAt==="string"?x.createdAt:new Date().toISOString()}}).filter(Boolean)}
-function load(){try{let x=JSON.parse(localStorage.getItem(KEY)||"{}");return{reductions:clean(x.reductions),advances:clean(x.advances)}}catch{return{reductions:[],advances:[]}}}let S=load(),pending=null,timer;
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch{toast("Browser storage unavailable; records may not persist.")}}
-function progress(now=new Date()){let day=iso(now);if(day<C.start)return 0;if(day>C.end)return C.days;let n=Number(day.slice(-2)),cur=now.getHours()*60+now.getMinutes()+now.getSeconds()/60,st=mins(C.dutyStart),en=mins(C.dutyEnd),fraction=cur<=st?0:cur>=en?1:(cur-st)/(en-st);return Math.max(0,Math.min(C.days,n-1+fraction))}
-function live(now=new Date()){if(iso(now)<C.start||iso(now)>C.end)return 0;let cur=now.getHours()*60+now.getMinutes()+now.getSeconds()/60,st=mins(C.dutyStart),en=mins(C.dutyEnd);return cur<=st?0:cur>=en?C.dailySalary:C.dailySalary*(cur-st)/(en-st)}
-function summary(now=new Date()){let p=progress(now),earned=p*C.dailySalary,reduction=S.reductions.reduce((a,x)=>a+x.amount,0),adv=S.advances.reduce((a,x)=>a+x.amount,0),target=C.days*C.dailySalary;return{p,earned,reduction,adv,target,estimated:target-reduction-adv,balance:earned-reduction-adv}}
-function render(){let now=new Date(),today=iso(now),s=summary(now),pct=Math.min(100,Math.max(0,s.p/C.days*100)),circ=2*Math.PI*94;R.period.textContent=today<C.start?"COUNTDOWN TO 01 NOV 2026":today>C.end?"WORK PERIOD COMPLETE · 25 NOV 2026":"NOVEMBER 2026 · 15-HOUR SHIFT";R.live.textContent=money(live(now));R.clock.textContent=now.toLocaleTimeString("en-GB",{hour12:false});$("#progressPercent").textContent=pct.toFixed(2)+"%";$("#progressDays").textContent=s.p.toFixed(2)+" / 25 days";let ring=$("#ringProgress");ring.style.strokeDasharray=String(circ);ring.style.strokeDashoffset=String(circ*(1-pct/100));let elapsed=today<C.start?0:today>C.end?25:Number(today.slice(-2));R.working.textContent=`${elapsed} / 25`;R.earned.textContent=money(s.earned);R.remaining.textContent=`${Math.max(0,25-s.p).toFixed(2)} days remain`;R.reduction.textContent=money(s.reduction);R.adv.textContent=money(s.adv);R.estimated.textContent=money(s.estimated);R.balance.textContent=money(s.balance);R.reductionTotal.textContent=money(s.reduction);R.advTotal.textContent=money(s.adv);history(R.reductionList,S.reductions,"reduction");history(R.advList,S.advances,"advance")}
-function esc(v){return String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
-function history(el,list,type){let a=[...list].sort((x,y)=>y.date.localeCompare(x.date)||y.createdAt.localeCompare(x.createdAt));if(!a.length){el.innerHTML=`<div class="empty-state">${type==="reduction"?"No overtime reductions have been recorded yet.":"No salary advances have been added for November yet."}</div>`;return}el.innerHTML=a.map(x=>`<article class="entry-row"><div class="entry-main"><div class="entry-date">${esc(fmtDate(x.date))}</div><div class="entry-amount">${esc(money(x.amount))}</div>${x.note?`<div class="entry-note" title="${esc(x.note)}">${esc(x.note)}</div>`:""}</div><div class="entry-actions"><button type="button" class="small-btn" data-action="edit" data-type="${type}" data-id="${esc(x.id)}">Edit</button><button type="button" class="small-btn delete" data-action="delete" data-type="${type}" data-id="${esc(x.id)}">Delete</button></div></article>`).join("")}
-function validate(p){let amount=Number(String(p.amount).replace(/,/g,"").trim());if(!Number.isFinite(amount)||amount<=0)return{error:"Enter an amount greater than ₹0."};if(amount>C.maxAmount)return{error:"That amount exceeds the permitted limit."};if(!validDate(p.date)||p.date<C.start||p.date>C.end)return{error:"Choose a date between 1 and 25 November 2026."};if(String(p.note||"").length>C.noteMaxLength)return{error:"Note must be 150 characters or fewer."};if(p.type==="reductions"){if(amount>C.overtimePay)return{error:"Daily overtime reduction cannot exceed ₹150."};let already=S.reductions.filter(x=>x.date===p.date&&x.id!==p.id).reduce((a,x)=>a+x.amount,0);if(already+amount>C.overtimePay)return{error:"Total overtime reduction for one day cannot exceed ₹150."}}return{amount,date:p.date,note:String(p.note||"").trim()}}
-function add(type,form,error){let f=new FormData(form),r=validate({amount:f.get("amount"),date:f.get("date"),note:f.get("note")||"",type});if(r.error){error.textContent=r.error;return}S[type].push({...r,id:id(),createdAt:new Date().toISOString()});save();form.reset();let d=iso();(type==="reductions"?R.reductionDate:R.advDate).value=d>=C.start&&d<=C.end?d:C.start;error.textContent="";render();toast(type==="reductions"?"Overtime reduction recorded.":"Salary advance added.")}
-function edit(type,key){let x=S[type].find(v=>v.id===key);if(!x)return;R.editType.value=type;R.editId.value=key;R.editAmount.value=x.amount.toFixed(2);R.editDate.value=x.date;R.editNote.value=x.note;R.editError.textContent="";$("#modalTitle").textContent=type==="reductions"?"Edit Overtime Reduction":"Edit Salary Advance";R.modal.hidden=false;R.editAmount.focus()}
-function closeEdit(){R.modal.hidden=true;R.editForm.reset();R.editError.textContent=""}
-function saveEdit(e){e.preventDefault();let type=R.editType.value,key=R.editId.value,r=validate({amount:R.editAmount.value,date:R.editDate.value,note:R.editNote.value,type,id:key});if(r.error){R.editError.textContent=r.error;return}let x=S[type].find(v=>v.id===key);if(!x)return;Object.assign(x,{amount:r.amount,date:r.date,note:r.note});save();closeEdit();render();toast("Entry updated.")}
-function askDelete(type,key){let x=S[type].find(v=>v.id===key);if(!x)return;pending=()=>{S[type]=S[type].filter(v=>v.id!==key);save();render();toast("Entry deleted.")};R.confirmMessage.textContent=`Delete ${money(x.amount)} dated ${fmtDate(x.date)}? This cannot be undone.`;R.confirm.hidden=false}
-function reset(){pending=()=>{S={reductions:[],advances:[]};save();render();toast("All November records have been cleared.")};R.confirmMessage.textContent="Delete every November overtime reduction and advance record? This cannot be undone.";R.confirm.hidden=false}
-function closeConfirm(){R.confirm.hidden=true;pending=null}function toast(msg){clearTimeout(timer);R.toast.textContent=msg;R.toast.classList.add("show");timer=setTimeout(()=>R.toast.classList.remove("show"),2800)}
-function receipt(){let s=summary(),red=[...S.reductions].sort((a,b)=>b.date.localeCompare(a.date)),ad=[...S.advances].sort((a,b)=>b.date.localeCompare(a.date)),rows=a=>a.length?a.map(x=>`<tr><td>${esc(fmtDate(x.date))}</td><td>${esc(money(x.amount))}</td><td>${esc(x.note||"—")}</td></tr>`).join(""):'<tr><td colspan="3">No records</td></tr>';return`<!doctype html><html><head><meta charset="utf-8"><title>Salary Tracker · November 2026</title><style>*{box-sizing:border-box}body{font:14px Arial,sans-serif;color:#2b202d;margin:0;padding:30px}.receipt{max-width:780px;margin:auto}.head{display:flex;justify-content:space-between;gap:20px;border-bottom:3px solid #a9183b;padding-bottom:18px}h1,h2{font-family:Georgia,serif;color:#a9183b}h1{font-size:26px}h2{font-size:17px;margin:24px 0 10px}.summary{margin:22px 0;padding:15px;border:1px solid #efd1db;background:#fff8fa}.line{display:flex;justify-content:space-between;gap:12px;padding:8px 0}.total{border-top:2px solid #a9183b;margin-top:8px;padding-top:14px;font-size:18px;font-weight:bold;color:#a9183b}table{width:100%;border-collapse:collapse;font-size:12px}th,td{text-align:left;padding:9px;border-bottom:1px solid #e9e1eb}th{background:#fff0f3;color:#74152e}.foot{margin-top:25px;color:#796d7c;font-size:10px}@media print{body{padding:0}}</style></head><body><main class="receipt"><div class="head"><div><h1>SALARY TRACKER</h1><p>November 2026 · Salary Record</p></div><div><p>01 Nov — 25 Nov 2026</p><p>25 working days · 07:00–22:00 · ₹750/day</p></div></div><section class="summary"><div class="line"><span>Full-Period Salary Target</span><strong>${esc(money(s.target))}</strong></div><div class="line"><span>Salary Earned To Date</span><strong>${esc(money(s.earned))}</strong></div><div class="line"><span>Overtime Reductions</span><strong>−${esc(money(s.reduction))}</strong></div><div class="line"><span>Salary Advances</span><strong>−${esc(money(s.adv))}</strong></div><div class="line"><span>Salary Balance</span><strong>${esc(money(s.balance))}</strong></div><div class="line total"><span>Estimated Salary</span><strong>${esc(money(s.estimated))}</strong></div></section><h2>Overtime Reduction History</h2><table><thead><tr><th>Date</th><th>Amount</th><th>Note</th></tr></thead><tbody>${rows(red)}</tbody></table><h2>Advance History</h2><table><thead><tr><th>Date</th><th>Amount</th><th>Note</th></tr></thead><tbody>${rows(ad)}</tbody></table><div class="foot">Generated by Salary Tracker · ${new Date().toLocaleString()}</div></main><script>window.onload=()=>window.print();<\/script></body></html>`}
-function print(){let w=window.open("","_blank");if(!w){toast("Allow pop-ups to print the receipt.");return}w.document.open();w.document.write(receipt());w.document.close()}
-function clickHistory(e){let b=e.target.closest("[data-action]");if(!b)return;let{action,type,id:key}=b.dataset,store=type==="reduction"?"reductions":"advances";if(action==="edit")edit(store,key);if(action==="delete")askDelete(store,key)}
-function wire(){R.reductionForm.addEventListener("submit",e=>{e.preventDefault();add("reductions",R.reductionForm,R.reductionError)});R.advForm.addEventListener("submit",e=>{e.preventDefault();add("advances",R.advForm,R.advError)});R.editForm.addEventListener("submit",saveEdit);R.reductionList.addEventListener("click",clickHistory);R.advList.addEventListener("click",clickHistory);document.addEventListener("click",e=>{let b=e.target.closest("[data-action]");if(!b)return;if(b.dataset.action==="close-modal")closeEdit();if(b.dataset.action==="cancel-confirm")closeConfirm()});R.confirmButton.addEventListener("click",()=>{if(pending)pending();closeConfirm()});$("#resetBtn").addEventListener("click",reset);$("#printBtn").addEventListener("click",print);R.modal.addEventListener("click",e=>{if(e.target===R.modal)closeEdit()});R.confirm.addEventListener("click",e=>{if(e.target===R.confirm)closeConfirm()});document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeEdit();closeConfirm()}})}
-function init(){let d=iso(),defaultDate=d>=C.start&&d<=C.end?d:C.start;R.reductionDate.value=defaultDate;R.advDate.value=defaultDate;wire();render();setInterval(render,1000)}init();
+(() => {
+"use strict";
+
+const C = {dailySalary:600,dutyStart:"07:00",dutyEnd:"22:00",maxAmount:1e9,noteMaxLength:150,start:"2026-11-01",end:"2026-11-25",days:25};
+const KEY = "infernalLedger_november2026_v2";
+const $ = s => document.querySelector(s);
+const R = {
+  live:$("#liveEarning"),clock:$("#liveClock"),overtime:$("#overtimeTotal"),adv:$("#advanceTotal"),
+  estimated:$("#estimatedSalary"),balance:$("#totalSalaryBalance"),working:$("#workingDays"),
+  earned:$("#earnedToDate"),remaining:$("#daysRemaining"),wageTotal:$("#historyWageTotal"),
+  advTotal:$("#historyAdvanceTotal"),wageList:$("#wageHistory"),advList:$("#advanceHistory"),
+  wageForm:$("#wageForm"),advForm:$("#advanceForm"),wageDate:$("#wageDate"),advDate:$("#advanceDate"),
+  wageError:$("#wageError"),advError:$("#advanceError"),modal:$("#modalBackdrop"),
+  editForm:$("#editForm"),editType:$("#editType"),editId:$("#editId"),editAmount:$("#editAmount"),
+  editDate:$("#editDate"),editNote:$("#editNote"),editError:$("#editError"),
+  confirm:$("#confirmBackdrop"),confirmMessage:$("#confirmMessage"),
+  confirmButton:$("#confirmButton"),toast:$("#toast")
+};
+
+const money = n => new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",minimumFractionDigits:2,maximumFractionDigits:2}).format(Number(n)||0);
+const iso = (d=new Date()) => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+const validDate = v => {
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(v)) return false;
+  const [y,m,d]=v.split("-").map(Number),x=new Date(y,m-1,d);
+  return x.getFullYear()===y&&x.getMonth()===m-1&&x.getDate()===d;
+};
+const fmtDate = v => validDate(v) ? new Intl.DateTimeFormat("en-GB",{day:"2-digit",month:"short",year:"numeric"}).format(new Date(v+"T00:00:00")) : "Unrecorded date";
+const id = () => Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,9);
+const mins = t => {const [h,m]=t.split(":").map(Number);return h*60+m;};
+
+function clean(a){
+  return (Array.isArray(a)?a:[]).map(x=>{
+    if(!x||typeof x!=="object") return null;
+    const amount=Number(x.amount),date=String(x.date||"");
+    if(!Number.isFinite(amount)||amount<=0||amount>C.maxAmount||!validDate(date)||date<C.start||date>C.end) return null;
+    return {id:typeof x.id==="string"&&x.id?x.id:id(),amount,date,note:typeof x.note==="string"?x.note.slice(0,C.noteMaxLength):"",createdAt:typeof x.createdAt==="string"?x.createdAt:new Date().toISOString()};
+  }).filter(Boolean);
+}
+function load(){
+  try{
+    const x=JSON.parse(localStorage.getItem(KEY)||"{}");
+    // Migrate old overtime-reduction records into the new wage ledger as ordinary wage records is unsafe:
+    // old records were deductions, not earned wages. Keep advances, start the wage ledger empty.
+    return {wages:clean(x.wages),advances:clean(x.advances)};
+  }catch{return {wages:[],advances:[]};}
+}
+let S=load(),pending=null,timer=null;
+function save(){
+  try{localStorage.setItem(KEY,JSON.stringify(S));}
+  catch{toast("Browser storage unavailable; records may not persist.");}
+}
+
+function progress(now=new Date()){
+  const day=iso(now);
+  if(day<C.start)return 0;
+  if(day>C.end)return C.days;
+  const n=Number(day.slice(-2)),cur=now.getHours()*60+now.getMinutes()+now.getSeconds()/60;
+  const st=mins(C.dutyStart),en=mins(C.dutyEnd);
+  const fraction=cur<=st?0:cur>=en?1:(cur-st)/(en-st);
+  return Math.max(0,Math.min(C.days,n-1+fraction));
+}
+function live(now=new Date()){
+  const day=iso(now);
+  if(day<C.start||day>C.end)return 0;
+  const cur=now.getHours()*60+now.getMinutes()+now.getSeconds()/60;
+  const st=mins(C.dutyStart),en=mins(C.dutyEnd);
+  return cur<=st?0:cur>=en?C.dailySalary:C.dailySalary*(cur-st)/(en-st);
+}
+function calculateOvertime(){
+  const totals={};
+  S.wages.forEach(x=>{totals[x.date]=(totals[x.date]||0)+x.amount;});
+  return Object.values(totals).reduce((sum,amount)=>sum+Math.max(0,amount-C.dailySalary),0);
+}
+function summary(now=new Date()){
+  const p=progress(now);
+  const wages=S.wages.reduce((a,x)=>a+x.amount,0);
+  const overtime=calculateOvertime();
+  const advances=S.advances.reduce((a,x)=>a+x.amount,0);
+  const target=C.days*C.dailySalary;
+  return {p,wages,overtime,advances,target,estimated:target+overtime-advances,balance:wages-advances};
+}
+function render(){
+  const now=new Date(),today=iso(now),s=summary(now),pct=Math.min(100,Math.max(0,s.p/C.days*100)),circ=2*Math.PI*94;
+  $("#periodLabel").textContent=today<C.start?"COUNTDOWN TO 01 NOV 2026":today>C.end?"WORK PERIOD COMPLETE · 25 NOV 2026":"NOVEMBER 2026 · MANUAL WAGES";
+  R.live.textContent=money(live(now));
+  R.clock.textContent=now.toLocaleTimeString("en-GB",{hour12:false});
+  $("#progressPercent").textContent=pct.toFixed(2)+"%";
+  $("#progressDays").textContent=s.p.toFixed(2)+" / 25 days";
+  const ring=$("#ringProgress");ring.style.strokeDasharray=String(circ);ring.style.strokeDashoffset=String(circ*(1-pct/100));
+  const elapsed=today<C.start?0:today>C.end?25:Number(today.slice(-2));
+  R.working.textContent=`${elapsed} / 25`;
+  R.earned.textContent=money(s.wages);
+  R.remaining.textContent=`${Math.max(0,25-s.p).toFixed(2)} days remain`;
+  R.overtime.textContent=money(s.overtime);
+  R.adv.textContent=money(s.advances);
+  R.estimated.textContent=money(s.estimated);
+  R.balance.textContent=money(s.balance);
+  R.wageTotal.textContent=money(s.wages);
+  R.advTotal.textContent=money(s.advances);
+  history(R.wageList,S.wages,"wages");
+  history(R.advList,S.advances,"advances");
+}
+function esc(v){return String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));}
+function history(el,list,type){
+  const a=[...list].sort((x,y)=>y.date.localeCompare(x.date)||y.createdAt.localeCompare(x.createdAt));
+  if(!a.length){el.innerHTML=`<div class="empty-state">${type==="wages"?"No daily wages have been recorded yet.":"No salary advances have been added yet."}</div>`;return;}
+  el.innerHTML=a.map(x=>`<article class="entry-row"><div class="entry-main"><div class="entry-date">${esc(fmtDate(x.date))}</div><div class="entry-amount">${esc(money(x.amount))}</div>${x.note?`<div class="entry-note" title="${esc(x.note)}">${esc(x.note)}</div>`:""}</div><div class="entry-actions"><button type="button" class="small-btn" data-action="edit" data-type="${type}" data-id="${esc(x.id)}">Edit</button><button type="button" class="small-btn delete" data-action="delete" data-type="${type}" data-id="${esc(x.id)}">Delete</button></div></article>`).join("");
+}
+function validate(p){
+  const amount=Number(String(p.amount).replace(/,/g,"").trim());
+  if(!Number.isFinite(amount)||amount<=0)return {error:"Enter an amount greater than ₹0."};
+  if(amount>C.maxAmount)return {error:"That amount exceeds the permitted limit."};
+  if(!validDate(p.date)||p.date<C.start||p.date>C.end)return {error:"Choose a date between 1 and 25 November 2026."};
+  if(String(p.note||"").length>C.noteMaxLength)return {error:"Note must be 150 characters or fewer."};
+  return {amount,date:p.date,note:String(p.note||"").trim()};
+}
+function add(type,form,error){
+  const f=new FormData(form),r=validate({amount:f.get("amount"),date:f.get("date"),note:f.get("note")||""});
+  if(r.error){error.textContent=r.error;return;}
+  S[type].push({...r,id:id(),createdAt:new Date().toISOString()});
+  save();form.reset();
+  const d=iso(),dateInput=type==="wages"?R.wageDate:R.advDate;
+  dateInput.value=d>=C.start&&d<=C.end?d:C.start;
+  error.textContent="";render();
+  toast(type==="wages"?"Daily wages recorded successfully.":"Salary advance added successfully.");
+}
+function edit(type,key){
+  const x=S[type].find(v=>v.id===key);if(!x)return;
+  R.editType.value=type;R.editId.value=key;R.editAmount.value=x.amount.toFixed(2);
+  R.editDate.value=x.date;R.editNote.value=x.note;R.editError.textContent="";
+  $("#modalTitle").textContent=type==="wages"?"Edit Daily Wages":"Edit Salary Advance";
+  R.modal.hidden=false;R.editAmount.focus();
+}
+function closeEdit(){R.modal.hidden=true;R.editForm.reset();R.editError.textContent="";}
+function saveEdit(e){
+  e.preventDefault();
+  const type=R.editType.value,key=R.editId.value;
+  const r=validate({amount:R.editAmount.value,date:R.editDate.value,note:R.editNote.value});
+  if(r.error){R.editError.textContent=r.error;return;}
+  const x=S[type].find(v=>v.id===key);if(!x)return;
+  Object.assign(x,{amount:r.amount,date:r.date,note:r.note});
+  save();closeEdit();render();toast("Entry updated successfully.");
+}
+function askDelete(type,key){
+  const x=S[type].find(v=>v.id===key);if(!x)return;
+  pending=()=>{S[type]=S[type].filter(v=>v.id!==key);save();render();toast("Entry deleted.");};
+  R.confirmMessage.textContent=`Delete ${money(x.amount)} dated ${fmtDate(x.date)}? This cannot be undone.`;
+  R.confirm.hidden=false;
+}
+function reset(){
+  pending=()=>{S={wages:[],advances:[]};save();render();toast("All November wage and advance records have been cleared.");};
+  R.confirmMessage.textContent="Delete every November daily wage and salary advance record? This cannot be undone.";
+  R.confirm.hidden=false;
+}
+function closeConfirm(){R.confirm.hidden=true;pending=null;}
+function toast(msg){
+  clearTimeout(timer);R.toast.textContent=msg;R.toast.classList.add("show");
+  timer=setTimeout(()=>R.toast.classList.remove("show"),2800);
+}
+function receipt(){
+  const s=summary(),wages=[...S.wages].sort((a,b)=>b.date.localeCompare(a.date)),adv=[...S.advances].sort((a,b)=>b.date.localeCompare(a.date));
+  const rows=a=>a.length?a.map(x=>`<tr><td>${esc(fmtDate(x.date))}</td><td>${esc(money(x.amount))}</td><td>${esc(x.note||"—")}</td></tr>`).join(""):'<tr><td colspan="3">No records</td></tr>';
+  const overtimeByDate={};
+  S.wages.forEach(x=>{overtimeByDate[x.date]=(overtimeByDate[x.date]||0)+x.amount;});
+  const overtimeRows=Object.entries(overtimeByDate).filter(([,v])=>v>C.dailySalary).sort(([a],[b])=>b.localeCompare(a));
+  const overtimeTable=overtimeRows.length?overtimeRows.map(([date,total])=>`<tr><td>${esc(fmtDate(date))}</td><td>${esc(money(total))}</td><td>${esc(money(total-C.dailySalary))}</td></tr>`).join(""):'<tr><td colspan="3">No overtime recorded</td></tr>';
+  return `<!doctype html><html><head><meta charset="utf-8"><title>Salary Tracker · November 2026</title><style>*{box-sizing:border-box}body{font:14px Arial,sans-serif;color:#2b202d;margin:0;padding:30px}.receipt{max-width:780px;margin:auto}.head{display:flex;justify-content:space-between;gap:20px;border-bottom:3px solid #a9183b;padding-bottom:18px}h1,h2{font-family:Georgia,serif;color:#a9183b}h1{font-size:26px}h2{font-size:17px;margin:24px 0 10px}.summary{margin:22px 0;padding:15px;border:1px solid #efd1db;background:#fff8fa}.line{display:flex;justify-content:space-between;gap:12px;padding:8px 0}.total{border-top:2px solid #a9183b;margin-top:8px;padding-top:14px;font-size:18px;font-weight:bold;color:#a9183b}table{width:100%;border-collapse:collapse;font-size:12px}th,td{text-align:left;padding:9px;border-bottom:1px solid #e9e1eb}th{background:#fff0f3;color:#74152e}.foot{margin-top:25px;color:#796d7c;font-size:10px}@media print{body{padding:0}}</style></head><body><main class="receipt"><div class="head"><div><h1>SALARY TRACKER</h1><p>November 2026 · Salary Record</p></div><div><p>01 Nov — 25 Nov 2026</p><p>25 working days · 07:00–22:00 · ₹600/day</p></div></div><section class="summary"><div class="line"><span>Base Salary Target</span><strong>${esc(money(s.target))}</strong></div><div class="line"><span>Manually Recorded Wages</span><strong>${esc(money(s.wages))}</strong></div><div class="line"><span>Overtime Earned</span><strong>+${esc(money(s.overtime))}</strong></div><div class="line"><span>Salary Advances</span><strong>−${esc(money(s.advances))}</strong></div><div class="line"><span>Salary Balance</span><strong>${esc(money(s.balance))}</strong></div><div class="line total"><span>Estimated Salary</span><strong>${esc(money(s.estimated))}</strong></div></section><h2>Daily Wages History</h2><table><thead><tr><th>Date</th><th>Amount</th><th>Note</th></tr></thead><tbody>${rows(wages)}</tbody></table><h2>Overtime Breakdown</h2><table><thead><tr><th>Date</th><th>Total Wages</th><th>Overtime</th></tr></thead><tbody>${overtimeTable}</tbody></table><h2>Advance History</h2><table><thead><tr><th>Date</th><th>Amount</th><th>Note</th></tr></thead><tbody>${rows(advances)}</tbody></table><div class="foot">Generated by Salary Tracker · ${new Date().toLocaleString()}</div></main><script>window.onload=()=>window.print();<\\/script></body></html>`;
+}
+function print(){
+  const w=window.open("","_blank");
+  if(!w){toast("Allow pop-ups to print the receipt.");return;}
+  w.document.open();w.document.write(receipt());w.document.close();
+}
+function clickHistory(e){
+  const b=e.target.closest("[data-action]");if(!b)return;
+  const {action,type,id:key}=b.dataset;
+  if(action==="edit")edit(type,key);
+  if(action==="delete")askDelete(type,key);
+}
+function wire(){
+  R.wageForm.addEventListener("submit",e=>{e.preventDefault();add("wages",R.wageForm,R.wageError);});
+  R.advForm.addEventListener("submit",e=>{e.preventDefault();add("advances",R.advForm,R.advError);});
+  R.editForm.addEventListener("submit",saveEdit);
+  R.wageList.addEventListener("click",clickHistory);
+  R.advList.addEventListener("click",clickHistory);
+  document.addEventListener("click",e=>{
+    const b=e.target.closest("[data-action]");if(!b)return;
+    if(b.dataset.action==="close-modal")closeEdit();
+    if(b.dataset.action==="cancel-confirm")closeConfirm();
+  });
+  R.confirmButton.addEventListener("click",()=>{if(pending)pending();closeConfirm();});
+  $("#resetBtn").addEventListener("click",reset);
+  $("#printBtn").addEventListener("click",print);
+  R.modal.addEventListener("click",e=>{if(e.target===R.modal)closeEdit();});
+  R.confirm.addEventListener("click",e=>{if(e.target===R.confirm)closeConfirm();});
+  document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeEdit();closeConfirm();}});
+}
+function init(){
+  const d=iso(),defaultDate=d>=C.start&&d<=C.end?d:C.start;
+  R.wageDate.value=defaultDate;R.advDate.value=defaultDate;
+  wire();render();setInterval(render,1000);
+}
+init();
 })();
 </script>
 </body>
